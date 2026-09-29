@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CaspianBank-API-FinalProject/CaspianBank-API-FinalProject.csproj" />
+  <Project Path="Domain/Domain.csproj" Id="390da78d-89a8-4a68-9fc8-d8541af88cdd" />
+  <Project Path="Repository/Repository.csproj" Id="f599ab54-d8b5-45ea-b768-0a27bd98eef4" />
+  <Project Path="Service/Service.csproj" Id="8ad66e91-0f5d-4458-a6bd-68253b4750fe" />
+</Solution>

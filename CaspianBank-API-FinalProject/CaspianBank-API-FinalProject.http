@@ -1,0 +1,6 @@
+@CaspianBank_API_FinalProject_HostAddress = http://localhost:5062
+
+GET {{CaspianBank_API_FinalProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
