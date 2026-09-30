@@ -1,10 +1,9 @@
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 using Repository.Data;
-using Repository.Repositories;
-using Repository.Repositories.Interfaces;
-using Service.Account;
+using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +17,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddServiceLayer();
+builder.Services.AddRepositoryLayer();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -44,8 +46,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 
@@ -71,3 +71,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

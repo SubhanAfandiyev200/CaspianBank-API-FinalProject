@@ -1,6 +1,7 @@
-using Service.Account.DTOs;
+using Service.Helpers.Responses;
+using Service.Helpers.Responses.DTOs;
 
-namespace Service.Account
+namespace Service.Services.Interfaces
 {
     public interface IAccountService
     {

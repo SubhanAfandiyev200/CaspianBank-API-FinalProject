@@ -1,9 +1,11 @@
 using Domain.Constants;
 using Domain.Entities;
 using Repository.Repositories.Interfaces;
-using Service.Account.DTOs;
+using Service.Helpers.Responses;
+using Service.Helpers.Responses.DTOs;
+using Service.Services.Interfaces;
 
-namespace Service.Account
+namespace Service.Services
 {
     public class AccountService : IAccountService
     {

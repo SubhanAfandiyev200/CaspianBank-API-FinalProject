@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Service.Account;
-using Service.Account.DTOs;
+using Service.Helpers.Responses.DTOs;
+using Service.Services.Interfaces;
 
 namespace CaspianBank_API_FinalProject.Controllers.Client
 {

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CaspianBank-API-FinalProject")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f2ba2675be55a6300d1cbaf248e636fce1d7b84")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32e852aaa5fff47514394f4339048f82ae350394")]
 [assembly: System.Reflection.AssemblyProductAttribute("CaspianBank-API-FinalProject")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CaspianBank-API-FinalProject")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
