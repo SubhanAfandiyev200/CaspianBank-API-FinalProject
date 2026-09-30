@@ -9,10 +9,20 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "Service.Helpers.Responses.DTOs.RegisterDto",
+        "Type": "Service.Helpers.Responses.DTOs.Account.RegisterDto",
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllUIAsync",
+    "RelativePath": "api/Home/tickers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   }
 ]

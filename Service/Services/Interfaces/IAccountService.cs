@@ -1,5 +1,5 @@
 using Service.Helpers.Responses;
-using Service.Helpers.Responses.DTOs;
+using Service.Helpers.Responses.DTOs.Account;
 
 namespace Service.Services.Interfaces
 {

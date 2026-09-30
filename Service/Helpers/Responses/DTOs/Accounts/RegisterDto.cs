@@ -1,4 +1,4 @@
-namespace Service.Helpers.Responses.DTOs
+namespace Service.Helpers.Responses.DTOs.Account
 {
     public class RegisterDto
     {

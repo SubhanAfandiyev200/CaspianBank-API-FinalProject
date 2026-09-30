@@ -2,7 +2,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.Responses;
-using Service.Helpers.Responses.DTOs;
+using Service.Helpers.Responses.DTOs.Account;
 using Service.Services.Interfaces;
 
 namespace Service.Services

@@ -9,5 +9,6 @@ namespace Repository.Repositories.Interfaces
 {
     public interface IBaseRepository<T> where T : BaseEntity
     {
+        Task<IEnumerable<T>> GetAllAsync();
     }
 }

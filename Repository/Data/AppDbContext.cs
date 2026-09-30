@@ -7,11 +7,12 @@ namespace Repository.Data
 {
     public class AppDbContext : IdentityDbContext<AppUser>
     {
+        public DbSet<HomeTicker> HomeTickers { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder); // Identity-nin öz konfiqurasiyası üçün vacibdir
-            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
         }
     }
 }
