@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Helpers.Responses.DTOs.HomeTickers
+namespace Service.Helpers.DTOs.HomeTickers
 {
     public class HomeTickerDto
     {

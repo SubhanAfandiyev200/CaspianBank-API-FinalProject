@@ -1,0 +1,4 @@
+wwwroot\images\chatgpt.png
+wwwroot\images\claude.png
+wwwroot\images\cursor.png
+wwwroot\images\seabreeze.png

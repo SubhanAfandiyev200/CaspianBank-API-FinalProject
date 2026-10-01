@@ -7,6 +7,7 @@ namespace Repository.Data
 {
     public class AppDbContext : IdentityDbContext<AppUser>
     {
+        public DbSet<Brand> Brands { get; set; }
         public DbSet<HomeTicker> HomeTickers { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder builder)

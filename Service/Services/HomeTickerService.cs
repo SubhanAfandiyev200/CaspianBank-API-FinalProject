@@ -2,7 +2,7 @@
 
 using Domain.Entities;
 using Repository.Repositories.Interfaces;
-using Service.Helpers.Responses.DTOs.HomeTickers;
+using Service.Helpers.DTOs.HomeTickers;
 using Service.Services.Interfaces;
 
 namespace Service.Services
@@ -15,7 +15,7 @@ namespace Service.Services
             _tickerRepo = tickerRepo;
         }
 
-        public async Task<IEnumerable<HomeTickerDto>> GetAllAsync()
+        public async Task<IEnumerable<HomeTickerDto>> GetAllUIAsync()
         {
             var result = await _tickerRepo.GetAllAsync();
             return result.OrderBy(m => m.Id).Select(m => new HomeTickerDto

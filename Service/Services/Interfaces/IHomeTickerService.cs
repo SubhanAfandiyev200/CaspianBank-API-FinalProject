@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 using Repository.Repositories.Interfaces;
-using Service.Helpers.Responses.DTOs.HomeTickers;
+using Service.Helpers.DTOs.HomeTickers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,6 @@ namespace Service.Services.Interfaces
 {
     public interface IHomeTickerService
     {
-        Task<IEnumerable<HomeTickerDto>> GetAllAsync();
+        Task<IEnumerable<HomeTickerDto>> GetAllUIAsync();
     }
 }
