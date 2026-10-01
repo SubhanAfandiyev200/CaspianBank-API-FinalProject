@@ -21,6 +21,8 @@ namespace Service
             services.AddScoped<IAccountService, AccountService>();
             services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
             services.AddScoped<IHomeTickerService, HomeTickerService>();
+            services.AddScoped<IAboutService, AboutService>();
+            services.AddScoped<IAboutPillarService, AboutPillarService>();
             return services;
         }
     }

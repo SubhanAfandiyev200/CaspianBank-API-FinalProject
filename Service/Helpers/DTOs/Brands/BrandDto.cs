@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Service.Helpers.DTOs.Brands
 {
-    public class BrandUIVM
+    public class BrandDto
     {
-        public string Name { get; set; }
-        public string Image { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
     }
 }

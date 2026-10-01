@@ -9,6 +9,6 @@ namespace Service.Services.Interfaces
 {
     public interface IBrandService
     {
-        Task<IEnumerable<BrandUIVM>> GetAllUIAsync();
+        Task<IEnumerable<BrandDto>> GetAllUIAsync();
     }
 }

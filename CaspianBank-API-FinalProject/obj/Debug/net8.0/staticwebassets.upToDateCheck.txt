@@ -1,4 +1,7 @@
 wwwroot\images\chatgpt.png
 wwwroot\images\claude.png
+wwwroot\images\clear-movement.png
 wwwroot\images\cursor.png
+wwwroot\images\custody.png
+wwwroot\images\desk-in-baku.png
 wwwroot\images\seabreeze.png

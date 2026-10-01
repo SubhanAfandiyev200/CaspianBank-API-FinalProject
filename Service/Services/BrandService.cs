@@ -17,10 +17,10 @@ namespace Service.Services
             _brandRepo = brandRepo;
         }
 
-        public async Task<IEnumerable<BrandUIVM>> GetAllUIAsync()
+        public async Task<IEnumerable<BrandDto>> GetAllUIAsync()
         {
             var result = await _brandRepo.GetAllAsync();
-            return result.OrderBy(m => m.Id).Select(m => new BrandUIVM
+            return result.OrderBy(m => m.Id).Select(m => new BrandDto
             {
                 Image = m.Image,
                 Name = m.Name

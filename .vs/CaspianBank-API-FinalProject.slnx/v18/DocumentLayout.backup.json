@@ -3,40 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\caspianbank-api-finalproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|solutionrelative:caspianbank-api-finalproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\services\\aboutservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\services\\aboutservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\caspianbank-api-finalproject\\controllers\\client\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|solutionrelative:caspianbank-api-finalproject\\controllers\\client\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Migrations\\20261001223640_AddedVideoPathToAboutModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Repository\\Migrations\\20261001223640_AddedVideoPathToAboutModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\helpers\\dtos\\abouts\\aboutdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\helpers\\dtos\\abouts\\aboutdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\services\\brandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\services\\brandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\configurations\\aboutconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\configurations\\aboutconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\helpers\\dtos\\brands\\brandvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\helpers\\dtos\\brands\\brandvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\services\\interfaces\\ibrandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\services\\interfaces\\ibrandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\helpers\\dtos\\brands\\branduivm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\helpers\\dtos\\brands\\branduivm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\repository\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|solutionrelative:repository\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\repository\\repositories\\brandrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|solutionrelative:repository\\repositories\\brandrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\about.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\about.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,110 +30,71 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\Program.cs",
-              "RelativeDocumentMoniker": "CaspianBank-API-FinalProject\\Program.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\Program.cs",
-              "RelativeToolTip": "CaspianBank-API-FinalProject\\Program.cs",
-              "ViewState": "AgIAADMAAAAAAAAAAAAAAEIAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T03:04:38.854Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\Controllers\\Client\\HomeController.cs",
-              "RelativeDocumentMoniker": "CaspianBank-API-FinalProject\\Controllers\\Client\\HomeController.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\Controllers\\Client\\HomeController.cs",
-              "RelativeToolTip": "CaspianBank-API-FinalProject\\Controllers\\Client\\HomeController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
+              "Title": "20261001223640_AddedVideoPathToAboutModel.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Migrations\\20261001223640_AddedVideoPathToAboutModel.cs",
+              "RelativeDocumentMoniker": "Repository\\Migrations\\20261001223640_AddedVideoPathToAboutModel.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Migrations\\20261001223640_AddedVideoPathToAboutModel.cs",
+              "RelativeToolTip": "Repository\\Migrations\\20261001223640_AddedVideoPathToAboutModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:54:43.959Z",
+              "WhenOpened": "2026-10-01T22:36:40.418Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "DependencyInjection.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\DependencyInjection.cs",
-              "RelativeDocumentMoniker": "Service\\DependencyInjection.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\DependencyInjection.cs",
-              "RelativeToolTip": "Service\\DependencyInjection.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABRAAAAAAAAAA==",
+              "Title": "AboutDto.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Abouts\\AboutDto.cs",
+              "RelativeDocumentMoniker": "Service\\Helpers\\DTOs\\Abouts\\AboutDto.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Abouts\\AboutDto.cs",
+              "RelativeToolTip": "Service\\Helpers\\DTOs\\Abouts\\AboutDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:54:22.913Z",
+              "WhenOpened": "2026-10-01T22:35:34.944Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AboutService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\AboutService.cs",
+              "RelativeDocumentMoniker": "Service\\Services\\AboutService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\AboutService.cs",
+              "RelativeToolTip": "Service\\Services\\AboutService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAwB4AAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-01T22:35:25.109Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "BrandVM.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Brands\\BrandVM.cs",
-              "RelativeDocumentMoniker": "Service\\Helpers\\DTOs\\Brands\\BrandVM.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Brands\\BrandVM.cs",
-              "RelativeToolTip": "Service\\Helpers\\DTOs\\Brands\\BrandVM.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAbAAAAAAAAAA==",
+              "Title": "About.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\About.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\About.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\About.cs",
+              "RelativeToolTip": "Domain\\Entities\\About.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:53:38.127Z",
+              "WhenOpened": "2026-10-01T22:34:53.806Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "BrandService.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\BrandService.cs",
-              "RelativeDocumentMoniker": "Service\\Services\\BrandService.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\BrandService.cs",
-              "RelativeToolTip": "Service\\Services\\BrandService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAdAAAAAAAAAA==",
+              "Title": "AboutConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Configurations\\AboutConfiguration.cs",
+              "RelativeDocumentMoniker": "Domain\\Configurations\\AboutConfiguration.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Configurations\\AboutConfiguration.cs",
+              "RelativeToolTip": "Domain\\Configurations\\AboutConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:51:53.301Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "BrandUIVM.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Brands\\BrandUIVM.cs",
-              "RelativeDocumentMoniker": "Service\\Helpers\\DTOs\\Brands\\BrandUIVM.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Brands\\BrandUIVM.cs",
-              "RelativeToolTip": "Service\\Helpers\\DTOs\\Brands\\BrandUIVM.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:51:21.506Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "IBrandService.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\Interfaces\\IBrandService.cs",
-              "RelativeDocumentMoniker": "Service\\Services\\Interfaces\\IBrandService.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\Interfaces\\IBrandService.cs",
-              "RelativeToolTip": "Service\\Services\\Interfaces\\IBrandService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:48:09.429Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "DependencyInjection.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\DependencyInjection.cs",
-              "RelativeDocumentMoniker": "Repository\\DependencyInjection.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\DependencyInjection.cs",
-              "RelativeToolTip": "Repository\\DependencyInjection.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAABEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:47:37.789Z",
+              "WhenOpened": "2026-10-01T22:34:22.8Z",
               "EditorCaption": ""
             },
             {
@@ -163,19 +108,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "BrandRepository.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\BrandRepository.cs",
-              "RelativeDocumentMoniker": "Repository\\Repositories\\BrandRepository.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\BrandRepository.cs",
-              "RelativeToolTip": "Repository\\Repositories\\BrandRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T02:46:28.912Z",
-              "EditorCaption": ""
             }
           ]
         }

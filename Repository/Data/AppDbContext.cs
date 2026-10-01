@@ -7,6 +7,8 @@ namespace Repository.Data
 {
     public class AppDbContext : IdentityDbContext<AppUser>
     {
+        public DbSet<About> Abouts { get; set; }
+        public DbSet<AboutPillar> AboutPillars { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<HomeTicker> HomeTickers { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }

@@ -23,5 +23,10 @@ namespace Repository.Repositories
         {
             return await _dbSet.AsNoTracking().ToListAsync();
         }
+
+        public async Task<T?> GetAsync()
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync();
+        }
     }
 }

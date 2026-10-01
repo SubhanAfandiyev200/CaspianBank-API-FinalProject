@@ -17,8 +17,28 @@
   },
   {
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAboutAsync",
+    "RelativePath": "api/Home/about",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
     "Method": "GetAllBrandsAsync",
     "RelativePath": "api/Home/brands",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllAboutPillarsAsync",
+    "RelativePath": "api/Home/pillars",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
