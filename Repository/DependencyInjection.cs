@@ -18,6 +18,7 @@ namespace Repository
             services.AddScoped<IHomeTickerRepository, HomeTickerRepository>();
             services.AddScoped<IAboutRepository, AboutRepository>();
             services.AddScoped<IAboutPillarRepository, AboutPillarRepository>();
+            services.AddScoped<IEmailOtpRepository, EmailOtpRepository>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             return services;
         }

@@ -11,3 +11,6 @@ C:\Users\User\Desktop\CaspianBank-API-FinalProject\Domain\obj\Debug\net8.0\Domai
 C:\Users\User\Desktop\CaspianBank-API-FinalProject\Domain\obj\Debug\net8.0\refint\Domain.dll
 C:\Users\User\Desktop\CaspianBank-API-FinalProject\Domain\obj\Debug\net8.0\Domain.pdb
 C:\Users\User\Desktop\CaspianBank-API-FinalProject\Domain\obj\Debug\net8.0\ref\Domain.dll
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\63697d9e-1401-4afa-a422-2a7a74f812c8\scratchpad\api\Domain.deps.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\63697d9e-1401-4afa-a422-2a7a74f812c8\scratchpad\api\Domain.dll
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\63697d9e-1401-4afa-a422-2a7a74f812c8\scratchpad\api\Domain.pdb

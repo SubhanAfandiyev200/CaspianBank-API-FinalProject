@@ -31,14 +31,10 @@ namespace Service.Helpers.Validators.Accounts
                 .NotEmpty().WithMessage("Enter your date of birth.")
                 .Must(BeAdult).WithMessage($"You must be {MinAge} or older to open an account.");
 
-            // Identity-nin Program.cs-dəki qaydaları ilə üst-üstə düşür
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Enter a password.")
-                .MinimumLength(6).WithMessage("Use at least 6 characters.")
-                .Matches("[A-Z]").WithMessage("Include an uppercase letter.")
-                .Matches("[a-z]").WithMessage("Include a lowercase letter.")
-                .Matches("[0-9]").WithMessage("Include a number.")
-                .Matches("[^a-zA-Z0-9]").WithMessage("Include a special character.");
+            RuleFor(x => x.VerificationToken)
+                .NotEmpty().WithMessage("Email verification is required.");
+
+            RuleFor(x => x.Password).MustBeStrongPassword();
         }
 
         private static bool BeAdult(DateTime birthDay)

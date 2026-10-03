@@ -5,3 +5,4 @@ wwwroot\images\cursor.png
 wwwroot\images\custody.png
 wwwroot\images\desk-in-baku.png
 wwwroot\images\seabreeze.png
+wwwroot\videos\homeVideo.mp4
