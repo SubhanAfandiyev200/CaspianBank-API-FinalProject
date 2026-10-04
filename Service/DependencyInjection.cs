@@ -3,15 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Service.Helpers.Settings;
 using Service.Helpers.Validators.Accounts;
-using Repository.Repositories;
-using Repository.Repositories.Interfaces;
 using Service.Services;
 using Service.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -34,6 +27,10 @@ namespace Service
             services.AddScoped<IHomeTickerService, HomeTickerService>();
             services.AddScoped<IAboutService, AboutService>();
             services.AddScoped<IAboutPillarService, AboutPillarService>();
+            services.AddScoped<IServiceSectionService, ServiceSectionService>();
+            services.AddScoped<IServiceItemService, ServiceItemService>();
+            services.AddScoped<IBenefitSectionService, BenefitSectionService>();
+            services.AddScoped<IBenefitItemService, BenefitItemService>();
             return services;
         }
     }

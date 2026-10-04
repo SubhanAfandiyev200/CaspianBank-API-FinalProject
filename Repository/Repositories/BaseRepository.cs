@@ -21,12 +21,16 @@ namespace Repository.Repositories
         }
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.AsNoTracking().ToListAsync();
+            return await _dbSet.AsNoTracking()
+                .OrderByDescending(m => m.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<T?> GetAsync()
         {
-            return await _dbSet.AsNoTracking().FirstOrDefaultAsync();
+            return await _dbSet.AsNoTracking()
+                .OrderByDescending(m => m.CreatedAt)
+                .FirstOrDefaultAsync();
         }
     }
 }

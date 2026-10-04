@@ -20,7 +20,7 @@ namespace Service.Services
         public async Task<IEnumerable<BrandDto>> GetAllUIAsync()
         {
             var result = await _brandRepo.GetAllAsync();
-            return result.OrderBy(m => m.Id).Select(m => new BrandDto
+            return result.OrderByDescending(m => m.CreatedAt).Select(m => new BrandDto
             {
                 Image = m.Image,
                 Name = m.Name

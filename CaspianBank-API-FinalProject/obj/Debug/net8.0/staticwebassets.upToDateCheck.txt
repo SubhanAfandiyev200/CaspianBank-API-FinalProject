@@ -5,4 +5,10 @@ wwwroot\images\cursor.png
 wwwroot\images\custody.png
 wwwroot\images\desk-in-baku.png
 wwwroot\images\seabreeze.png
+wwwroot\images\services\bills.svg
+wwwroot\images\services\cards.svg
+wwwroot\images\services\cashback.svg
+wwwroot\images\services\loans.svg
+wwwroot\images\services\support.svg
+wwwroot\images\services\transfers.svg
 wwwroot\videos\homeVideo.mp4

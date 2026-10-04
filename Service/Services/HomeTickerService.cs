@@ -18,7 +18,7 @@ namespace Service.Services
         public async Task<IEnumerable<HomeTickerDto>> GetAllUIAsync()
         {
             var result = await _tickerRepo.GetAllAsync();
-            return result.OrderBy(m => m.Id).Select(m => new HomeTickerDto
+            return result.OrderByDescending(m => m.CreatedAt).Select(m => new HomeTickerDto
             {
                 Text = m.Text
             });

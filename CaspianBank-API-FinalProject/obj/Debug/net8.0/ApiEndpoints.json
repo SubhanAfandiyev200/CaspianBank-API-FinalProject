@@ -133,6 +133,26 @@
   },
   {
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllBenefitItemsAsync",
+    "RelativePath": "api/Home/benefitItems",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetBenefitSectionAsync",
+    "RelativePath": "api/Home/benefitSections",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
     "Method": "GetAllBrandsAsync",
     "RelativePath": "api/Home/brands",
     "HttpMethod": "GET",
@@ -145,6 +165,26 @@
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
     "Method": "GetAllAboutPillarsAsync",
     "RelativePath": "api/Home/pillars",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllServiceItemsAsync",
+    "RelativePath": "api/Home/serviceItems",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetServiceSectionAsync",
+    "RelativePath": "api/Home/serviceSections",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
