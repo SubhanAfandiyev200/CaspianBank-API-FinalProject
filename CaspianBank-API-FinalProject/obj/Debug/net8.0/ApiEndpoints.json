@@ -1,0 +1,327 @@
+[
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "CheckEmail",
+    "RelativePath": "api/Account/check-email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.CheckEmailDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/Account/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.ForgotPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "Login",
+    "RelativePath": "api/Account/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "Me",
+    "RelativePath": "api/Account/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "Register",
+    "RelativePath": "api/Account/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.RegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/Account/reset-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.ResetPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "SendOtp",
+    "RelativePath": "api/Account/send-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.SendOtpDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.AccountController",
+    "Method": "VerifyOtp",
+    "RelativePath": "api/Account/verify-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "Service.Helpers.DTOs.Accounts.VerifyOtpDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "GetAll",
+    "RelativePath": "api/admin/card-designs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "Create",
+    "RelativePath": "api/admin/card-designs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowOnHome",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "DisplayOrder",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "Update",
+    "RelativePath": "api/admin/card-designs/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowOnHome",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "DisplayOrder",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "Delete",
+    "RelativePath": "api/admin/card-designs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAboutAsync",
+    "RelativePath": "api/Home/about",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllBenefitItemsAsync",
+    "RelativePath": "api/Home/benefitItems",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetBenefitSectionAsync",
+    "RelativePath": "api/Home/benefitSections",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllBrandsAsync",
+    "RelativePath": "api/Home/brands",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetCardHeroAsync",
+    "RelativePath": "api/Home/cardHero",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetHomeCardsAsync",
+    "RelativePath": "api/Home/cards",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllAboutPillarsAsync",
+    "RelativePath": "api/Home/pillars",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllServiceItemsAsync",
+    "RelativePath": "api/Home/serviceItems",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetServiceSectionAsync",
+    "RelativePath": "api/Home/serviceSections",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetAllTickersAsync",
+    "RelativePath": "api/Home/tickers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.SettingsController",
+    "Method": "GetAllAsync",
+    "RelativePath": "api/settings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

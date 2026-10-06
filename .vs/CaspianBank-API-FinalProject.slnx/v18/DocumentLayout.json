@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\enums\\cardtier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\enums\\cardtier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\cardtierconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\cardtierconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|solutionrelative:repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,27 +43,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Class1.cs",
-              "RelativeDocumentMoniker": "Service\\Class1.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Class1.cs",
-              "RelativeToolTip": "Service\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Title": "Card.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\Card.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Card.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\Card.cs",
+              "RelativeToolTip": "Domain\\Entities\\Card.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-29T08:45:18.33Z",
+              "WhenOpened": "2026-10-06T06:26:15.404Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CardTierConfig.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\CardTierConfig.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
+              "RelativeToolTip": "Domain\\Entities\\CardTierConfig.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T04:05:22.158Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Class1.cs",
-              "RelativeDocumentMoniker": "Domain\\Class1.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Class1.cs",
-              "RelativeToolTip": "Domain\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "CardTier.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Enums\\CardTier.cs",
+              "RelativeDocumentMoniker": "Domain\\Enums\\CardTier.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Enums\\CardTier.cs",
+              "RelativeToolTip": "Domain\\Enums\\CardTier.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-29T08:44:47.429Z",
+              "WhenOpened": "2026-10-06T04:04:19.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CardDesignRepository.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\Repositories\\CardDesignRepository.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
+              "RelativeToolTip": "Repository\\Repositories\\CardDesignRepository.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T02:13:08.692Z",
               "EditorCaption": ""
             }
           ]

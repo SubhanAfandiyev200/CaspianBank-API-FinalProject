@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("c06ed923-8744-4673-a30e-1e21f885673f")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("CaspianBank-API-FinalProject")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e819294b7db1e69a9f5dfbe439fd453e035e185")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab34668ea2198803173c9c56a346e9bfd3ed68bd")]
 [assembly: System.Reflection.AssemblyProductAttribute("CaspianBank-API-FinalProject")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CaspianBank-API-FinalProject")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
