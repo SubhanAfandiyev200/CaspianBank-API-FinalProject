@@ -122,7 +122,7 @@ namespace Service.Services
             if (otp.Attempts > MaxAttempts)
             {
                 otp.IsUsed = true;
-                await _otpRepo.SaveChangesAsync();
+                await _otpRepo.UpdateAsync(otp);
                 return VerifyFail("Too many attempts. Please request a new code.");
             }
 
@@ -130,7 +130,7 @@ namespace Service.Services
             var actual = Encoding.UTF8.GetBytes(Hash("email-otp", email, model.Code));
             if (!CryptographicOperations.FixedTimeEquals(expected, actual))
             {
-                await _otpRepo.SaveChangesAsync();
+                await _otpRepo.UpdateAsync(otp);
                 return VerifyFail("The code is incorrect.");
             }
 
@@ -138,7 +138,7 @@ namespace Service.Services
             otp.IsUsed = true;
             otp.VerificationTokenHash = Hash("otp-verification", email, token);
             otp.VerifiedAt = DateTime.UtcNow;
-            await _otpRepo.SaveChangesAsync();
+            await _otpRepo.UpdateAsync(otp);
 
             return new VerifyOtpResponse { IsSuccess = true, VerificationToken = token };
         }
@@ -164,7 +164,7 @@ namespace Service.Services
             if (record is null) return;
 
             record.VerificationTokenHash = null;
-            await _otpRepo.SaveChangesAsync();
+            await _otpRepo.UpdateAsync(record);
         }
 
         private static string Normalize(string email) => email.Trim().ToLowerInvariant();

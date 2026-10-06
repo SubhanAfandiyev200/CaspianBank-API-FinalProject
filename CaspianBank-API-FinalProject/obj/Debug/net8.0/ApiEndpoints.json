@@ -122,6 +122,99 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "GetAll",
+    "RelativePath": "api/admin/card-designs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "Create",
+    "RelativePath": "api/admin/card-designs",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowOnHome",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "DisplayOrder",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "Update",
+    "RelativePath": "api/admin/card-designs/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowOnHome",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "DisplayOrder",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
+    "Method": "Delete",
+    "RelativePath": "api/admin/card-designs/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
     "Method": "GetAboutAsync",
     "RelativePath": "api/Home/about",
@@ -163,6 +256,26 @@
   },
   {
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetCardHeroAsync",
+    "RelativePath": "api/Home/cardHero",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
+    "Method": "GetHomeCardsAsync",
+    "RelativePath": "api/Home/cards",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
     "Method": "GetAllAboutPillarsAsync",
     "RelativePath": "api/Home/pillars",
     "HttpMethod": "GET",
@@ -195,6 +308,16 @@
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.HomeController",
     "Method": "GetAllTickersAsync",
     "RelativePath": "api/Home/tickers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Client.SettingsController",
+    "Method": "GetAllAsync",
+    "RelativePath": "api/settings",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

@@ -10,5 +10,8 @@ namespace Domain.Entities
         public string? FinKod { get; set; }
         public bool IsRestricted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // İstifadəçinin kartları (one-to-many)
+        public ICollection<Card> Cards { get; set; } = new List<Card>();
     }
 }

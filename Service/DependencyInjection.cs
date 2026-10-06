@@ -17,6 +17,9 @@ namespace Service
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IPasswordService, PasswordService>();
+            services.AddScoped<ICardDesignService, CardDesignService>();
+            services.AddScoped<ICardHeroService, CardHeroService>();
+            services.AddScoped<ISettingService, SettingService>();
 
             // SMTP tam qurulubsa (Host + istifadəçi + parol) MailKit, əks halda email mətni konsola yazılır
             services.AddScoped<IEmailSender>(sp =>

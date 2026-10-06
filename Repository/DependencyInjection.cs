@@ -19,6 +19,9 @@ namespace Repository
             services.AddScoped<IAboutRepository, AboutRepository>();
             services.AddScoped<IAboutPillarRepository, AboutPillarRepository>();
             services.AddScoped<IEmailOtpRepository, EmailOtpRepository>();
+            services.AddScoped<ICardDesignRepository, CardDesignRepository>();
+            services.AddScoped<ICardHeroRepository, CardHeroRepository>();
+            services.AddScoped<ISettingRepository, SettingRepository>();
             services.AddScoped<IServiceSectionRepository, ServiceSectionRepository>();
             services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
             services.AddScoped<IBenefitSectionRepository, BenefitSectionRepository>();

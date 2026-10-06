@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Repository;
 using Repository.Data;
 using Service;
+using Service.Services.Interfaces;
 using Service.Helpers.Settings;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -51,6 +52,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddServiceLayer();
+builder.Services.AddScoped<IImageStorage, LocalImageStorage>();
 builder.Services.AddRepositoryLayer();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>

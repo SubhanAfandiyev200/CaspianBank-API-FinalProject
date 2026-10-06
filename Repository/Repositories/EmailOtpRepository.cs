@@ -9,12 +9,6 @@ namespace Repository.Repositories
     {
         public EmailOtpRepository(AppDbContext context) : base(context) { }
 
-        public async Task AddAsync(EmailOtp otp)
-        {
-            await _dbSet.AddAsync(otp);
-            await _dbContext.SaveChangesAsync();
-        }
-
         // Ən son yaradılmış, hələ istifadə olunmamış və vaxtı keçməmiş kod
         public Task<EmailOtp?> GetLatestActiveAsync(string email)
             => _dbSet
@@ -41,7 +35,5 @@ namespace Repository.Repositories
             => _dbSet
                 .Where(o => o.Email == email && !o.IsUsed)
                 .ExecuteUpdateAsync(s => s.SetProperty(o => o.IsUsed, true));
-
-        public Task SaveChangesAsync() => _dbContext.SaveChangesAsync();
     }
 }

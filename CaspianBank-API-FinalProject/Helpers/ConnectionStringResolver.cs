@@ -47,10 +47,13 @@ namespace CaspianBank_API_FinalProject.Helpers
                 }
             }
 
-            throw new InvalidOperationException(
-                "SQL Server tapılmadı. Yoxlanılan ünvanlar: " + string.Join(", ", servers) +
-                ". SQL Server (Express/LocalDB) quraşdırılıb işləyirsə, appsettings.json-dakı " +
-                "ConnectionStrings:DefaultConnection-u öz serverinizin adı ilə dəyişin.");
+            // Xəta atmırıq: bazaya ehtiyacı olmayan əmrlər (məs. dotnet ef migrations add) işləməyə davam etsin.
+            // Real bağlantı xətası bazaya ilk müraciətdə (başlanğıcdakı migration) aydın mesajla çıxacaq.
+            logger.LogError(
+                "SQL Server tapılmadı. Yoxlanılan ünvanlar: {Servers}. SQL Server (Express/LocalDB) quraşdırılıb işləyirsə, " +
+                "appsettings.json-dakı ConnectionStrings:DefaultConnection-u öz serverinizin adı ilə dəyişin.",
+                string.Join(", ", servers));
+            return baseBuilder.ConnectionString;
         }
 
         private static IEnumerable<string> Candidates()
@@ -70,7 +73,7 @@ namespace CaspianBank_API_FinalProject.Helpers
             {
                 DataSource = server,
                 InitialCatalog = database,
-                ConnectTimeout = 3
+                ConnectTimeout = 5
             };
             // Başqa kompüterdə SQL Server sertifikatı etibarlı olmaya bilər (lokal sınaq)
             builder.TrustServerCertificate = true;

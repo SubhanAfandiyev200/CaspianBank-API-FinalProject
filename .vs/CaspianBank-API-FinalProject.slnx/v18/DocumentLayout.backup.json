@@ -3,7 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/DESKTOP_B24N2SA_SQLEXPRESS/CaspianBankDataBase/True/SqlTable/dbo.BenefitItems.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\enums\\cardtier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\enums\\cardtier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\cardtierconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\cardtierconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|solutionrelative:repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -13,18 +26,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "dbo.BenefitItems [Data]",
-              "DocumentMoniker": "ViewDataWindow_MSSQL__/DESKTOP_B24N2SA_SQLEXPRESS/CaspianBankDataBase/True/SqlTable/dbo.BenefitItems.sql",
-              "ToolTip": "dbo.BenefitItems [Data]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2026-10-04T14:08:46.989Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -36,6 +39,58 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Card.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\Card.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Card.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\Card.cs",
+              "RelativeToolTip": "Domain\\Entities\\Card.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T06:26:15.404Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CardTierConfig.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\CardTierConfig.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
+              "RelativeToolTip": "Domain\\Entities\\CardTierConfig.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T04:05:22.158Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CardTier.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Enums\\CardTier.cs",
+              "RelativeDocumentMoniker": "Domain\\Enums\\CardTier.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Enums\\CardTier.cs",
+              "RelativeToolTip": "Domain\\Enums\\CardTier.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T04:04:19.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CardDesignRepository.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\Repositories\\CardDesignRepository.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
+              "RelativeToolTip": "Repository\\Repositories\\CardDesignRepository.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T02:13:08.692Z",
+              "EditorCaption": ""
             }
           ]
         }

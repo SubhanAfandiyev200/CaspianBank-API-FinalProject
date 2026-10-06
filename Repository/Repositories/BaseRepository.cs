@@ -32,5 +32,30 @@ namespace Repository.Repositories
                 .OrderByDescending(m => m.CreatedAt)
                 .FirstOrDefaultAsync();
         }
+
+        // Id ilə tapır (izlənən: dəyişdirmək/silmək üçün)
+        public async Task<T?> GetByIdAsync(int id)
+        {
+            return await _dbSet.FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        // Aşağıdakı üç metod əməliyyatı bazaya dərhal yazır
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(T entity)
+        {
+            _dbSet.Update(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(T entity)
+        {
+            _dbSet.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

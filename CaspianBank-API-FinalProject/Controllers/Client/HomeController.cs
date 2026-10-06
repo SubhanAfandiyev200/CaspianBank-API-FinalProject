@@ -9,6 +9,8 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
     {
         private readonly IHomeTickerService _tickerService;
         private readonly IBrandService _brandService;
+        private readonly ICardDesignService _cardDesignService;
+        private readonly ICardHeroService _cardHeroService;
         private readonly IAboutService _aboutService;
         private readonly IAboutPillarService _pillarService;
         private readonly IServiceSectionService _serviceSection;
@@ -18,6 +20,8 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
 
         public HomeController(IHomeTickerService tickerService,
                               IBrandService brandService,
+                              ICardDesignService cardDesignService,
+                              ICardHeroService cardHeroService,
                               IAboutService aboutService,
                               IAboutPillarService pillarService,
                               IServiceItemService serviceItem,
@@ -27,12 +31,30 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             _tickerService = tickerService;
             _brandService = brandService;
+            _cardDesignService = cardDesignService;
+            _cardHeroService = cardHeroService;
             _pillarService = pillarService;
             _aboutService = aboutService;
             _serviceItem = serviceItem;
             _serviceSection = serviceSection;
             _benefitSection = benefitSection;
             _benefitItem = benefitItem;
+        }
+
+        // Home-un yuxarı hissəsinin (hero) sol tərəfindəki mətnlər; sətir yoxdursa 404 (MVC statik mətni göstərir)
+        [HttpGet("cardHero")]
+        public async Task<IActionResult> GetCardHeroAsync()
+        {
+            var hero = await _cardHeroService.GetUIAsync();
+            if (hero is null) return NotFound();
+            return Ok(hero);
+        }
+
+        // Home-dakı kart yelpazəsi: admin tərəfindən göstərilən kart dizaynları (sıra ilə, maksimum 3)
+        [HttpGet("cards")]
+        public async Task<IActionResult> GetHomeCardsAsync()
+        {
+            return Ok(await _cardDesignService.GetHomeAsync());
         }
 
         [HttpGet("tickers")]
