@@ -1,4 +1,5 @@
 using CaspianBank_API_FinalProject.Helpers;
+using CaspianBank_API_FinalProject.Middlewares;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -174,6 +175,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Ən başda dayansın ki, sonrakı hər şeydə atılan xəta tutulsun
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseForwardedHeaders();
 
