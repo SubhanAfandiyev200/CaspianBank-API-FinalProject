@@ -10,17 +10,21 @@ namespace Repository.Repositories
         public CardDesignRepository(AppDbContext context) : base(context) { }
 
         public async Task<IEnumerable<CardDesign>> GetHomeAsync(int max)
-            => await _dbSet
-                .AsNoTracking()
-                .Where(d => d.ShowOnHome)
-                .OrderBy(d => d.DisplayOrder).ThenBy(d => d.Id)
-                .Take(max)
-                .ToListAsync();
+        {
+            return await _dbSet
+                    .AsNoTracking()
+                    .Where(d => d.ShowOnHome)
+                    .OrderBy(d => d.DisplayOrder).ThenBy(d => d.Id)
+                    .Take(max)
+                    .ToListAsync();
+        }
 
         public async Task<IEnumerable<CardDesign>> GetAllOrderedAsync()
-            => await _dbSet
-                .AsNoTracking()
-                .OrderBy(d => d.DisplayOrder).ThenBy(d => d.Id)
-                .ToListAsync();
+        {
+            return await _dbSet
+                    .AsNoTracking()
+                    .OrderBy(d => d.DisplayOrder).ThenBy(d => d.Id)
+                    .ToListAsync();
+        }
     }
 }

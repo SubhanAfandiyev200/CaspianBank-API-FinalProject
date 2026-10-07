@@ -46,7 +46,9 @@ namespace Service.Services
         {
             var validation = await _createValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return ServiceResult<CardDesignAdminDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             var imagePath = await SaveImageAsync(model.Image!);
 
@@ -76,11 +78,15 @@ namespace Service.Services
         {
             var validation = await _updateValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return ServiceResult<CardDesignAdminDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             var design = await _repo.GetByIdAsync(id);
             if (design is null)
+            {
                 return ServiceResult<CardDesignAdminDto>.NotFound();
+            }
 
             design.Title = model.Title.Trim();
             design.ShowOnHome = model.ShowOnHome;
@@ -101,12 +107,18 @@ namespace Service.Services
             }
             catch
             {
-                if (newImage is not null) _storage.Delete(newImage);
+                if (newImage is not null)
+                {
+                    _storage.Delete(newImage);
+                }
                 throw;
             }
 
             // Yeni şəkil uğurla yazıldı: köhnəsi silinir
-            if (oldImage is not null) _storage.Delete(oldImage);
+            if (oldImage is not null)
+            {
+                _storage.Delete(oldImage);
+            }
 
             return ServiceResult<CardDesignAdminDto>.Ok(ToAdminDto(design));
         }
@@ -115,7 +127,9 @@ namespace Service.Services
         {
             var design = await _repo.GetByIdAsync(id);
             if (design is null)
+            {
                 return new OperationResponse { IsSuccess = false, Errors = new[] { "Not found." } };
+            }
 
             var image = design.Image;
             await _repo.DeleteAsync(design);
@@ -132,13 +146,16 @@ namespace Service.Services
             return await _storage.SaveAsync(Folder, image.Content, extension);
         }
 
-        private static CardDesignAdminDto ToAdminDto(CardDesign d) => new()
+        private static CardDesignAdminDto ToAdminDto(CardDesign d)
         {
-            Id = d.Id,
-            Title = d.Title,
-            Image = d.Image,
-            ShowOnHome = d.ShowOnHome,
-            DisplayOrder = d.DisplayOrder
-        };
+            return new CardDesignAdminDto
+            {
+                Id = d.Id,
+                Title = d.Title,
+                Image = d.Image,
+                ShowOnHome = d.ShowOnHome,
+                DisplayOrder = d.DisplayOrder
+            };
+        }
     }
 }

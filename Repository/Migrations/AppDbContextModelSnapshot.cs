@@ -313,6 +313,66 @@ namespace Repository.Migrations
                     b.ToTable("Brands");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Card", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Balance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CardDesignId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Tier")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardDesignId");
+
+                    b.HasIndex("CardNumber")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "UserId" }, "UX_Cards_UserId_Cashback")
+                        .IsUnique()
+                        .HasFilter("[Tier] = 0");
+
+                    b.ToTable("Cards");
+                });
+
             modelBuilder.Entity("Domain.Entities.CardDesign", b =>
                 {
                     b.Property<int>("Id")
@@ -375,6 +435,15 @@ namespace Repository.Migrations
                             Image = "/images/cards/gold.png",
                             ShowOnHome = true,
                             Title = "Gold"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 10, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 4,
+                            Image = "/images/cards/cashback.png",
+                            ShowOnHome = false,
+                            Title = "Cashback"
                         });
                 });
 
@@ -409,6 +478,97 @@ namespace Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CardHeroes");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CardTierConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CardDesignId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CashbackPercent")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CommissionPercent")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<decimal>("IssueFee")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Tier")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TransferLimit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardDesignId");
+
+                    b.HasIndex("Tier")
+                        .IsUnique();
+
+                    b.ToTable("CardTierConfigs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CardDesignId = 4,
+                            CashbackPercent = 0m,
+                            CommissionPercent = 0m,
+                            CreatedAt = new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IssueFee = 0m,
+                            Tier = 0,
+                            TransferLimit = 0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CardDesignId = 1,
+                            CashbackPercent = 0.5m,
+                            CommissionPercent = 1m,
+                            CreatedAt = new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IssueFee = 10m,
+                            Tier = 1,
+                            TransferLimit = 500m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CardDesignId = 2,
+                            CashbackPercent = 1m,
+                            CommissionPercent = 0.6m,
+                            CreatedAt = new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IssueFee = 15m,
+                            Tier = 2,
+                            TransferLimit = 2000m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CardDesignId = 3,
+                            CashbackPercent = 1.5m,
+                            CommissionPercent = 0.3m,
+                            CreatedAt = new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IssueFee = 40m,
+                            Tier = 3,
+                            TransferLimit = 10000m
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.EmailOtp", b =>
@@ -585,6 +745,60 @@ namespace Repository.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceAfter")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CardId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsIncome")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(140)
+                        .HasColumnType("nvarchar(140)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId", "CreatedAt");
+
+                    b.HasIndex("Reference", "Type")
+                        .IsUnique();
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -740,6 +954,36 @@ namespace Repository.Migrations
                     b.Navigation("BenefitSection");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Card", b =>
+                {
+                    b.HasOne("Domain.Entities.CardDesign", "CardDesign")
+                        .WithMany("Cards")
+                        .HasForeignKey("CardDesignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.AppUser", "User")
+                        .WithMany("Cards")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CardDesign");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CardTierConfig", b =>
+                {
+                    b.HasOne("Domain.Entities.CardDesign", "CardDesign")
+                        .WithMany("TierConfigs")
+                        .HasForeignKey("CardDesignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CardDesign");
+                });
+
             modelBuilder.Entity("Domain.Entities.ServiceItem", b =>
                 {
                     b.HasOne("Domain.Entities.ServiceSection", "ServiceSection")
@@ -749,6 +993,17 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("ServiceSection");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Card");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -807,9 +1062,21 @@ namespace Repository.Migrations
                     b.Navigation("AboutPillars");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AppUser", b =>
+                {
+                    b.Navigation("Cards");
+                });
+
             modelBuilder.Entity("Domain.Entities.BenefitSection", b =>
                 {
                     b.Navigation("BenefitItems");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CardDesign", b =>
+                {
+                    b.Navigation("Cards");
+
+                    b.Navigation("TierConfigs");
                 });
 
             modelBuilder.Entity("Domain.Entities.ServiceSection", b =>

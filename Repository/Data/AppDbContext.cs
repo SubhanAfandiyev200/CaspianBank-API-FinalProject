@@ -11,6 +11,7 @@ namespace Repository.Data
         public DbSet<CardDesign> CardDesigns { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<CardTierConfig> CardTierConfigs { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<CardHero> CardHeroes { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<ServiceItem> ServiceItems { get; set; }

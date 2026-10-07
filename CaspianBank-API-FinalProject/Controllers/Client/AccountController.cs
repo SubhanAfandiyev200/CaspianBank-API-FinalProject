@@ -27,7 +27,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _accountService.RegisterAsync(model);
             if (!result.IsSuccess)
+            {
                 return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -38,7 +40,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _accountService.LoginAsync(model);
             if (!result.IsSuccess)
+            {
                 return Unauthorized(result);
+            }
 
             return Ok(result);
         }
@@ -51,7 +55,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _accountService.CheckEmailAsync(model);
             if (!result.IsSuccess)
+            {
                 return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -63,11 +69,15 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _otpService.SendOtpAsync(model);
             if (result.IsSuccess)
+            {
                 return Ok(result);
+            }
 
             // Çox tez yeni kod istəyibsə 429, qalan hallarda 400
             if (result.RetryAfterSeconds > 0)
+            {
                 return StatusCode(StatusCodes.Status429TooManyRequests, result);
+            }
 
             return BadRequest(result);
         }
@@ -79,7 +89,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _otpService.VerifyOtpAsync(model);
             if (!result.IsSuccess)
+            {
                 return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -91,7 +103,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _passwordService.ForgotPasswordAsync(model);
             if (!result.IsSuccess)
+            {
                 return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -103,7 +117,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             var result = await _passwordService.ResetPasswordAsync(model);
             if (!result.IsSuccess)
+            {
                 return BadRequest(result);
+            }
 
             return Ok(result);
         }

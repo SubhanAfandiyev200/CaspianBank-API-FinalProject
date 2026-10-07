@@ -25,3 +25,6 @@ C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-Fi
 C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\bfa8f79a-6e63-41dd-af32-f6db9245f298\scratchpad\api\Service.deps.json
 C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\bfa8f79a-6e63-41dd-af32-f6db9245f298\scratchpad\api\Service.dll
 C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\bfa8f79a-6e63-41dd-af32-f6db9245f298\scratchpad\api\Service.pdb
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\12432d73-04fb-4d22-990f-cedbad76ef77\scratchpad\api\Service.deps.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\12432d73-04fb-4d22-990f-cedbad76ef77\scratchpad\api\Service.dll
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\12432d73-04fb-4d22-990f-cedbad76ef77\scratchpad\api\Service.pdb

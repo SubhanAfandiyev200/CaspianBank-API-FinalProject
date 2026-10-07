@@ -46,7 +46,10 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         public async Task<IActionResult> GetCardHeroAsync()
         {
             var hero = await _cardHeroService.GetUIAsync();
-            if (hero is null) return NotFound();
+            if (hero is null)
+            {
+                return NotFound();
+            }
             return Ok(hero);
         }
 
@@ -71,7 +74,10 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         public async Task<IActionResult> GetAboutAsync()
         {
             var about = await _aboutService.GetUIAsync();
-            if (about is null) return NotFound();
+            if (about is null)
+            {
+                return NotFound();
+            }
             return Ok(about);
         }
         [HttpGet("pillars")]
@@ -83,7 +89,10 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         public async Task<IActionResult> GetServiceSectionAsync()
         {
             var serviceSection = await _serviceSection.GetUIAsync();
-            if (serviceSection is null) return NotFound();
+            if (serviceSection is null)
+            {
+                return NotFound();
+            }
             return Ok(serviceSection);
         }
         [HttpGet("serviceItems")]
@@ -95,7 +104,10 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         public async Task<IActionResult> GetBenefitSectionAsync()
         {
             var benefitSection = await _benefitSection.GetUIAsync();
-            if (benefitSection is null) return NotFound();
+            if (benefitSection is null)
+            {
+                return NotFound();
+            }
             return Ok(benefitSection);
         }
         [HttpGet("benefitItems")]

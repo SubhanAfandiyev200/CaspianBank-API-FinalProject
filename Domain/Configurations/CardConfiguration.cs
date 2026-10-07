@@ -23,6 +23,11 @@ namespace Domain.Configurations
             // "İstifadəçinin kartları" sorğusu tez işləsin
             builder.HasIndex(m => m.UserId);
 
+            // Hər istifadəçinin yalnız bir Cashback kartı ola bilər (Tier = 0). İlk kartlar iki dəfə sorğu ilə yaranmasın deyə bazada da qorunur
+            builder.HasIndex(m => m.UserId, "UX_Cards_UserId_Cashback")
+                   .IsUnique()
+                   .HasFilter("[Tier] = 0");
+
             // İstifadəçi silinəndə kartlar səssizcə yox olmasın
             builder.HasOne(m => m.User)
                    .WithMany(u => u.Cards)

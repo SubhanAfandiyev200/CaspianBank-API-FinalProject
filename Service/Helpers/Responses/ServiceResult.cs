@@ -8,8 +8,17 @@ namespace Service.Helpers.Responses
         public string[] Errors { get; set; } = Array.Empty<string>();
         public T? Data { get; set; }
 
-        public static ServiceResult<T> Ok(T data) => new() { IsSuccess = true, Data = data };
-        public static ServiceResult<T> Fail(params string[] errors) => new() { Errors = errors };
-        public static ServiceResult<T> NotFound() => new() { IsNotFound = true, Errors = new[] { "Not found." } };
+        public static ServiceResult<T> Ok(T data)
+        {
+            return new() { IsSuccess = true, Data = data };
+        }
+        public static ServiceResult<T> Fail(params string[] errors)
+        {
+            return new() { Errors = errors };
+        }
+        public static ServiceResult<T> NotFound()
+        {
+            return new() { IsNotFound = true, Errors = new[] { "Not found." } };
+        }
     }
 }

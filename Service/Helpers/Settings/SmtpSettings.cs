@@ -17,7 +17,13 @@ namespace Service.Helpers.Settings
         // Real email olmadan sınaq/təqdimat üçün; production-da MÜTLƏQ false qalmalıdır.
         public bool ShowCodesWhenNotConfigured { get; set; } = false;
 
-        public bool ExposeCodes => !IsConfigured && ShowCodesWhenNotConfigured;
+        public bool ExposeCodes
+        {
+            get
+            {
+                return !IsConfigured && ShowCodesWhenNotConfigured;
+            }
+        }
 
         // Host, istifadəçi adı və parol verilməyibsə email göndərilmir, mətn konsola yazılır (yalnız sınaq üçün)
         public bool IsConfigured =>

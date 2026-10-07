@@ -52,12 +52,16 @@ namespace Service.Services
         {
             var validation = await _sendValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return SendFail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             var email = Normalize(model.Email);
 
             if (await _accountRepo.GetByEmailAsync(email) is not null)
+            {
                 return SendFail("This email is already registered. Please log in.");
+            }
 
             // Çox tez-tez yeni kod istəməyin qarşısı (email spam-ı və kod ələ keçirmə cəhdləri)
             var latest = await _otpRepo.GetLatestAsync(email);
@@ -111,12 +115,16 @@ namespace Service.Services
         {
             var validation = await _verifyValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return VerifyFail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             var email = Normalize(model.Email);
             var otp = await _otpRepo.GetLatestActiveAsync(email);
             if (otp is null)
+            {
                 return VerifyFail("The code has expired or is invalid. Please request a new one.");
+            }
 
             otp.Attempts++;
             if (otp.Attempts > MaxAttempts)
@@ -145,7 +153,10 @@ namespace Service.Services
 
         public async Task<bool> IsVerifiedAsync(string email, string verificationToken)
         {
-            if (string.IsNullOrWhiteSpace(verificationToken)) return false;
+            if (string.IsNullOrWhiteSpace(verificationToken))
+            {
+                return false;
+            }
             var normalized = Normalize(email);
             var record = await _otpRepo.GetVerifiedAsync(
                 normalized,
@@ -161,13 +172,19 @@ namespace Service.Services
                 normalized,
                 Hash("otp-verification", normalized, verificationToken),
                 DateTime.UtcNow - VerificationLifetime);
-            if (record is null) return;
+            if (record is null)
+            {
+                return;
+            }
 
             record.VerificationTokenHash = null;
             await _otpRepo.UpdateAsync(record);
         }
 
-        private static string Normalize(string email) => email.Trim().ToLowerInvariant();
+        private static string Normalize(string email)
+        {
+            return email.Trim().ToLowerInvariant();
+        }
 
         private string Hash(string purpose, string email, string value)
         {
@@ -177,12 +194,18 @@ namespace Service.Services
         }
 
         private static string Base64Url(byte[] bytes)
-            => Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        {
+            return Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        }
 
         private static SendOtpResponse SendFail(params string[] errors)
-            => new() { IsSuccess = false, Errors = errors };
+        {
+            return new() { IsSuccess = false, Errors = errors };
+        }
 
         private static VerifyOtpResponse VerifyFail(params string[] errors)
-            => new() { IsSuccess = false, Errors = errors };
+        {
+            return new() { IsSuccess = false, Errors = errors };
+        }
     }
 }
