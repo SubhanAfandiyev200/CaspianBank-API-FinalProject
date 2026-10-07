@@ -16,7 +16,10 @@ namespace Service.Services
         public async Task<CardHeroDto?> GetUIAsync()
         {
             var hero = await _heroRepo.GetAsync();
-            if (hero is null) return null;
+            if (hero is null)
+            {
+                return null;
+            }
 
             return new CardHeroDto
             {

@@ -23,7 +23,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
-            => Ok(await _service.GetAllAsync());
+        {
+            return Ok(await _service.GetAllAsync());
+        }
 
         [HttpPost]
         [Consumes("multipart/form-data")]
@@ -31,7 +33,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         {
             var (image, error) = await ReadImageAsync(form.Image);
             if (error is not null)
+            {
                 return BadRequest(new { isSuccess = false, errors = new[] { error } });
+            }
 
             var result = await _service.CreateAsync(new CreateCardDesignDto
             {
@@ -42,7 +46,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
             });
 
             if (!result.IsSuccess)
+            {
                 return BadRequest(new { isSuccess = false, errors = result.Errors });
+            }
 
             return Ok(result.Data);
         }
@@ -53,7 +59,9 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         {
             var (image, error) = await ReadImageAsync(form.Image);
             if (error is not null)
+            {
                 return BadRequest(new { isSuccess = false, errors = new[] { error } });
+            }
 
             var result = await _service.UpdateAsync(id, new UpdateCardDesignDto
             {
@@ -63,9 +71,14 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
                 Image = image
             });
 
-            if (result.IsNotFound) return NotFound();
+            if (result.IsNotFound)
+            {
+                return NotFound();
+            }
             if (!result.IsSuccess)
+            {
                 return BadRequest(new { isSuccess = false, errors = result.Errors });
+            }
 
             return Ok(result.Data);
         }
@@ -81,10 +94,14 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         private static async Task<(UploadedImage? Image, string? Error)> ReadImageAsync(IFormFile? file)
         {
             if (file is null || file.Length == 0)
+            {
                 return (null, null);
+            }
 
             if (file.Length > ImageFileRules.MaxBytes)
+            {
                 return (null, "The image must be up to 2 MB.");
+            }
 
             using var stream = new MemoryStream((int)file.Length);
             await file.CopyToAsync(stream);

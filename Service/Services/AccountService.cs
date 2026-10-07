@@ -38,11 +38,15 @@ namespace Service.Services
         {
             var validation = await _registerValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             // Email OTP ilə təsdiqlənməyibsə qeydiyyat olmaz
             if (!await _otpService.IsVerifiedAsync(model.Email, model.VerificationToken))
+            {
                 return Fail("Email verification is missing or has expired. Please verify your email again.");
+            }
 
             var user = new AppUser
             {
@@ -57,11 +61,15 @@ namespace Service.Services
 
             var result = await _accountRepository.RegisterAsync(user, model.Password);
             if (!result.Succeeded)
+            {
                 return Fail(result.Errors.Select(e => e.Description).ToArray());
+            }
 
             var roleResult = await _accountRepository.AddToRoleAsync(user, Roles.Customer);
             if (!roleResult.Succeeded)
+            {
                 return Fail(roleResult.Errors.Select(e => e.Description).ToArray());
+            }
 
             // Token yalnız bir dəfə işləyir
             await _otpService.ConsumeVerificationAsync(model.Email, model.VerificationToken);
@@ -73,14 +81,20 @@ namespace Service.Services
         {
             var validation = await _loginValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return FailLogin(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             var user = await _accountRepository.GetByEmailAsync(model.Email.Trim());
             if (user is null)
+            {
                 return FailLogin(InvalidCredentials); // email yoxdursa da eyni mesaj (user enumeration qarşısı)
+            }
 
             if (await _accountRepository.IsLockedOutAsync(user))
+            {
                 return FailLogin("Too many failed attempts. Try again in a few minutes.");
+            }
 
             if (!await _accountRepository.CheckPasswordAsync(user, model.Password))
             {
@@ -92,7 +106,9 @@ namespace Service.Services
 
             // Admin tərəfindən dondurulmuş (freeze) hesab şifrə düzgün olsa da daxil ola bilmir
             if (user.IsRestricted)
+            {
                 return FailLogin("Your account is restricted. Please contact support.");
+            }
 
             var roles = await _accountRepository.GetRolesAsync(user);
             var (token, expiresAt) = _tokenService.CreateToken(user, roles);
@@ -126,9 +142,13 @@ namespace Service.Services
         }
 
         private static RegisterResponse Fail(params string[] errors)
-            => new() { IsSuccess = false, Errors = errors };
+        {
+            return new() { IsSuccess = false, Errors = errors };
+        }
 
         private static LoginResponse FailLogin(params string[] errors)
-            => new() { IsSuccess = false, Errors = errors };
+        {
+            return new() { IsSuccess = false, Errors = errors };
+        }
     }
 }

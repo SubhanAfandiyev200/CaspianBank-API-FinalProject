@@ -21,7 +21,10 @@ namespace Service.Services
         public async Task<AboutDto?> GetUIAsync()
         {
             var about = await _aboutRepo.GetAsync();
-            if (about is null) return null;
+            if (about is null)
+            {
+                return null;
+            }
 
             return new AboutDto
             {

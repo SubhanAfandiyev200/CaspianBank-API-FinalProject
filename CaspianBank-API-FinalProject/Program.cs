@@ -91,7 +91,9 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     options.TokenLifespan = TimeSpan.FromMinutes(30));
 var jwtSettings = jwtSection.Get<JwtSettings>() ?? new JwtSettings();
 if (string.IsNullOrWhiteSpace(jwtSettings.Key) || jwtSettings.Key.Length < 32)
+{
     throw new InvalidOperationException("Jwt:Key tapılmadı və ya çox qısadır (min 32 simvol). dotnet user-secrets ilə təyin edin.");
+}
 
 // AddIdentity cookie-ni defolt edir; API üçün defolt sxem JWT olmalıdır (yoxsa 401 əvəzinə login-ə yönləndirir)
 builder.Services.AddAuthentication(options =>
@@ -127,6 +129,16 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    // Köçürmə: alıcı kartını tapmaq cəhdlərini (nömrə təxmini) və sürətli təkrar sorğuları məhdudlaşdırır
+    options.AddPolicy("transfer", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
     options.AddPolicy("auth", httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",

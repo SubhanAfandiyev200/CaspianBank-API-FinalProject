@@ -21,10 +21,17 @@ namespace CaspianBank_API_FinalProject.Helpers
                 : new SqlConnectionStringBuilder(configured);
 
             var servers = new List<string>();
-            if (!string.IsNullOrWhiteSpace(baseBuilder.DataSource)) servers.Add(baseBuilder.DataSource);
+            if (!string.IsNullOrWhiteSpace(baseBuilder.DataSource))
+            {
+                servers.Add(baseBuilder.DataSource);
+            }
             foreach (var candidate in Candidates())
+            {
                 if (!servers.Contains(candidate, StringComparer.OrdinalIgnoreCase))
+                {
                     servers.Add(candidate);
+                }
+            }
 
             // 1-ci keçid: verilənlər bazasının özü (import olunmuş) mövcud olan server
             foreach (var server in servers)

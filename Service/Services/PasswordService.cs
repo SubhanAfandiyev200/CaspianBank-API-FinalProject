@@ -43,12 +43,16 @@ namespace Service.Services
         {
             var validation = await _forgotValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             // Email mövcud olsa da olmasa da eyni cavab qayıdır (hesabların siyahısını çıxarmağa qarşı)
             var user = await _accountRepository.GetByEmailAsync(model.Email.Trim());
             if (user is null || user.IsRestricted)
+            {
                 return new OperationResponse { IsSuccess = true };
+            }
 
             string? devLink = null;
             try
@@ -83,18 +87,24 @@ namespace Service.Services
         {
             var validation = await _resetValidator.ValidateAsync(model);
             if (!validation.IsValid)
+            {
                 return Fail(validation.Errors.Select(e => e.ErrorMessage).Distinct().ToArray());
+            }
 
             var user = await _accountRepository.GetByEmailAsync(model.Email.Trim());
             var token = Base64UrlDecode(model.Token);
             if (user is null || token is null)
+            {
                 return Fail(InvalidLink);
+            }
 
             var result = await _accountRepository.ResetPasswordAsync(user, token, model.NewPassword);
             if (!result.Succeeded)
             {
                 if (result.Errors.Any(e => e.Code == "InvalidToken"))
+                {
                     return Fail(InvalidLink);
+                }
 
                 return Fail(result.Errors.Select(e => e.Description).ToArray());
             }
@@ -106,7 +116,9 @@ namespace Service.Services
         }
 
         private static string Base64UrlEncode(string value)
-            => Convert.ToBase64String(Encoding.UTF8.GetBytes(value)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(value)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        }
 
         private static string? Base64UrlDecode(string value)
         {
@@ -123,6 +135,8 @@ namespace Service.Services
         }
 
         private static OperationResponse Fail(params string[] errors)
-            => new() { IsSuccess = false, Errors = errors };
+        {
+            return new() { IsSuccess = false, Errors = errors };
+        }
     }
 }

@@ -9,6 +9,11 @@ namespace Repository.Repositories.Interfaces
         Task<IdentityResult> AddToRoleAsync(AppUser user, string role);
 
         Task<AppUser?> GetByEmailAsync(string email);
+        Task<AppUser?> GetByIdAsync(string id);
+
+        // FİN başqa istifadəçidə varmı (öz FİN-i sayılmır)
+        Task<bool> FinInUseAsync(string fin, string exceptUserId);
+        Task<IdentityResult> UpdateAsync(AppUser user);
         Task<bool> CheckPasswordAsync(AppUser user, string password);
         Task<IList<string>> GetRolesAsync(AppUser user);
 

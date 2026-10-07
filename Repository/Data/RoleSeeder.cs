@@ -10,7 +10,9 @@ namespace Repository.Data
             foreach (var role in Roles.All)
             {
                 if (!await roleManager.RoleExistsAsync(role))
+                {
                     await roleManager.CreateAsync(new IdentityRole(role));
+                }
             }
         }
     }

@@ -40,9 +40,15 @@ namespace Service.Helpers.Validators.Accounts
         private static bool BeAdult(DateTime birthDay)
         {
             var today = DateTime.UtcNow.Date;
-            if (birthDay.Date > today) return false;
+            if (birthDay.Date > today)
+            {
+                return false;
+            }
             var age = today.Year - birthDay.Year;
-            if (birthDay.Date > today.AddYears(-age)) age--;
+            if (birthDay.Date > today.AddYears(-age))
+            {
+                age--;
+            }
             return age >= MinAge;
         }
     }

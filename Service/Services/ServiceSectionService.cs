@@ -15,7 +15,10 @@ namespace Service.Services
         public async Task<ServiceSectionDto?> GetUIAsync()
         {
             var section = await _serviceSectionRepo.GetAsync();
-            if (section is null) return null;
+            if (section is null)
+            {
+                return null;
+            }
 
             return new ServiceSectionDto
             {
