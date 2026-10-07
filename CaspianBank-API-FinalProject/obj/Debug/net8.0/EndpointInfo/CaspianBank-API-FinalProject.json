@@ -234,6 +234,18 @@
         }
       }
     },
+    "/api/admin/brands": {
+      "get": {
+        "tags": [
+          "Brand"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/admin/card-designs": {
       "get": {
         "tags": [

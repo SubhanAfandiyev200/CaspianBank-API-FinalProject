@@ -10,9 +10,6 @@ namespace Domain.Constants
         public const string CustomerSupport = "CustomerSupport"; // Müştəri məmnuniyyəti
         public const string Security = "Security";           // Şübhəli əməliyyatlar
 
-        // Sayt dizaynını (kart dizaynları, brendlər və s.) idarə edə bilənlər
-        public const string DesignStaff = WebDesigner + "," + Admin + "," + SuperAdmin;
-
         public static readonly string[] All =
         {
             Customer, SuperAdmin, Admin, Accountant, WebDesigner, CustomerSupport, Security

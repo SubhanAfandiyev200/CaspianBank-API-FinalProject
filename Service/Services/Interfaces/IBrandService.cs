@@ -10,5 +10,7 @@ namespace Service.Services.Interfaces
     public interface IBrandService
     {
         Task<IEnumerable<BrandDto>> GetAllUIAsync();
+        Task<IEnumerable<BrandDto>> GetAllAsync();
+        Task<BrandDto> GetDetailAsync(int id);
     }
 }
