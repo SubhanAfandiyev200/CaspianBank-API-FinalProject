@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Service.Helpers.DTOs.Brands;
 using Service.Services.Interfaces;
 
 namespace CaspianBank_API_FinalProject.Controllers.Admin
@@ -25,6 +26,12 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         public async Task<IActionResult> GetBrandDetailAsync([FromRoute] int id)
         {
             return Ok(await _brandService.GetDetailAsync(id));
+        }
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateBrand([FromForm] CreateBrandDto request)
+        {
+            return Ok(await _brandService.CreateAsync(request));
         }
     }
 }

@@ -12,5 +12,6 @@ namespace Service.Services.Interfaces
         Task<IEnumerable<BrandDto>> GetAllUIAsync();
         Task<IEnumerable<BrandDto>> GetAllAsync();
         Task<BrandDto> GetDetailAsync(int id);
+        Task<BrandDto> CreateAsync(CreateBrandDto model);
     }
 }
