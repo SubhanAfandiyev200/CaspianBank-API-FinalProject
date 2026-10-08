@@ -53,7 +53,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddServiceLayer();
-builder.Services.AddScoped<IImageStorage, LocalImageStorage>();
 builder.Services.AddRepositoryLayer();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>

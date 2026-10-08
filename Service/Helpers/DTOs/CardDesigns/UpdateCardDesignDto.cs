@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Service.Helpers.DTOs.CardDesigns
 {
     public class UpdateCardDesignDto
@@ -7,6 +9,6 @@ namespace Service.Helpers.DTOs.CardDesigns
         public int DisplayOrder { get; set; }
 
         // Boş olarsa köhnə şəkil qalır
-        public UploadedImage? Image { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

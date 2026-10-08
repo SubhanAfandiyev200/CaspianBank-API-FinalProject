@@ -1,7 +1,6 @@
 using Domain.Entities;
 using FluentValidation;
 using Repository.Repositories.Interfaces;
-using Service.Helpers;
 using Service.Helpers.DTOs.CardDesigns;
 using Service.Helpers.Responses;
 using Service.Services.Interfaces;
@@ -15,17 +14,17 @@ namespace Service.Services
         private const string Folder = "cards";
 
         private readonly ICardDesignRepository _repo;
-        private readonly IImageStorage _storage;
+        private readonly IFileService _files;
         private readonly IValidator<CreateCardDesignDto> _createValidator;
         private readonly IValidator<UpdateCardDesignDto> _updateValidator;
 
         public CardDesignService(ICardDesignRepository repo,
-                                 IImageStorage storage,
+                                 IFileService files,
                                  IValidator<CreateCardDesignDto> createValidator,
                                  IValidator<UpdateCardDesignDto> updateValidator)
         {
             _repo = repo;
-            _storage = storage;
+            _files = files;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
@@ -50,7 +49,7 @@ namespace Service.Services
                 return ServiceResult<CardDesignAdminDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
             }
 
-            var imagePath = await SaveImageAsync(model.Image!);
+            var imagePath = await _files.UploadFileAsync(model.Image!, Folder);
 
             var design = new CardDesign
             {
@@ -67,7 +66,7 @@ namespace Service.Services
             catch
             {
                 // Bazaya yazılmadısa şəkil faylı yetim qalmasın
-                _storage.Delete(imagePath);
+                await _files.DeleteFileAsync(imagePath);
                 throw;
             }
 
@@ -94,9 +93,9 @@ namespace Service.Services
 
             string? oldImage = null;
             string? newImage = null;
-            if (model.Image is not null)
+            if (model.Image is not null && model.Image.Length > 0)
             {
-                newImage = await SaveImageAsync(model.Image);
+                newImage = await _files.UploadFileAsync(model.Image, Folder);
                 oldImage = design.Image;
                 design.Image = newImage;
             }
@@ -109,7 +108,7 @@ namespace Service.Services
             {
                 if (newImage is not null)
                 {
-                    _storage.Delete(newImage);
+                    await _files.DeleteFileAsync(newImage);
                 }
                 throw;
             }
@@ -117,7 +116,7 @@ namespace Service.Services
             // Yeni şəkil uğurla yazıldı: köhnəsi silinir
             if (oldImage is not null)
             {
-                _storage.Delete(oldImage);
+                await _files.DeleteFileAsync(oldImage);
             }
 
             return ServiceResult<CardDesignAdminDto>.Ok(ToAdminDto(design));
@@ -133,17 +132,9 @@ namespace Service.Services
 
             var image = design.Image;
             await _repo.DeleteAsync(design);
-            _storage.Delete(image);
+            await _files.DeleteFileAsync(image);
 
             return new OperationResponse { IsSuccess = true };
-        }
-
-        private async Task<string> SaveImageAsync(UploadedImage image)
-        {
-            // Uzantı faylın içindəki imzadan təyin olunur (validator artıq təsdiqləyib)
-            var extension = ImageFileRules.DetectExtension(image.Content)
-                            ?? throw new InvalidOperationException("Unsupported image.");
-            return await _storage.SaveAsync(Folder, image.Content, extension);
         }
 
         private static CardDesignAdminDto ToAdminDto(CardDesign d)

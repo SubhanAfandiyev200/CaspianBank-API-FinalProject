@@ -25,6 +25,10 @@ namespace CaspianBank_API_FinalProject.Middlewares
             {
                 await WriteAsync(context, StatusCodes.Status404NotFound, ex.Message);
             }
+            catch (BadRequestException ex)
+            {
+                await WriteAsync(context, StatusCodes.Status400BadRequest, ex.Message);
+            }
             catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
             {
                 // İstifadəçi sorğunu özü ləğv edib, cavab göndərməyin mənası yoxdur
