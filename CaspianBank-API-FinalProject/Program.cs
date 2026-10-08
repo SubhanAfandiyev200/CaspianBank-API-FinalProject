@@ -17,6 +17,9 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Yalnız bu kompüterdəki gizli məlumatlar (məs. işçi hesablarının parolları). Fayl .gitignore-dadır, yoxdursa heç nə olmur
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 // Add services to the container.
 
 builder.Services.AddControllers();
