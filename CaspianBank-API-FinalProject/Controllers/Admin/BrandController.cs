@@ -33,5 +33,17 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         {
             return Ok(await _brandService.CreateAsync(request));
         }
+        [HttpPut("{id}")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateBrand(int id, [FromForm] UpdateBrandDto request)
+        {
+            return Ok(await _brandService.UpdateAsync(id, request));
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBrand(int id)
+        {
+            await _brandService.DeleteAsync(id);
+            return NoContent();
+        }
     }
 }

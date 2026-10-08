@@ -62,6 +62,18 @@ namespace Service.Services
             };
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var brand = await _brandRepo.GetByIdAsync(id);
+            if (brand is null) throw new NotFoundException();
+
+            var imagePath = brand.Image;
+
+            // Əvvəl baza, sonra fayl: baza silməsi xəta versə şəkil yerində qalır (sətir qalıb şəkil itməsin)
+            await _brandRepo.DeleteAsync(brand);
+            await _fileService.DeleteFileAsync(imagePath);
+        }
+
         public async Task<IEnumerable<BrandDto>> GetAllAsync()
         {
             var result = await _brandRepo.GetAllAsync();
@@ -96,5 +108,59 @@ namespace Service.Services
             };
         }
 
+        public async Task<BrandDto> UpdateAsync(int id, UpdateBrandDto model)
+        {
+            var brand = await _brandRepo.GetByIdAsync(id);
+            if (brand is null) throw new NotFoundException();
+
+            var name = model.Name?.Trim() ?? string.Empty;
+            if (name.Length == 0)
+            {
+                throw new BadRequestException("Enter a name.");
+            }
+            if (name.Length > 100)
+            {
+                throw new BadRequestException("The name can be at most 100 characters.");
+            }
+
+            // Köhnə şəklin yolu həmişə bazadan götürülür (müştəridən gələn yola etibar edilmir)
+            var oldImage = brand.Image;
+            string? newImage = null;
+
+            // Şəkil seçilməyibsə köhnəsi qalır. Yenisi əvvəl yüklənir ki, yanlış fayl olsa köhnə şəkil itməsin
+            if (model.Image is not null && model.Image.Length > 0)
+            {
+                newImage = await _fileService.UploadFileAsync(model.Image, "brands");
+                brand.Image = newImage;
+            }
+            brand.Name = name;
+
+            try
+            {
+                await _brandRepo.UpdateAsync(brand);
+            }
+            catch
+            {
+                // Bazaya yazılmadısa yeni fayl yetim qalmasın
+                if (newImage is not null)
+                {
+                    await _fileService.DeleteFileAsync(newImage);
+                }
+                throw;
+            }
+
+            // Yeni şəkil uğurla yazıldı: köhnəsi silinir
+            if (newImage is not null)
+            {
+                await _fileService.DeleteFileAsync(oldImage);
+            }
+
+            return new BrandDto
+            {
+                Id = brand.Id,
+                Image = brand.Image,
+                Name = brand.Name
+            };
+        }
     }
 }
