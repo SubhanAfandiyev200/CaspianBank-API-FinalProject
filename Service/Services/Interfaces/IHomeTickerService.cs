@@ -7,8 +7,8 @@ namespace Service.Services.Interfaces
         Task<IEnumerable<HomeTickerDto>> GetAllUIAsync();
         Task<IEnumerable<HomeTickerDto>> GetAllAsync();
         Task<HomeTickerDto> GetDetailAsync(int id);
-        Task<HomeTickerDto> CreateAsync(CreateHomeTickerDto model);
-        Task<HomeTickerDto> UpdateAsync(int id, UpdateHomeTickerDto model);
+        Task CreateAsync(CreateHomeTickerDto model);
+        Task UpdateAsync(int id, UpdateHomeTickerDto model);
         Task DeleteAsync(int id);
     }
 }

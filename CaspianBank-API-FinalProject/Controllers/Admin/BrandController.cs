@@ -31,13 +31,15 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateBrand([FromForm] CreateBrandDto request)
         {
-            return Ok(await _brandService.CreateAsync(request));
+            await _brandService.CreateAsync(request);
+            return Ok();
         }
         [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateBrand(int id, [FromForm] UpdateBrandDto request)
         {
-            return Ok(await _brandService.UpdateAsync(id, request));
+            await _brandService.UpdateAsync(id, request);
+            return NoContent();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBrand(int id)

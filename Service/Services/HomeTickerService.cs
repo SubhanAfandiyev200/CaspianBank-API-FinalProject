@@ -42,24 +42,27 @@ namespace Service.Services
         {
             var ticker = await _tickerRepo.GetByIdAsync(id);
             if (ticker is null) throw new NotFoundException();
-            return ToDto(ticker);
+            return new HomeTickerDto
+            {
+                Text = ticker.Text,
+                Id = ticker.Id
+            };
         }
 
-        public async Task<HomeTickerDto> CreateAsync(CreateHomeTickerDto model)
+        public async Task CreateAsync(CreateHomeTickerDto model)
         {
             var ticker = new HomeTicker { Text = CleanText(model.Text) };
             await _tickerRepo.AddAsync(ticker);
-            return ToDto(ticker);
+
         }
 
-        public async Task<HomeTickerDto> UpdateAsync(int id, UpdateHomeTickerDto model)
+        public async Task UpdateAsync(int id, UpdateHomeTickerDto model)
         {
             var ticker = await _tickerRepo.GetByIdAsync(id);
             if (ticker is null) throw new NotFoundException();
 
             ticker.Text = CleanText(model.Text);
             await _tickerRepo.UpdateAsync(ticker);
-            return ToDto(ticker);
         }
 
         public async Task DeleteAsync(int id)
@@ -82,15 +85,6 @@ namespace Service.Services
                 throw new BadRequestException($"The text can be at most {MaxTextLength} characters.");
             }
             return value;
-        }
-
-        private static HomeTickerDto ToDto(HomeTicker ticker)
-        {
-            return new HomeTickerDto
-            {
-                Id = ticker.Id,
-                Text = ticker.Text
-            };
         }
     }
 }

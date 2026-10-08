@@ -28,15 +28,17 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> CreateTicker([FromBody] CreateHomeTickerDto request)
         {
-            return Ok(await _homeTickerService.CreateAsync(request));
+            await _homeTickerService.CreateAsync(request);
+            return Ok();
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTicker(int id, [FromBody] UpdateHomeTickerDto request)
+        public async Task<IActionResult> UpdateTicker([FromRoute]int id, [FromBody] UpdateHomeTickerDto request)
         {
-            return Ok(await _homeTickerService.UpdateAsync(id, request));
+            await _homeTickerService.UpdateAsync(id, request);
+            return NoContent();
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicker(int id)
+        public async Task<IActionResult> DeleteTicker([FromRoute]int id)
         {
             await _homeTickerService.DeleteAsync(id);
             return NoContent();

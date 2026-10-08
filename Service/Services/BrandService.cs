@@ -22,7 +22,7 @@ namespace Service.Services
             _fileService = fileService;
         }
 
-        public async Task<BrandDto> CreateAsync(CreateBrandDto model)
+        public async Task CreateAsync(CreateBrandDto model)
         {
             var name = model.Name?.Trim() ?? string.Empty;
             if (name.Length == 0)
@@ -53,13 +53,6 @@ namespace Service.Services
                 await _fileService.DeleteFileAsync(imagePath);
                 throw;
             }
-
-            return new BrandDto
-            {
-                Id = brand.Id,
-                Image = brand.Image,
-                Name = brand.Name
-            };
         }
 
         public async Task DeleteAsync(int id)
@@ -108,7 +101,7 @@ namespace Service.Services
             };
         }
 
-        public async Task<BrandDto> UpdateAsync(int id, UpdateBrandDto model)
+        public async Task UpdateAsync(int id, UpdateBrandDto model)
         {
             var brand = await _brandRepo.GetByIdAsync(id);
             if (brand is null) throw new NotFoundException();
@@ -154,13 +147,6 @@ namespace Service.Services
             {
                 await _fileService.DeleteFileAsync(oldImage);
             }
-
-            return new BrandDto
-            {
-                Id = brand.Id,
-                Image = brand.Image,
-                Name = brand.Name
-            };
         }
     }
 }
