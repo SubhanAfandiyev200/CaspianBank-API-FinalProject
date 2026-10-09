@@ -1,20 +1,25 @@
 using Domain.Entities;
+using FluentValidation;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.HomeTickers;
 using Service.Helpers.Exceptions;
+using Service.Helpers.Validators;
 using Service.Services.Interfaces;
 
 namespace Service.Services
 {
     public class HomeTickerService : IHomeTickerService
     {
-        // Bazadakı HomeTickers.Text sütununun uzunluğu (HomeTickerConfiguration)
-        private const int MaxTextLength = 100;
-
         private readonly IHomeTickerRepository _tickerRepo;
-        public HomeTickerService(IHomeTickerRepository tickerRepo)
+        private readonly IValidator<CreateHomeTickerDto> _createValidator;
+        private readonly IValidator<UpdateHomeTickerDto> _updateValidator;
+        public HomeTickerService(IHomeTickerRepository tickerRepo,
+                                 IValidator<CreateHomeTickerDto> createValidator,
+                                 IValidator<UpdateHomeTickerDto> updateValidator)
         {
             _tickerRepo = tickerRepo;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         // Admin siyahısı: köhnədən yeniyə (id sırası ilə)
@@ -51,17 +56,19 @@ namespace Service.Services
 
         public async Task CreateAsync(CreateHomeTickerDto model)
         {
-            var ticker = new HomeTicker { Text = CleanText(model.Text) };
-            await _tickerRepo.AddAsync(ticker);
-
+            // Mətnin boş olmaması və uzunluğu CreateHomeTickerDtoValidator-da yoxlanılır
+            await _createValidator.EnsureValidAsync(model);
+            await _tickerRepo.AddAsync(new HomeTicker { Text = model.Text!.Trim() });
         }
 
         public async Task UpdateAsync(int id, UpdateHomeTickerDto model)
         {
+            await _updateValidator.EnsureValidAsync(model);
+
             var ticker = await _tickerRepo.GetByIdAsync(id);
             if (ticker is null) throw new NotFoundException();
 
-            ticker.Text = CleanText(model.Text);
+            ticker.Text = model.Text!.Trim();
             await _tickerRepo.UpdateAsync(ticker);
         }
 
@@ -70,21 +77,6 @@ namespace Service.Services
             var ticker = await _tickerRepo.GetByIdAsync(id);
             if (ticker is null) throw new NotFoundException();
             await _tickerRepo.DeleteAsync(ticker);
-        }
-
-        // Boşluqlar kənarlardan silinir (Home-da mətn Trim ilə göstərilir, aralarındakı məsafəni CSS verir)
-        private static string CleanText(string? text)
-        {
-            var value = text?.Trim() ?? string.Empty;
-            if (value.Length == 0)
-            {
-                throw new BadRequestException("Enter the text.");
-            }
-            if (value.Length > MaxTextLength)
-            {
-                throw new BadRequestException($"The text can be at most {MaxTextLength} characters.");
-            }
-            return value;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace CaspianBank_API_FinalProject.Middlewares
             }
             catch (BadRequestException ex)
             {
-                await WriteAsync(context, StatusCodes.Status400BadRequest, ex.Message);
+                await WriteAsync(context, StatusCodes.Status400BadRequest, ex.Errors);
             }
             catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
             {
@@ -43,6 +43,11 @@ namespace CaspianBank_API_FinalProject.Middlewares
 
         private static async Task WriteAsync(HttpContext context, int statusCode, string message)
         {
+            await WriteAsync(context, statusCode, new[] { message });
+        }
+
+        private static async Task WriteAsync(HttpContext context, int statusCode, string[] errors)
+        {
             if (context.Response.HasStarted)
             {
                 return;
@@ -50,7 +55,7 @@ namespace CaspianBank_API_FinalProject.Middlewares
 
             context.Response.Clear();
             context.Response.StatusCode = statusCode;
-            await context.Response.WriteAsJsonAsync(new { isSuccess = false, errors = new[] { message } });
+            await context.Response.WriteAsJsonAsync(new { isSuccess = false, errors });
         }
     }
 }

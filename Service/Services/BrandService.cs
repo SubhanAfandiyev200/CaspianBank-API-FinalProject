@@ -1,7 +1,9 @@
 ﻿using Domain.Entities;
+using FluentValidation;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.Brands;
 using Service.Helpers.Exceptions;
+using Service.Helpers.Validators;
 using Service.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,24 +17,24 @@ namespace Service.Services
     {
         private readonly IBrandRepository _brandRepo;
         private readonly IFileService _fileService;
+        private readonly IValidator<CreateBrandDto> _createValidator;
+        private readonly IValidator<UpdateBrandDto> _updateValidator;
         public BrandService(IBrandRepository brandRepo,
-                            IFileService fileService)
+                            IFileService fileService,
+                            IValidator<CreateBrandDto> createValidator,
+                            IValidator<UpdateBrandDto> updateValidator)
         {
             _brandRepo = brandRepo;
             _fileService = fileService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task CreateAsync(CreateBrandDto model)
         {
-            var name = model.Name?.Trim() ?? string.Empty;
-            if (name.Length == 0)
-            {
-                throw new BadRequestException("Enter a name.");
-            }
-            if (name.Length > 100)
-            {
-                throw new BadRequestException("The name can be at most 100 characters.");
-            }
+            // Ad və şəklin seçilməsi CreateBrandDtoValidator-da yoxlanılır
+            await _createValidator.EnsureValidAsync(model);
+            var name = model.Name!.Trim();
 
             // Fayl /images/brands/<təsadüfi ad> altına yazılır (FileService yolun əvvəlinə /images/ özü əlavə edir)
             string imagePath = await _fileService.UploadFileAsync(model.Image!, "brands");
@@ -103,18 +105,12 @@ namespace Service.Services
 
         public async Task UpdateAsync(int id, UpdateBrandDto model)
         {
+            await _updateValidator.EnsureValidAsync(model);
+
             var brand = await _brandRepo.GetByIdAsync(id);
             if (brand is null) throw new NotFoundException();
 
-            var name = model.Name?.Trim() ?? string.Empty;
-            if (name.Length == 0)
-            {
-                throw new BadRequestException("Enter a name.");
-            }
-            if (name.Length > 100)
-            {
-                throw new BadRequestException("The name can be at most 100 characters.");
-            }
+            var name = model.Name!.Trim();
 
             // Köhnə şəklin yolu həmişə bazadan götürülür (müştəridən gələn yola etibar edilmir)
             var oldImage = brand.Image;

@@ -10,5 +10,10 @@ namespace Service.Services.Interfaces
     public interface IBenefitItemService
     {
         Task<IEnumerable<BenefitItemDto>> GetAllUIAsync();
+        Task<IEnumerable<BenefitItemDto>> GetAllAsync();
+        Task<BenefitItemDto> GetDetailAsync(int id);
+        Task CreateAsync(BenefitItemCreateDto model);
+        Task DeleteAsync(int id);
+        Task UpdateAsync(int id, BenefitItemUpdateDto model);
     }
 }

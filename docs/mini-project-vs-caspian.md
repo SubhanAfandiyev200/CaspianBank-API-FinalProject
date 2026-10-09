@@ -26,7 +26,7 @@ MiniProject-də hər şey **bir web layihəsindədir**. Caspian Bank-da iş **qa
 ## 3. Yeni model əlavə etmək üçün 5 addım (Brand/Ticker kimi)
 
 1. **DTO-lar** (`Service/Helpers/DTOs/<Model>`): `XDto` (Id daxil), `CreateXDto`, `UpdateXDto`.
-2. **Service**: `IXService` + `XService` (`GetAll`, `GetDetail`, `Create`, `Update`, `Delete`). Create/Update/Delete `Task`-dır. Mövcud olmayan id üçün `NotFoundException`, yanlış məlumat üçün `BadRequestException`.
+2. **Service + Validator**: `IXService` + `XService` (`GetAll`, `GetDetail`, `Create`, `Update`, `Delete`). Create/Update/Delete `Task`-dır. Yoxlama qaydaları ayrıca fayldadır: `Service/Helpers/Validators/<Model>/CreateXDtoValidator.cs` və `UpdateXDtoValidator.cs` (FluentValidation, `RequiredText`/`SitePath` ortaq qaydaları). Servis `await _createValidator.EnsureValidAsync(model)` çağırır, xəta olsa `BadRequestException` (bütün mesajlar birlikdə 400). Mövcud olmayan id üçün `NotFoundException` (404).
 3. **API controller** (`Controllers/Admin`): `[Route("api/admin/<ad>")]`, `[Authorize(Roles = ...)]`, 5 endpoint. Şəkil varsa `[FromForm]` + `[Consumes("multipart/form-data")]`.
 4. **MVC**: `XController : ApiControllerBase` (`Index`, `Detail`, `Create`, `Edit`, `Delete`) və `XVM`, `XCreateVM`, `XEditVM`. Yan menyuya link əlavə et (`_AdminLayout`).
 5. **View-lar**: `Index`, `Detail`, `Create`, `Edit`. Delete düyməsi `data-confirm-*` atributları ilə `POST` formasındadır.

@@ -8,8 +8,8 @@ namespace Service.Helpers.DTOs.BenefitSections
 {
     public class BenefitSectionUpdateDto
     {
-        public string Label { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Label { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
     }
 }

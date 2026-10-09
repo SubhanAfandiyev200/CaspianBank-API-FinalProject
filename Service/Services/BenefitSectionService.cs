@@ -1,9 +1,9 @@
-
-
 using Domain.Entities;
+using FluentValidation;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.BenefitSections;
 using Service.Helpers.Exceptions;
+using Service.Helpers.Validators;
 using Service.Services.Interfaces;
 
 namespace Service.Services
@@ -11,23 +11,27 @@ namespace Service.Services
     public class BenefitSectionService : IBenefitSectionService
     {
         private readonly IBenefitSectionRepository _benefitSectionRepo;
-        public BenefitSectionService(IBenefitSectionRepository benefitSectionRepo)
+        private readonly IValidator<BenefitSectionCreateDto> _createValidator;
+        private readonly IValidator<BenefitSectionUpdateDto> _updateValidator;
+        public BenefitSectionService(IBenefitSectionRepository benefitSectionRepo,
+                                     IValidator<BenefitSectionCreateDto> createValidator,
+                                     IValidator<BenefitSectionUpdateDto> updateValidator)
         {
             _benefitSectionRepo = benefitSectionRepo;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
-
-        // Bazadakı limitlər (BenefitSectionConfiguration)
-        private const int MaxLabelLength = 100;
-        private const int MaxTitleLength = 200;
-        private const int MaxDescriptionLength = 500;
 
         public async Task CreateAsync(BenefitSectionCreateDto model)
         {
+            // Label, title və description boş olmamalıdır və limiti keçməməlidir (CreateBenefitSectionDtoValidator)
+            await _createValidator.EnsureValidAsync(model);
+
             await _benefitSectionRepo.AddAsync(new BenefitSection
             {
-                Description = Clean(model.Description, "description", MaxDescriptionLength),
-                Label = Clean(model.Label, "label", MaxLabelLength),
-                Title = Clean(model.Title, "title", MaxTitleLength)
+                Description = model.Description!.Trim(),
+                Label = model.Label!.Trim(),
+                Title = model.Title!.Trim()
             });
         }
 
@@ -95,29 +99,16 @@ namespace Service.Services
 
         public async Task UpdateAsync(int id, BenefitSectionUpdateDto model)
         {
+            await _updateValidator.EnsureValidAsync(model);
+
             var benefitSection = await _benefitSectionRepo.GetByIdAsync(id);
             if (benefitSection is null) throw new NotFoundException();
 
             // Modeldəki dəyərlər tapılan obyektə köçürülməsə, UpdateAsync köhnə dəyərləri yenidən yazar
-            benefitSection.Label = Clean(model.Label, "label", MaxLabelLength);
-            benefitSection.Title = Clean(model.Title, "title", MaxTitleLength);
-            benefitSection.Description = Clean(model.Description, "description", MaxDescriptionLength);
+            benefitSection.Label = model.Label!.Trim();
+            benefitSection.Title = model.Title!.Trim();
+            benefitSection.Description = model.Description!.Trim();
             await _benefitSectionRepo.UpdateAsync(benefitSection);
-        }
-
-        // Kənar boşluqlar silinir, boş və ya limitdən uzun mətn bazaya çatmadan 400 verir
-        private static string Clean(string? value, string name, int maxLength)
-        {
-            var text = value?.Trim() ?? string.Empty;
-            if (text.Length == 0)
-            {
-                throw new BadRequestException($"Enter the {name}.");
-            }
-            if (text.Length > maxLength)
-            {
-                throw new BadRequestException($"The {name} can be at most {maxLength} characters.");
-            }
-            return text;
         }
     }
 }
