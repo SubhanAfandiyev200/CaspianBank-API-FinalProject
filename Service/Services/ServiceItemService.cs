@@ -10,12 +10,17 @@ namespace Service.Services
 {
     public class ServiceItemService : IServiceItemService
     {
+        private const string Folder = "services";
+
         private readonly IServiceItemRepository _serviceItemRepo;
+        private readonly IFileService _fileService;
         private readonly IValidator<ServiceItemUpdateDto> _updateValidator;
         public ServiceItemService(IServiceItemRepository serviceItemRepo,
+                                  IFileService fileService,
                                   IValidator<ServiceItemUpdateDto> updateValidator)
         {
             _serviceItemRepo = serviceItemRepo;
+            _fileService = fileService;
             _updateValidator = updateValidator;
         }
 
@@ -46,10 +51,38 @@ namespace Service.Services
             var item = await _serviceItemRepo.GetByIdAsync(id);
             if (item is null) throw new NotFoundException();
 
+            // Köhnə ikonun yolu həmişə bazadan götürülür. Yenisi əvvəl yüklənir ki, yanlış fayl olsa köhnə ikon itməsin
+            var oldIcon = item.Icon;
+            string? newIcon = null;
+            if (model.Icon is not null && model.Icon.Length > 0)
+            {
+                newIcon = await _fileService.UploadFileAsync(model.Icon, Folder);
+                item.Icon = newIcon;
+            }
+
             // Modeldəki dəyərlər tapılan obyektə köçürülməsə, UpdateAsync köhnə dəyərləri yenidən yazar
             item.Title = model.Title!.Trim();
             item.Description = model.Description!.Trim();
-            await _serviceItemRepo.UpdateAsync(item);
+
+            try
+            {
+                await _serviceItemRepo.UpdateAsync(item);
+            }
+            catch
+            {
+                // Bazaya yazılmadısa yeni fayl yetim qalmasın
+                if (newIcon is not null)
+                {
+                    await _fileService.DeleteFileAsync(newIcon);
+                }
+                throw;
+            }
+
+            // Yeni ikon uğurla yazıldı: köhnəsi silinir (başlanğıc .svg ikonlar bu sistemin yüklədiyi fayl deyil, ona görə qalır)
+            if (newIcon is not null)
+            {
+                await _fileService.DeleteFileAsync(oldIcon);
+            }
         }
 
         private static ServiceItemDto ToDto(ServiceItem item)

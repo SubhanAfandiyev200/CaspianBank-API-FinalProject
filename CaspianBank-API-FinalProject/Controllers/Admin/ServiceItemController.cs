@@ -5,7 +5,7 @@ using Service.Services.Interfaces;
 
 namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
-    // Home-dakı altı xidmət kartı. Hər kart proqramın bir bölməsinə aparır, ona görə yalnız mətnləri dəyişir (əlavə/silmə yoxdur)
+    // Home-dakı altı xidmət kartı. Hər kart proqramın bir bölməsinə aparır, ona görə mətnləri və ikonu dəyişir, amma əlavə/silmə yoxdur
     [Route("api/admin/service-items")]
     [ApiController]
     [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
@@ -27,7 +27,8 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
             return Ok(await _serviceItemService.GetDetailAsync(id));
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateServiceItem([FromRoute] int id, [FromBody] ServiceItemUpdateDto request)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateServiceItem([FromRoute] int id, [FromForm] ServiceItemUpdateDto request)
         {
             await _serviceItemService.UpdateAsync(id, request);
             return NoContent();

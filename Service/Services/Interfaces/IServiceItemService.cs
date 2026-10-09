@@ -2,7 +2,7 @@ using Service.Helpers.DTOs.ServiceItems;
 
 namespace Service.Services.Interfaces
 {
-    // Altı xidmət kartı hər biri proqramın bir bölməsinə aparır, ona görə admin yalnız mətnlərini dəyişir (əlavə/silmə yoxdur)
+    // Altı xidmət kartı hər biri proqramın bir bölməsinə aparır, ona görə admin mətnlərini və ikonunu dəyişir (əlavə/silmə yoxdur)
     public interface IServiceItemService
     {
         Task<IEnumerable<ServiceItemDto>> GetAllUIAsync();
