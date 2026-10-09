@@ -16,9 +16,6 @@ namespace Service.Helpers.Validators.BenefitItems
             RuleFor(x => x.Text1).RequiredText("first line", 200);
             RuleFor(x => x.Text2).RequiredText("second line", 200);
             RuleFor(x => x.Text3).RequiredText("third line", 200);
-
-            // Bölmənin bazada olub-olmadığını servis yoxlayır (repository lazımdır)
-            RuleFor(x => x.BenefitSectionId).GreaterThan(0).WithMessage("Choose a section.");
         }
     }
 }

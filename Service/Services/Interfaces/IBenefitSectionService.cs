@@ -1,20 +1,12 @@
 using Service.Helpers.DTOs.BenefitSections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Services.Interfaces
 {
+    // Benefits blokunun başlığı tək yazıdır: admin onu yalnız görür (GetAsync) və dəyişir (UpdateAsync)
     public interface IBenefitSectionService
     {
         Task<BenefitSectionDto?> GetUIAsync();
         Task<BenefitSectionDto> GetAsync();
-        Task<IEnumerable<BenefitSectionDto>> GetAllAsync();
-        Task<BenefitSectionDto> GetDetailAsync(int id);
-        Task CreateAsync(BenefitSectionCreateDto model);
-        Task DeleteAsync(int id);
         Task UpdateAsync(int id, BenefitSectionUpdateDto model);
     }
 }

@@ -58,9 +58,11 @@ namespace Service.Services
 
         public async Task CreateAsync(BenefitItemCreateDto model)
         {
-            // Mətnlər, düymənin ünvanı və bölmə seçimi CreateBenefitItemDtoValidator-da yoxlanılır
+            // Mətnlər və düymənin ünvanı CreateBenefitItemDtoValidator-da yoxlanılır
             await _createValidator.EnsureValidAsync(model);
-            await EnsureSectionExistsAsync(model.BenefitSectionId);
+
+            // Bölmə tək olduğu üçün seçilmir: kart Home-da göstərilən hazırkı bölməyə bağlanır
+            var section = await GetCurrentSectionAsync();
 
             await _benefitItemRepo.AddAsync(new BenefitItem
             {
@@ -72,7 +74,7 @@ namespace Service.Services
                 Text1 = model.Text1!.Trim(),
                 Text2 = model.Text2!.Trim(),
                 Text3 = model.Text3!.Trim(),
-                BenefitSectionId = model.BenefitSectionId
+                BenefitSectionId = section.Id
             });
         }
 
@@ -83,8 +85,6 @@ namespace Service.Services
             var item = await _benefitItemRepo.GetByIdAsync(id);
             if (item is null) throw new NotFoundException();
 
-            await EnsureSectionExistsAsync(model.BenefitSectionId);
-
             // Modeldəki dəyərlər tapılan obyektə köçürülməsə, UpdateAsync köhnə dəyərləri yenidən yazar
             item.Label = model.Label!.Trim();
             item.Title = model.Title!.Trim();
@@ -94,7 +94,6 @@ namespace Service.Services
             item.Text1 = model.Text1!.Trim();
             item.Text2 = model.Text2!.Trim();
             item.Text3 = model.Text3!.Trim();
-            item.BenefitSectionId = model.BenefitSectionId;
             await _benefitItemRepo.UpdateAsync(item);
         }
 
@@ -105,14 +104,15 @@ namespace Service.Services
             await _benefitItemRepo.DeleteAsync(item);
         }
 
-        // Olmayan bölməyə bağlana bilməz: yoxsa baza xarici açar xətası (500) verərdi
-        private async Task EnsureSectionExistsAsync(int sectionId)
+        // Kart bölmə olmadan yaranmır (xarici açar xətası əvəzinə aydın mesaj verilir)
+        private async Task<BenefitSection> GetCurrentSectionAsync()
         {
-            var section = await _benefitSectionRepo.GetByIdAsync(sectionId);
+            var section = await _benefitSectionRepo.GetAsync();
             if (section is null)
             {
-                throw new BadRequestException("Choose a section.");
+                throw new BadRequestException("There is no benefit section yet. Add one in the database first.");
             }
+            return section;
         }
 
         private static BenefitItemDto ToDto(BenefitItem item)

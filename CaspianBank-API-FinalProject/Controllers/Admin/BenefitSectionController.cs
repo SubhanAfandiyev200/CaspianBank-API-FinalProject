@@ -5,7 +5,8 @@ using Service.Services.Interfaces;
 
 namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
-    [Route("api/admin/benefit-sections")]
+    // Benefits blokunun başlığı. Tək yazıdır: yalnız oxunur və dəyişdirilir. Kartlar BenefitItemController-dədir
+    [Route("api/admin/benefit-section")]
     [ApiController]
     [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
     public class BenefitSectionController : ControllerBase
@@ -16,31 +17,14 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
             _benefitSectionService = benefitSectionService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllBenefitSections()
+        public async Task<IActionResult> GetBenefitSection()
         {
-            return Ok(await _benefitSectionService.GetAllAsync());
-        }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetBenefitSectionDetail([FromRoute] int id)
-        {
-            return Ok(await _benefitSectionService.GetDetailAsync(id));
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateBenefitSection([FromBody] BenefitSectionCreateDto request)
-        {
-            await _benefitSectionService.CreateAsync(request);
-            return Ok();
+            return Ok(await _benefitSectionService.GetAsync());
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBenefitSection([FromRoute] int id, [FromBody] BenefitSectionUpdateDto request)
         {
             await _benefitSectionService.UpdateAsync(id, request);
-            return NoContent();
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBenefitSection([FromRoute] int id)
-        {
-            await _benefitSectionService.DeleteAsync(id);
             return NoContent();
         }
     }

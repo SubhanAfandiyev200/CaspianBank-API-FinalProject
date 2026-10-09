@@ -1,4 +1,3 @@
-using Domain.Entities;
 using FluentValidation;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.BenefitSections;
@@ -11,66 +10,18 @@ namespace Service.Services
     public class BenefitSectionService : IBenefitSectionService
     {
         private readonly IBenefitSectionRepository _benefitSectionRepo;
-        private readonly IValidator<BenefitSectionCreateDto> _createValidator;
         private readonly IValidator<BenefitSectionUpdateDto> _updateValidator;
         public BenefitSectionService(IBenefitSectionRepository benefitSectionRepo,
-                                     IValidator<BenefitSectionCreateDto> createValidator,
                                      IValidator<BenefitSectionUpdateDto> updateValidator)
         {
             _benefitSectionRepo = benefitSectionRepo;
-            _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
 
-        public async Task CreateAsync(BenefitSectionCreateDto model)
-        {
-            // Label, title və description boş olmamalıdır və limiti keçməməlidir (CreateBenefitSectionDtoValidator)
-            await _createValidator.EnsureValidAsync(model);
-
-            await _benefitSectionRepo.AddAsync(new BenefitSection
-            {
-                Description = model.Description!.Trim(),
-                Label = model.Label!.Trim(),
-                Title = model.Title!.Trim()
-            });
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var benefitSection = await _benefitSectionRepo.GetByIdAsync(id);
-            if (benefitSection is null) throw new NotFoundException();
-            await _benefitSectionRepo.DeleteAsync(benefitSection);
-        }
-
+        // Admin: Home-da göstərilən hazırkı başlıq (Edit üçün Id ilə). Yoxdursa 404
         public async Task<BenefitSectionDto> GetAsync()
         {
             var benefitSection = await _benefitSectionRepo.GetAsync();
-            if (benefitSection is null) throw new NotFoundException();
-            return new BenefitSectionDto
-            {
-                Title = benefitSection.Title,
-                Label = benefitSection.Label,
-                Description = benefitSection.Description,
-                Id = benefitSection.Id
-            };
-        }
-
-        // Admin siyahısı: bütün bölmələr, köhnədən yeniyə (id sırası ilə)
-        public async Task<IEnumerable<BenefitSectionDto>> GetAllAsync()
-        {
-            var sections = await _benefitSectionRepo.GetAllAsync();
-            return sections.OrderBy(m => m.Id).Select(m => new BenefitSectionDto
-            {
-                Id = m.Id,
-                Label = m.Label,
-                Title = m.Title,
-                Description = m.Description
-            });
-        }
-
-        public async Task<BenefitSectionDto> GetDetailAsync(int id)
-        {
-            var benefitSection = await _benefitSectionRepo.GetByIdAsync(id);
             if (benefitSection is null) throw new NotFoundException();
             return new BenefitSectionDto
             {
@@ -81,6 +32,7 @@ namespace Service.Services
             };
         }
 
+        // Home (ictimai): Id lazım deyil
         public async Task<BenefitSectionDto?> GetUIAsync()
         {
             var section = await _benefitSectionRepo.GetAsync();
