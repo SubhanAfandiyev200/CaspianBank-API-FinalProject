@@ -20,6 +20,12 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         {
             return Ok(await _benefitItemService.GetAllAsync());
         }
+        // Düymə üçün hazır yerlər (Create/Edit formasındakı siyahı)
+        [HttpGet("destinations")]
+        public IActionResult GetDestinations()
+        {
+            return Ok(_benefitItemService.GetDestinations());
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBenefitItemDetail([FromRoute] int id)
         {

@@ -1,3 +1,4 @@
+using Domain.Constants;
 using Domain.Entities;
 using FluentValidation;
 using Repository.Repositories.Interfaces;
@@ -47,6 +48,15 @@ namespace Service.Services
         {
             var items = await _benefitItemRepo.GetAllAsync();
             return items.OrderBy(m => m.Id).Select(ToDto);
+        }
+
+        public IEnumerable<ButtonDestinationDto> GetDestinations()
+        {
+            return ButtonDestinations.All.Select(d => new ButtonDestinationDto
+            {
+                Path = d.Path,
+                Label = d.Label
+            }).ToList();
         }
 
         public async Task<BenefitItemDto> GetDetailAsync(int id)

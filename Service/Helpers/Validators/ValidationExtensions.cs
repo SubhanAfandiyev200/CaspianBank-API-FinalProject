@@ -24,20 +24,5 @@ namespace Service.Helpers.Validators
                 .Must(value => string.IsNullOrWhiteSpace(value) || value.Trim().Length <= maxLength)
                     .WithMessage($"The {name} can be at most {maxLength} characters.");
         }
-
-        // Düymənin ünvanı yalnız bu saytın yolu ola bilər (məs. /App/Transfer): "//sayt.com", "http:" və "javascript:" qəbul olunmur
-        public static IRuleBuilderOptions<T, string?> SitePath<T>(this IRuleBuilder<T, string?> rule, int maxLength)
-        {
-            return rule
-                .Must(IsSitePath).WithMessage("The link must be a path on this site, for example /App/Transfer.")
-                .Must(value => string.IsNullOrWhiteSpace(value) || value.Trim().Length <= maxLength)
-                    .WithMessage($"The link can be at most {maxLength} characters.");
-        }
-
-        private static bool IsSitePath(string? value)
-        {
-            var path = value?.Trim() ?? string.Empty;
-            return path.StartsWith("/") && !path.StartsWith("//") && !path.Contains(':') && !path.Contains('\\');
-        }
     }
 }
