@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class BrandRepository : BaseRepository<Brand>, IBrandRepository
     {
-        public BrandRepository(AppDbContext context) : base(context) { }
+        public BrandRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

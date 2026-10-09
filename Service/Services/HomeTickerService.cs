@@ -58,7 +58,9 @@ namespace Service.Services
         {
             // Mətnin boş olmaması və uzunluğu CreateHomeTickerDtoValidator-da yoxlanılır
             await _createValidator.EnsureValidAsync(model);
-            await _tickerRepo.AddAsync(new HomeTicker { Text = model.Text!.Trim() });
+            await _tickerRepo.AddAsync(new HomeTicker {
+                Text = model.Text!.Trim() 
+            });
         }
 
         public async Task UpdateAsync(int id, UpdateHomeTickerDto model)

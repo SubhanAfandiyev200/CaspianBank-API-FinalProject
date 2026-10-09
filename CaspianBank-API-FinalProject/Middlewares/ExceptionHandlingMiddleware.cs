@@ -55,7 +55,11 @@ namespace CaspianBank_API_FinalProject.Middlewares
 
             context.Response.Clear();
             context.Response.StatusCode = statusCode;
-            await context.Response.WriteAsJsonAsync(new { isSuccess = false, errors });
+            await context.Response.WriteAsJsonAsync(new
+            {
+                isSuccess = false,
+                errors
+            });
         }
     }
 }

@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class ServiceItemRepository : BaseRepository<ServiceItem> , IServiceItemRepository
     {
-        public ServiceItemRepository(AppDbContext context) : base(context) { }
+        public ServiceItemRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

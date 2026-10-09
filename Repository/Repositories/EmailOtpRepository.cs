@@ -7,7 +7,9 @@ namespace Repository.Repositories
 {
     public class EmailOtpRepository : BaseRepository<EmailOtp>, IEmailOtpRepository
     {
-        public EmailOtpRepository(AppDbContext context) : base(context) { }
+        public EmailOtpRepository(AppDbContext context) : base(context)
+        {
+        }
 
         // Ən son yaradılmış, hələ istifadə olunmamış və vaxtı keçməmiş kod
         public Task<EmailOtp?> GetLatestActiveAsync(string email)

@@ -51,7 +51,10 @@ namespace Service.Services
             var user = await _accountRepository.GetByEmailAsync(model.Email.Trim());
             if (user is null || user.IsRestricted)
             {
-                return new OperationResponse { IsSuccess = true };
+                return new OperationResponse
+                {
+                    IsSuccess = true
+                };
             }
 
             string? devLink = null;
@@ -112,7 +115,10 @@ namespace Service.Services
             // Şifrə dəyişdi: uğursuz cəhd sayğacı və müvəqqəti blok sıfırlanır
             await _accountRepository.ResetFailedAttemptsAsync(user);
 
-            return new OperationResponse { IsSuccess = true };
+            return new OperationResponse
+            {
+                IsSuccess = true
+            };
         }
 
         private static string Base64UrlEncode(string value)
@@ -136,7 +142,11 @@ namespace Service.Services
 
         private static OperationResponse Fail(params string[] errors)
         {
-            return new() { IsSuccess = false, Errors = errors };
+            return new()
+            {
+                IsSuccess = false,
+                Errors = errors
+            };
         }
     }
 }

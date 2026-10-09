@@ -19,11 +19,43 @@ namespace Domain.Configurations
             // Başlanğıc dizaynlar: Home səhifəsi ilk gündən boş qalmasın (şəkillər wwwroot/images/cards/-dadır)
             var seededAt = new DateTime(2026, 10, 6, 0, 0, 0, DateTimeKind.Utc);
             builder.HasData(
-                new CardDesign { Id = 1, Title = "Regular", Image = "/images/cards/regular.png", ShowOnHome = true, DisplayOrder = 1, CreatedAt = seededAt },
-                new CardDesign { Id = 2, Title = "Silver", Image = "/images/cards/silver.png", ShowOnHome = true, DisplayOrder = 2, CreatedAt = seededAt },
-                new CardDesign { Id = 3, Title = "Gold", Image = "/images/cards/gold.png", ShowOnHome = true, DisplayOrder = 3, CreatedAt = seededAt },
+                new CardDesign
+                {
+                    Id = 1,
+                    Title = "Regular",
+                    Image = "/images/cards/regular.png",
+                    ShowOnHome = true,
+                    DisplayOrder = 1,
+                    CreatedAt = seededAt
+                },
+                new CardDesign
+                {
+                    Id = 2,
+                    Title = "Silver",
+                    Image = "/images/cards/silver.png",
+                    ShowOnHome = true,
+                    DisplayOrder = 2,
+                    CreatedAt = seededAt
+                },
+                new CardDesign
+                {
+                    Id = 3,
+                    Title = "Gold",
+                    Image = "/images/cards/gold.png",
+                    ShowOnHome = true,
+                    DisplayOrder = 3,
+                    CreatedAt = seededAt
+                },
                 // Cashback kartının dizaynı: Home yelpazəsində göstərilmir, yalnız App-da
-                new CardDesign { Id = 4, Title = "Cashback", Image = "/images/cards/cashback.png", ShowOnHome = false, DisplayOrder = 4, CreatedAt = seededAt });
+                new CardDesign
+                {
+                    Id = 4,
+                    Title = "Cashback",
+                    Image = "/images/cards/cashback.png",
+                    ShowOnHome = false,
+                    DisplayOrder = 4,
+                    CreatedAt = seededAt
+                });
         }
     }
 }

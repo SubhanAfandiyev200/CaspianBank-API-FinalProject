@@ -9,7 +9,9 @@ namespace Repository.Repositories
 {
     public class CardRepository : BaseRepository<Card>, ICardRepository
     {
-        public CardRepository(AppDbContext context) : base(context) { }
+        public CardRepository(AppDbContext context) : base(context)
+        {
+        }
 
         public async Task<IReadOnlyList<Card>> GetByUserAsync(string userId)
         {

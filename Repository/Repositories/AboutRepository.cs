@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class AboutRepository : BaseRepository<About>, IAboutRepository
     {
-        public AboutRepository(AppDbContext context) : base(context) { }
+        public AboutRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

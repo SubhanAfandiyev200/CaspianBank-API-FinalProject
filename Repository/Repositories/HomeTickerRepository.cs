@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class HomeTickerRepository : BaseRepository<HomeTicker>, IHomeTickerRepository
     {
-        public HomeTickerRepository(AppDbContext context) : base(context) { }
+        public HomeTickerRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

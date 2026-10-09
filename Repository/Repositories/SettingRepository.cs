@@ -6,6 +6,8 @@ namespace Repository.Repositories
 {
     public class SettingRepository : BaseRepository<Setting>, ISettingRepository
     {
-        public SettingRepository(AppDbContext context) : base(context) { }
+        public SettingRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

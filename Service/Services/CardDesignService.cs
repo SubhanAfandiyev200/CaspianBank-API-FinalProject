@@ -33,7 +33,11 @@ namespace Service.Services
         public async Task<IEnumerable<CardDesignDto>> GetHomeAsync()
         {
             var designs = await _repo.GetHomeAsync(MaxHomeCards);
-            return designs.Select(d => new CardDesignDto { Title = d.Title, Image = d.Image }).ToList();
+            return designs.Select(d => new CardDesignDto
+            {
+                Title = d.Title,
+                Image = d.Image
+            }).ToList();
         }
 
         public async Task<IEnumerable<CardDesignAdminDto>> GetAllAsync()

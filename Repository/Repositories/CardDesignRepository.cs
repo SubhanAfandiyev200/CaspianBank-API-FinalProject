@@ -7,7 +7,9 @@ namespace Repository.Repositories
 {
     public class CardDesignRepository : BaseRepository<CardDesign>, ICardDesignRepository
     {
-        public CardDesignRepository(AppDbContext context) : base(context) { }
+        public CardDesignRepository(AppDbContext context) : base(context)
+        {
+        }
 
         public async Task<IEnumerable<CardDesign>> GetHomeAsync(int max)
         {

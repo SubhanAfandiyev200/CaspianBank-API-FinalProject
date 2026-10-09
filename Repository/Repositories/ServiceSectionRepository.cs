@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class ServiceSectionRepository : BaseRepository<ServiceSection>, IServiceSectionRepository
     {
-        public ServiceSectionRepository(AppDbContext context) : base(context) { }
+        public ServiceSectionRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }
