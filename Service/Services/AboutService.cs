@@ -9,13 +9,21 @@ namespace Service.Services
 {
     public class AboutService : IAboutService
     {
+        private const string VideoFolder = "about";
+
         private readonly IAboutRepository _aboutRepo;
+        private readonly IFileService _fileService;
         private readonly IValidator<AboutUpdateDto> _updateValidator;
+        private readonly IValidator<UpdateAboutVideoDto> _videoValidator;
         public AboutService(IAboutRepository aboutRepo,
-                            IValidator<AboutUpdateDto> updateValidator)
+                            IFileService fileService,
+                            IValidator<AboutUpdateDto> updateValidator,
+                            IValidator<UpdateAboutVideoDto> videoValidator)
         {
             _aboutRepo = aboutRepo;
+            _fileService = fileService;
             _updateValidator = updateValidator;
+            _videoValidator = videoValidator;
         }
 
         // Admin: Home-da göstərilən hazırkı mətn (Edit üçün Id ilə). Yoxdursa 404
@@ -63,6 +71,33 @@ namespace Service.Services
             about.Title = model.Title!.Trim();
             about.Description = model.Description!.Trim();
             await _aboutRepo.UpdateAsync(about);
+        }
+
+        public async Task UpdateVideoAsync(int id, UpdateAboutVideoDto model)
+        {
+            await _videoValidator.EnsureValidAsync(model);
+
+            var about = await _aboutRepo.GetByIdAsync(id);
+            if (about is null) throw new NotFoundException();
+
+            // Köhnə yol həmişə bazadan götürülür. Yeni video əvvəl yüklənir ki, yanlış fayl olsa köhnə video itməsin
+            var oldVideo = about.VideoPath;
+            var newVideo = await _fileService.UploadVideoAsync(model.Video!, VideoFolder);
+            about.VideoPath = newVideo;
+
+            try
+            {
+                await _aboutRepo.UpdateAsync(about);
+            }
+            catch
+            {
+                // Bazaya yazılmadısa yeni fayl yetim qalmasın
+                await _fileService.DeleteFileAsync(newVideo);
+                throw;
+            }
+
+            // Yalnız bu sistemin yüklədiyi video silinir (başlanğıc /videos/homeVideo.mp4 qalır)
+            await _fileService.DeleteFileAsync(oldVideo);
         }
     }
 }
