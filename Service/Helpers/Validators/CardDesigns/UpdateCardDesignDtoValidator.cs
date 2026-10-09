@@ -7,9 +7,7 @@ namespace Service.Helpers.Validators.CardDesigns
     {
         public UpdateCardDesignDtoValidator()
         {
-            RuleFor(x => x.Title)
-                .NotEmpty().WithMessage("Enter a title.")
-                .MaximumLength(50).WithMessage("The title can be at most 50 characters.");
+            RuleFor(x => x.Title).RequiredText("title", 50);
 
             RuleFor(x => x.DisplayOrder)
                 .InclusiveBetween(0, 1000).WithMessage("The order must be between 0 and 1000.");

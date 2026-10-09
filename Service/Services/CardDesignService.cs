@@ -2,7 +2,8 @@ using Domain.Entities;
 using FluentValidation;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.CardDesigns;
-using Service.Helpers.Responses;
+using Service.Helpers.Exceptions;
+using Service.Helpers.Validators;
 using Service.Services.Interfaces;
 
 namespace Service.Services
@@ -41,27 +42,31 @@ namespace Service.Services
             return designs.Select(ToAdminDto).ToList();
         }
 
-        public async Task<ServiceResult<CardDesignAdminDto>> CreateAsync(CreateCardDesignDto model)
+        public async Task<CardDesignAdminDto> GetDetailAsync(int id)
         {
-            var validation = await _createValidator.ValidateAsync(model);
-            if (!validation.IsValid)
-            {
-                return ServiceResult<CardDesignAdminDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
-            }
+            var design = await _repo.GetByIdAsync(id);
+            if (design is null) throw new NotFoundException();
+            return ToAdminDto(design);
+        }
 
+        public async Task CreateAsync(CreateCardDesignDto model)
+        {
+            // Ad, sıra və şəklin seçilməsi CreateCardDesignDtoValidator-da yoxlanılır
+            await _createValidator.EnsureValidAsync(model);
+            await EnsureHomeSlotAsync(model.ShowOnHome, null);
+
+            // Şəklin ölçüsünü və növünü FileService yoxlayır, yanlışdırsa global exception middleware 400 qaytarır
             var imagePath = await _files.UploadFileAsync(model.Image!, Folder);
-
-            var design = new CardDesign
-            {
-                Title = model.Title.Trim(),
-                Image = imagePath,
-                ShowOnHome = model.ShowOnHome,
-                DisplayOrder = model.DisplayOrder
-            };
 
             try
             {
-                await _repo.AddAsync(design);
+                await _repo.AddAsync(new CardDesign
+                {
+                    Title = model.Title!.Trim(),
+                    Image = imagePath,
+                    ShowOnHome = model.ShowOnHome,
+                    DisplayOrder = model.DisplayOrder
+                });
             }
             catch
             {
@@ -69,34 +74,28 @@ namespace Service.Services
                 await _files.DeleteFileAsync(imagePath);
                 throw;
             }
-
-            return ServiceResult<CardDesignAdminDto>.Ok(ToAdminDto(design));
         }
 
-        public async Task<ServiceResult<CardDesignAdminDto>> UpdateAsync(int id, UpdateCardDesignDto model)
+        public async Task UpdateAsync(int id, UpdateCardDesignDto model)
         {
-            var validation = await _updateValidator.ValidateAsync(model);
-            if (!validation.IsValid)
-            {
-                return ServiceResult<CardDesignAdminDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
-            }
+            await _updateValidator.EnsureValidAsync(model);
 
             var design = await _repo.GetByIdAsync(id);
-            if (design is null)
-            {
-                return ServiceResult<CardDesignAdminDto>.NotFound();
-            }
+            if (design is null) throw new NotFoundException();
 
-            design.Title = model.Title.Trim();
+            await EnsureHomeSlotAsync(model.ShowOnHome, id);
+
+            // Dəyərlər tapılan obyektə köçürülməsə, UpdateAsync köhnə dəyərləri yenidən yazar
+            design.Title = model.Title!.Trim();
             design.ShowOnHome = model.ShowOnHome;
             design.DisplayOrder = model.DisplayOrder;
 
-            string? oldImage = null;
+            // Köhnə şəklin yolu həmişə bazadan götürülür. Yenisi əvvəl yüklənir ki, yanlış fayl olsa köhnə şəkil itməsin
+            var oldImage = design.Image;
             string? newImage = null;
             if (model.Image is not null && model.Image.Length > 0)
             {
                 newImage = await _files.UploadFileAsync(model.Image, Folder);
-                oldImage = design.Image;
                 design.Image = newImage;
             }
 
@@ -106,6 +105,7 @@ namespace Service.Services
             }
             catch
             {
+                // Bazaya yazılmadısa yeni fayl yetim qalmasın
                 if (newImage is not null)
                 {
                     await _files.DeleteFileAsync(newImage);
@@ -114,27 +114,43 @@ namespace Service.Services
             }
 
             // Yeni şəkil uğurla yazıldı: köhnəsi silinir
-            if (oldImage is not null)
+            if (newImage is not null)
             {
                 await _files.DeleteFileAsync(oldImage);
             }
-
-            return ServiceResult<CardDesignAdminDto>.Ok(ToAdminDto(design));
         }
 
-        public async Task<OperationResponse> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             var design = await _repo.GetByIdAsync(id);
-            if (design is null)
+            if (design is null) throw new NotFoundException();
+
+            // Kartlar və ya kart növü qaydaları bu dizayna bağlıdırsa silinmir (bazada da Restrict qoyulub)
+            if (await _repo.IsUsedAsync(id))
             {
-                return new OperationResponse { IsSuccess = false, Errors = new[] { "Not found." } };
+                throw new BadRequestException("This design is used by a card type or by customer cards, so it cannot be deleted. Hide it from Home instead.");
             }
 
             var image = design.Image;
+
+            // Əvvəl baza, sonra fayl: baza silməsi xəta versə şəkil yerində qalır
             await _repo.DeleteAsync(design);
             await _files.DeleteFileAsync(image);
+        }
 
-            return new OperationResponse { IsSuccess = true };
+        // Home-da artıq 3 dizayn göstərilirsə dördüncünü göstərmək olmaz (yelpazədə yer yoxdur və sakitcə görünməzdi)
+        private async Task EnsureHomeSlotAsync(bool showOnHome, int? exceptId)
+        {
+            if (!showOnHome)
+            {
+                return;
+            }
+
+            var shown = await _repo.CountShownAsync(exceptId);
+            if (shown >= MaxHomeCards)
+            {
+                throw new BadRequestException($"Only {MaxHomeCards} designs can be shown on Home. Hide another one first.");
+            }
         }
 
         private static CardDesignAdminDto ToAdminDto(CardDesign d)

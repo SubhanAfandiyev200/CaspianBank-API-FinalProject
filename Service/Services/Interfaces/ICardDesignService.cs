@@ -1,5 +1,4 @@
 using Service.Helpers.DTOs.CardDesigns;
-using Service.Helpers.Responses;
 
 namespace Service.Services.Interfaces
 {
@@ -10,8 +9,9 @@ namespace Service.Services.Interfaces
 
         // Admin
         Task<IEnumerable<CardDesignAdminDto>> GetAllAsync();
-        Task<ServiceResult<CardDesignAdminDto>> CreateAsync(CreateCardDesignDto model);
-        Task<ServiceResult<CardDesignAdminDto>> UpdateAsync(int id, UpdateCardDesignDto model);
-        Task<OperationResponse> DeleteAsync(int id);
+        Task<CardDesignAdminDto> GetDetailAsync(int id);
+        Task CreateAsync(CreateCardDesignDto model);
+        Task UpdateAsync(int id, UpdateCardDesignDto model);
+        Task DeleteAsync(int id);
     }
 }

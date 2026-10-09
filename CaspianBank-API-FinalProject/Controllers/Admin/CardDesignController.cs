@@ -1,4 +1,3 @@
-using CaspianBank_API_FinalProject.Requests;
 using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,56 +25,33 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
             return Ok(await _service.GetAllAsync());
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDetail(int id)
+        {
+            return Ok(await _service.GetDetailAsync(id));
+        }
+
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Create([FromForm] CardDesignForm form)
+        public async Task<IActionResult> Create([FromForm] CreateCardDesignDto request)
         {
-            // Şəklin ölçüsünü və növünü FileService yoxlayır, yanlışdırsa global exception middleware 400 qaytarır
-            var result = await _service.CreateAsync(new CreateCardDesignDto
-            {
-                Title = form.Title,
-                ShowOnHome = form.ShowOnHome,
-                DisplayOrder = form.DisplayOrder,
-                Image = form.Image
-            });
-
-            if (!result.IsSuccess)
-            {
-                return BadRequest(new { isSuccess = false, errors = result.Errors });
-            }
-
-            return Ok(result.Data);
+            await _service.CreateAsync(request);
+            return Ok();
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Update(int id, [FromForm] CardDesignForm form)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateCardDesignDto request)
         {
-            var result = await _service.UpdateAsync(id, new UpdateCardDesignDto
-            {
-                Title = form.Title,
-                ShowOnHome = form.ShowOnHome,
-                DisplayOrder = form.DisplayOrder,
-                Image = form.Image
-            });
-
-            if (result.IsNotFound)
-            {
-                return NotFound();
-            }
-            if (!result.IsSuccess)
-            {
-                return BadRequest(new { isSuccess = false, errors = result.Errors });
-            }
-
-            return Ok(result.Data);
+            await _service.UpdateAsync(id, request);
+            return NoContent();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _service.DeleteAsync(id);
-            return result.IsSuccess ? NoContent() : NotFound();
+            await _service.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

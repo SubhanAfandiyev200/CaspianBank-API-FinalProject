@@ -26,5 +26,19 @@ namespace Repository.Repositories
                     .OrderBy(d => d.DisplayOrder).ThenBy(d => d.Id)
                     .ToListAsync();
         }
+
+        public async Task<int> CountShownAsync(int? exceptId)
+        {
+            return await _dbSet.CountAsync(d => d.ShowOnHome && (exceptId == null || d.Id != exceptId));
+        }
+
+        public async Task<bool> IsUsedAsync(int id)
+        {
+            if (await _dbContext.Cards.AnyAsync(c => c.CardDesignId == id))
+            {
+                return true;
+            }
+            return await _dbContext.CardTierConfigs.AnyAsync(c => c.CardDesignId == id);
+        }
     }
 }
