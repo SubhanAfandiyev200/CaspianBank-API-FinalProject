@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class AboutPillarRepository : BaseRepository<AboutPillar>, IAboutPillarRepository
     {
-        public AboutPillarRepository(AppDbContext context) : base(context) { }
+        public AboutPillarRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

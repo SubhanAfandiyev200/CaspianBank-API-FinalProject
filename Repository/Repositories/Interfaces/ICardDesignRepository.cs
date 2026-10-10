@@ -10,5 +10,11 @@ namespace Repository.Repositories.Interfaces
 
         // Admin üçün: hamısı, sıra ilə
         Task<IEnumerable<CardDesign>> GetAllOrderedAsync();
+
+        // Home-da göstərilən dizaynların sayı (exceptId verilibsə o dizayn sayılmır: onu redaktə edirik)
+        Task<int> CountShownAsync(int? exceptId);
+
+        // Dizaynı kartlar və ya kart növü qaydaları istifadə edirsə true (belə dizayn silinə bilməz)
+        Task<bool> IsUsedAsync(int id);
     }
 }

@@ -1,4 +1,5 @@
 using CaspianBank_API_FinalProject.Helpers;
+using CaspianBank_API_FinalProject.Middlewares;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -15,6 +16,9 @@ using System.Text;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Yalnız bu kompüterdəki gizli məlumatlar (məs. işçi hesablarının parolları). Fayl .gitignore-dadır, yoxdursa heç nə olmur
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 
@@ -37,7 +41,14 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
             Array.Empty<string>()
         }
     });
@@ -52,7 +63,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddServiceLayer();
-builder.Services.AddScoped<IImageStorage, LocalImageStorage>();
 builder.Services.AddRepositoryLayer();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -160,6 +170,12 @@ using (var scope = app.Services.CreateScope())
 
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleSeeder.SeedAsync(roleManager);
+
+    // İşçi hesabları (appsettings.json -> SeedAdmins): hesab artıq varsa toxunulmur
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+    var seedAdmins = app.Configuration.GetSection("SeedAdmins").Get<List<SeedAdminSettings>>() ?? new List<SeedAdminSettings>();
+    var seedLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("AdminSeeder");
+    await AdminSeeder.SeedAsync(userManager, seedAdmins, seedLogger);
 }
 
 // Configure the HTTP request pipeline.
@@ -168,6 +184,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Ən başda dayansın ki, sonrakı hər şeydə atılan xəta tutulsun
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseForwardedHeaders();
 

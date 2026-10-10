@@ -6,6 +6,8 @@ namespace Repository.Repositories
 {
     public class CardHeroRepository : BaseRepository<CardHero>, ICardHeroRepository
     {
-        public CardHeroRepository(AppDbContext context) : base(context) { }
+        public CardHeroRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

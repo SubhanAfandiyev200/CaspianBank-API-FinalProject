@@ -148,7 +148,11 @@ namespace Service.Services
             otp.VerifiedAt = DateTime.UtcNow;
             await _otpRepo.UpdateAsync(otp);
 
-            return new VerifyOtpResponse { IsSuccess = true, VerificationToken = token };
+            return new VerifyOtpResponse
+            {
+                IsSuccess = true,
+                VerificationToken = token
+            };
         }
 
         public async Task<bool> IsVerifiedAsync(string email, string verificationToken)
@@ -200,12 +204,20 @@ namespace Service.Services
 
         private static SendOtpResponse SendFail(params string[] errors)
         {
-            return new() { IsSuccess = false, Errors = errors };
+            return new()
+            {
+                IsSuccess = false,
+                Errors = errors
+            };
         }
 
         private static VerifyOtpResponse VerifyFail(params string[] errors)
         {
-            return new() { IsSuccess = false, Errors = errors };
+            return new()
+            {
+                IsSuccess = false,
+                Errors = errors
+            };
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Repository
         public static IServiceCollection AddRepositoryLayer(this IServiceCollection services)
         {
             services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IHomeTickerRepository, HomeTickerRepository>();
             services.AddScoped<IAboutRepository, AboutRepository>();

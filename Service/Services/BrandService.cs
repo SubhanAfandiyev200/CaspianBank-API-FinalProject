@@ -1,5 +1,9 @@
-﻿using Repository.Repositories.Interfaces;
+﻿using Domain.Entities;
+using FluentValidation;
+using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.Brands;
+using Service.Helpers.Exceptions;
+using Service.Helpers.Validators;
 using Service.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,9 +16,68 @@ namespace Service.Services
     public class BrandService : IBrandService
     {
         private readonly IBrandRepository _brandRepo;
-        public BrandService(IBrandRepository brandRepo)
+        private readonly IFileService _fileService;
+        private readonly IValidator<CreateBrandDto> _createValidator;
+        private readonly IValidator<UpdateBrandDto> _updateValidator;
+        public BrandService(IBrandRepository brandRepo,
+                            IFileService fileService,
+                            IValidator<CreateBrandDto> createValidator,
+                            IValidator<UpdateBrandDto> updateValidator)
         {
             _brandRepo = brandRepo;
+            _fileService = fileService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+        }
+
+        public async Task CreateAsync(CreateBrandDto model)
+        {
+            // Ad və şəklin seçilməsi CreateBrandDtoValidator-da yoxlanılır
+            await _createValidator.EnsureValidAsync(model);
+            var name = model.Name!.Trim();
+
+            // Fayl /images/brands/<təsadüfi ad> altına yazılır (FileService yolun əvvəlinə /images/ özü əlavə edir)
+            string imagePath = await _fileService.UploadFileAsync(model.Image!, "brands");
+
+            var brand = new Brand
+            {
+                Image = imagePath,
+                Name = name
+            };
+
+            try
+            {
+                await _brandRepo.AddAsync(brand);
+            }
+            catch
+            {
+                // Bazaya yazılmadısa şəkil faylı yetim qalmasın
+                await _fileService.DeleteFileAsync(imagePath);
+                throw;
+            }
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var brand = await _brandRepo.GetByIdAsync(id);
+            if (brand is null) throw new NotFoundException();
+
+            var imagePath = brand.Image;
+
+            // Əvvəl baza, sonra fayl: baza silməsi xəta versə şəkil yerində qalır (sətir qalıb şəkil itməsin)
+            await _brandRepo.DeleteAsync(brand);
+            await _fileService.DeleteFileAsync(imagePath);
+        }
+
+        public async Task<IEnumerable<BrandDto>> GetAllAsync()
+        {
+            var result = await _brandRepo.GetAllAsync();
+            return result.OrderBy(m => m.CreatedAt).Select(m => new BrandDto
+            {
+                Id = m.Id,
+                Image = m.Image,
+                Name = m.Name
+            });
         }
 
         public async Task<IEnumerable<BrandDto>> GetAllUIAsync()
@@ -22,9 +85,64 @@ namespace Service.Services
             var result = await _brandRepo.GetAllAsync();
             return result.OrderByDescending(m => m.CreatedAt).Select(m => new BrandDto
             {
+                Id = m.Id,
                 Image = m.Image,
                 Name = m.Name
             });
+        }
+
+        public async Task<BrandDto> GetDetailAsync(int id)
+        {
+            var brand = await _brandRepo.GetByIdAsync(id);
+            if (brand is null) throw new NotFoundException();
+            return new BrandDto
+            {
+                Image = brand.Image,
+                Id = brand.Id,
+                Name = brand.Name
+            };
+        }
+
+        public async Task UpdateAsync(int id, UpdateBrandDto model)
+        {
+            await _updateValidator.EnsureValidAsync(model);
+
+            var brand = await _brandRepo.GetByIdAsync(id);
+            if (brand is null) throw new NotFoundException();
+
+            var name = model.Name!.Trim();
+
+            // Köhnə şəklin yolu həmişə bazadan götürülür (müştəridən gələn yola etibar edilmir)
+            var oldImage = brand.Image;
+            string? newImage = null;
+
+            // Şəkil seçilməyibsə köhnəsi qalır. Yenisi əvvəl yüklənir ki, yanlış fayl olsa köhnə şəkil itməsin
+            if (model.Image is not null && model.Image.Length > 0)
+            {
+                newImage = await _fileService.UploadFileAsync(model.Image, "brands");
+                brand.Image = newImage;
+            }
+            brand.Name = name;
+
+            try
+            {
+                await _brandRepo.UpdateAsync(brand);
+            }
+            catch
+            {
+                // Bazaya yazılmadısa yeni fayl yetim qalmasın
+                if (newImage is not null)
+                {
+                    await _fileService.DeleteFileAsync(newImage);
+                }
+                throw;
+            }
+
+            // Yeni şəkil uğurla yazıldı: köhnəsi silinir
+            if (newImage is not null)
+            {
+                await _fileService.DeleteFileAsync(oldImage);
+            }
         }
     }
 }

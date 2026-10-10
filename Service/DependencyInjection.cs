@@ -13,6 +13,7 @@ namespace Service
         public static IServiceCollection AddServiceLayer(this IServiceCollection services)
         {
             services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<IFileService, FileService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOtpService, OtpService>();

@@ -10,11 +10,18 @@ namespace Service.Helpers.Responses
 
         public static ServiceResult<T> Ok(T data)
         {
-            return new() { IsSuccess = true, Data = data };
+            return new()
+            {
+                IsSuccess = true,
+                Data = data
+            };
         }
         public static ServiceResult<T> Fail(params string[] errors)
         {
-            return new() { Errors = errors };
+            return new()
+            {
+                Errors = errors
+            };
         }
         public static ServiceResult<T> NotFound()
         {

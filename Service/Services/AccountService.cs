@@ -74,7 +74,10 @@ namespace Service.Services
             // Token yalnız bir dəfə işləyir
             await _otpService.ConsumeVerificationAsync(model.Email, model.VerificationToken);
 
-            return new RegisterResponse { IsSuccess = true };
+            return new RegisterResponse
+            {
+                IsSuccess = true
+            };
         }
 
         public async Task<LoginResponse> LoginAsync(LoginDto model)
@@ -138,17 +141,29 @@ namespace Service.Services
             }
 
             var user = await _accountRepository.GetByEmailAsync(model.Email.Trim());
-            return new CheckEmailResponse { IsSuccess = true, Exists = user is not null };
+            return new CheckEmailResponse
+            {
+                IsSuccess = true,
+                Exists = user is not null
+            };
         }
 
         private static RegisterResponse Fail(params string[] errors)
         {
-            return new() { IsSuccess = false, Errors = errors };
+            return new()
+            {
+                IsSuccess = false,
+                Errors = errors
+            };
         }
 
         private static LoginResponse FailLogin(params string[] errors)
         {
-            return new() { IsSuccess = false, Errors = errors };
+            return new()
+            {
+                IsSuccess = false,
+                Errors = errors
+            };
         }
     }
 }

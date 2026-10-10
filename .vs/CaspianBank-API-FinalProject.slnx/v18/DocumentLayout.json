@@ -3,6 +3,34 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\caspianbank-api-finalproject\\controllers\\admin\\brandcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|solutionrelative:caspianbank-api-finalproject\\controllers\\admin\\brandcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\services\\brandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\services\\brandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\helpers\\dtos\\brands\\branddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\helpers\\dtos\\brands\\branddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\helpers\\exceptions\\notfoundexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\helpers\\exceptions\\notfoundexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\service\\services\\interfaces\\ibrandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8AD66E91-0F5D-4458-A6BD-68253B4750FE}|Service\\Service.csproj|solutionrelative:service\\services\\interfaces\\ibrandservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|solutionrelative:repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\caspianbank-api-finalproject\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{E14B68FC-8C38-7AB5-C493-3D0ACBBF1F80}|CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject.csproj|solutionrelative:caspianbank-api-finalproject\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\domain\\entities\\cardtierconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{390DA78D-89A8-4A68-9FC8-D8541AF88CDD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\cardtierconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|c:\\users\\user\\desktop\\caspianbank-api-finalproject\\repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F599AB54-D8B5-45EA-B768-0A27BD98EEF4}|Repository\\Repository.csproj|solutionrelative:repository\\repositories\\carddesignrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,8 +50,86 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "NotFoundException.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\Exceptions\\NotFoundException.cs",
+              "RelativeDocumentMoniker": "Service\\Helpers\\Exceptions\\NotFoundException.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\Exceptions\\NotFoundException.cs",
+              "RelativeToolTip": "Service\\Helpers\\Exceptions\\NotFoundException.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T17:06:13.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BrandDto.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Brands\\BrandDto.cs",
+              "RelativeDocumentMoniker": "Service\\Helpers\\DTOs\\Brands\\BrandDto.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Helpers\\DTOs\\Brands\\BrandDto.cs",
+              "RelativeToolTip": "Service\\Helpers\\DTOs\\Brands\\BrandDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T16:21:38.587Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BrandService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\BrandService.cs",
+              "RelativeDocumentMoniker": "Service\\Services\\BrandService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\BrandService.cs",
+              "RelativeToolTip": "Service\\Services\\BrandService.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAQwDMAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T16:12:28.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IBrandService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\Interfaces\\IBrandService.cs",
+              "RelativeDocumentMoniker": "Service\\Services\\Interfaces\\IBrandService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Service\\Services\\Interfaces\\IBrandService.cs",
+              "RelativeToolTip": "Service\\Services\\Interfaces\\IBrandService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T16:11:18.16Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BrandController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\Controllers\\Admin\\BrandController.cs",
+              "RelativeDocumentMoniker": "CaspianBank-API-FinalProject\\Controllers\\Admin\\BrandController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\Controllers\\Admin\\BrandController.cs",
+              "RelativeToolTip": "CaspianBank-API-FinalProject\\Controllers\\Admin\\BrandController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T16:02:01.554Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\appsettings.json",
+              "RelativeDocumentMoniker": "CaspianBank-API-FinalProject\\appsettings.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\CaspianBank-API-FinalProject\\appsettings.json",
+              "RelativeToolTip": "CaspianBank-API-FinalProject\\appsettings.json",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAIwBkAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-07T14:43:37.474Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -42,7 +144,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
               "Title": "Card.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\Card.cs",
               "RelativeDocumentMoniker": "Domain\\Entities\\Card.cs",
@@ -55,19 +157,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CardTierConfig.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
-              "RelativeDocumentMoniker": "Domain\\Entities\\CardTierConfig.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
-              "RelativeToolTip": "Domain\\Entities\\CardTierConfig.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAkAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "CardDesignRepository.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\Repositories\\CardDesignRepository.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
+              "RelativeToolTip": "Repository\\Repositories\\CardDesignRepository.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-06T04:05:22.158Z"
+              "WhenOpened": "2026-10-06T02:13:08.692Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 8,
               "Title": "CardTier.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Enums\\CardTier.cs",
               "RelativeDocumentMoniker": "Domain\\Enums\\CardTier.cs",
@@ -79,15 +182,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CardDesignRepository.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
-              "RelativeDocumentMoniker": "Repository\\Repositories\\CardDesignRepository.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Repository\\Repositories\\CardDesignRepository.cs",
-              "RelativeToolTip": "Repository\\Repositories\\CardDesignRepository.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBkAAAABAAAAAAAAAA==",
+              "DocumentIndex": 9,
+              "Title": "CardTierConfig.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\CardTierConfig.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-API-FinalProject\\Domain\\Entities\\CardTierConfig.cs",
+              "RelativeToolTip": "Domain\\Entities\\CardTierConfig.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-06T02:13:08.692Z"
+              "WhenOpened": "2026-10-06T04:05:22.158Z"
             }
           ]
         }

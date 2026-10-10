@@ -122,6 +122,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.BrandController",
+    "Method": "GetAllBrands",
+    "RelativePath": "api/admin/brands",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CaspianBank_API_FinalProject.Controllers.Admin.CardDesignController",
     "Method": "GetAll",
     "RelativePath": "api/admin/card-designs",

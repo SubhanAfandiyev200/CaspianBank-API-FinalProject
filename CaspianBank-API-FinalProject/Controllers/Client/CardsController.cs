@@ -82,11 +82,19 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         {
             if (result.IsNotFound)
             {
-                return NotFound(new { isSuccess = false, errors = result.Errors });
+                return NotFound(new
+                {
+                    isSuccess = false,
+                    errors = result.Errors
+                });
             }
             if (!result.IsSuccess)
             {
-                return BadRequest(new { isSuccess = false, errors = result.Errors });
+                return BadRequest(new
+                {
+                    isSuccess = false,
+                    errors = result.Errors
+                });
             }
             return Ok(result.Data);
         }

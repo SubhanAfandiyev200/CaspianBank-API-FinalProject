@@ -16,6 +16,6 @@ namespace Domain.Entities
         public decimal TransferLimit { get; set; }
         public decimal CommissionPercent { get; set; }
         public int CardDesignId { get; set; }
-        public CardDesign CardDesign { get; set; }
+        public CardDesign CardDesign { get; set; } = null!;
     }
 }

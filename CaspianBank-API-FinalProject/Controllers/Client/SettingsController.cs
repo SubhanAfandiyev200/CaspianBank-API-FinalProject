@@ -18,7 +18,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            return Ok(await _settingService.GetAllAsync());
+            return Ok(await _settingService.GetAllUIAsync());
         }
     }
 }

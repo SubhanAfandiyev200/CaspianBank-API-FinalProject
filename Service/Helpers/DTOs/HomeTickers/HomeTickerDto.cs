@@ -8,6 +8,7 @@ namespace Service.Helpers.DTOs.HomeTickers
 {
     public class HomeTickerDto
     {
+        public int Id { get; set; }
         public string Text { get; set; } = string.Empty;
     }
 }

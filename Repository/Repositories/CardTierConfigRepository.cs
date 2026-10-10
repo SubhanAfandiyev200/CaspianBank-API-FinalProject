@@ -8,7 +8,9 @@ namespace Repository.Repositories
 {
     public class CardTierConfigRepository : BaseRepository<CardTierConfig>, ICardTierConfigRepository
     {
-        public CardTierConfigRepository(AppDbContext context) : base(context) { }
+        public CardTierConfigRepository(AppDbContext context) : base(context)
+        {
+        }
 
         // Tier unikaldır: hər növün tək qaydası var
         public async Task<CardTierConfig?> GetByTierAsync(CardTier tier)

@@ -11,6 +11,8 @@ namespace Repository.Repositories
 {
     public class BenefitSectionRepository : BaseRepository<BenefitSection>, IBenefitSectionRepository
     {
-        public BenefitSectionRepository(AppDbContext context) : base(context) { }
+        public BenefitSectionRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }

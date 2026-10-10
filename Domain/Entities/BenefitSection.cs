@@ -9,9 +9,9 @@ namespace Domain.Entities
 {
     public class BenefitSection : BaseEntity
     {
-        public string Label { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public ICollection<BenefitItem> BenefitItems { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public ICollection<BenefitItem> BenefitItems { get; set; } = new List<BenefitItem>();
     }
 }

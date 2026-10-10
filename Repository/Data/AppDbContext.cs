@@ -22,7 +22,9 @@ namespace Repository.Data
         public DbSet<BenefitItem> BenefitItems { get; set; }
         public DbSet<BenefitSection> BenefitSections { get; set; }
         public DbSet<HomeTicker> HomeTickers { get; set; }
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder); // Identity-nin öz konfiqurasiyası üçün vacibdir
