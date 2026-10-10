@@ -21,5 +21,17 @@ namespace Repository.Repositories
                 .Take(take)
                 .ToListAsync();
         }
+
+        public async Task<IReadOnlyList<Transaction>> GetRecentForUserAsync(string userId, int take)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(t => t.Card)
+                .Where(t => t.Card.UserId == userId)
+                .OrderByDescending(t => t.CreatedAt)
+                .ThenByDescending(t => t.Id)
+                .Take(take)
+                .ToListAsync();
+        }
     }
 }

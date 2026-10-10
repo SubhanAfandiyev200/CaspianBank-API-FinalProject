@@ -246,6 +246,27 @@ namespace Service.Services
             return ServiceResult<IEnumerable<TransactionDto>>.Ok(result);
         }
 
+        public async Task<IEnumerable<TransactionDto>> GetRecentActivityAsync(string userId, int take)
+        {
+            var limit = Math.Clamp(take, 1, 50);
+            var rows = await _transactions.GetRecentForUserAsync(userId, limit);
+
+            return rows.Select(t => new TransactionDto
+            {
+                Id = t.Id,
+                CardId = t.CardId,
+                CardLabel = t.Card.Tier + " •••• " + t.Card.CardNumber[^4..],
+                Type = t.Type.ToString(),
+                IsIncome = t.IsIncome,
+                Amount = t.Amount,
+                BalanceAfter = t.BalanceAfter,
+                Description = t.Description,
+                Note = t.Note,
+                Reference = t.Reference,
+                CreatedAt = t.CreatedAt
+            }).ToList();
+        }
+
         public async Task<ServiceResult<CardDto>> BlockAsync(string userId, int cardId, BlockCardDto model)
         {
             var validation = await _blockValidator.ValidateAsync(model);

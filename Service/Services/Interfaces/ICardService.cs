@@ -20,6 +20,9 @@ namespace Service.Services.Interfaces
         // Kartın ən son əməliyyatları (yalnız sahibi görür)
         Task<ServiceResult<IEnumerable<TransactionDto>>> GetTransactionsAsync(string userId, int cardId, int take);
 
+        // Bütün kartların son əməliyyatları (Cards səhifəsindəki "Recent activity")
+        Task<IEnumerable<TransactionDto>> GetRecentActivityAsync(string userId, int take);
+
         // Email + parolla təsdiq edib kartı bloklayır
         Task<ServiceResult<CardDto>> BlockAsync(string userId, int cardId, BlockCardDto model);
     }

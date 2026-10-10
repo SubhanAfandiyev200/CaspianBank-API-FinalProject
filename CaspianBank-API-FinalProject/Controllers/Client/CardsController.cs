@@ -42,6 +42,13 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.GetMyCardAsync(UserId, id));
         }
 
+        // Bütün kartların ən son əməliyyatları (Cards səhifəsindəki "Recent activity"). "activity" sabit sözdür, {id:int} ilə qarışmır
+        [HttpGet("activity")]
+        public async Task<IActionResult> GetActivity([FromQuery] int take = 8)
+        {
+            return Ok(await _cardService.GetRecentActivityAsync(UserId, take));
+        }
+
         // Kartın ən son əməliyyatları (kart səhifəsindəki "Recent activity")
         [HttpGet("{id:int}/transactions")]
         public async Task<IActionResult> GetTransactions(int id, [FromQuery] int take = 20)
