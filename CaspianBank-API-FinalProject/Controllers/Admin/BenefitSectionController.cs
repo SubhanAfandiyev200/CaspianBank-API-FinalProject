@@ -8,7 +8,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // Benefits blokunun başlığı. Tək yazıdır: yalnız oxunur və dəyişdirilir. Kartlar BenefitItemController-dədir
     [Route("api/admin/benefit-section")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class BenefitSectionController : ControllerBase
     {
         private readonly IBenefitSectionService _benefitSectionService;

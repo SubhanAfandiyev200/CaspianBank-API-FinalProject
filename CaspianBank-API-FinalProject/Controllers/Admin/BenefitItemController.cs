@@ -7,7 +7,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
     [Route("api/admin/benefit-items")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class BenefitItemController : ControllerBase
     {
         private readonly IBenefitItemService _benefitItemService;

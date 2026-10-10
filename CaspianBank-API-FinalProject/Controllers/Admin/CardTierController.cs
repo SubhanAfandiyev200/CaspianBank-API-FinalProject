@@ -7,7 +7,7 @@ using Service.Services.Interfaces;
 namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
     // Kart növlərinin qaydaları (açılış haqqı, cashback, limit, komissiya, dizayn). Dörd növ kodda sabitdir: yalnız oxunur və dəyişdirilir.
-    // Pul qaydaları olduğu üçün WebDesigner yox, Accountant, Admin və SuperAdmin dəyişə bilər
+    // Pul qaydalarını Accountant, Admin və SuperAdmin dəyişə bilər
     [Route("api/admin/card-tiers")]
     [ApiController]
     [Authorize(Roles = Roles.Accountant + "," + Roles.Admin + "," + Roles.SuperAdmin)]
@@ -20,7 +20,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
             _cardTierService = cardTierService;
             _cardDesignService = cardDesignService;
         }
-        // Edit formasındakı dizayn siyahısı. Kart dizaynlarının öz endpoint-i (api/admin/card-designs) WebDesigner üçündür, burada bu rolların da oxuya bilməsi üçün ayrıca verilir
+        // Edit formasındakı dizayn siyahısı. Kart dizaynlarının öz endpoint-i (api/admin/card-designs) yalnız Admin və SuperAdmin üçündür, Accountant da oxuya bilsin deyə burada ayrıca verilir
         [HttpGet("designs")]
         public async Task<IActionResult> GetDesigns()
         {

@@ -9,7 +9,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // Loqo şəkildir, ona görə ayrıca endpoint-lə yüklənir
     [Route("api/admin/settings")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class SettingController : ControllerBase
     {
         private readonly ISettingService _settingService;

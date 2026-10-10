@@ -9,7 +9,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
     [Route("api/admin/brands")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class BrandController : ControllerBase
     {
         private readonly IBrandService _brandService;

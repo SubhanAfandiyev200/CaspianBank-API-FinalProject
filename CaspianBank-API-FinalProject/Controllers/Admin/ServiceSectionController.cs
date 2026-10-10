@@ -8,7 +8,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // Services blokunun başlığı. Tək yazıdır: yalnız oxunur və dəyişdirilir. Kartlar ServiceItemController-dədir
     [Route("api/admin/service-section")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class ServiceSectionController : ControllerBase
     {
         private readonly IServiceSectionService _serviceSectionService;
