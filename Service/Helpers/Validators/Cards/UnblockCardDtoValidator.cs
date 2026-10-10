@@ -3,9 +3,9 @@ using Service.Helpers.DTOs.Cards;
 
 namespace Service.Helpers.Validators.Cards
 {
-    public class BlockCardDtoValidator : AbstractValidator<BlockCardDto>
+    public class UnblockCardDtoValidator : AbstractValidator<UnblockCardDto>
     {
-        public BlockCardDtoValidator()
+        public UnblockCardDtoValidator()
         {
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)

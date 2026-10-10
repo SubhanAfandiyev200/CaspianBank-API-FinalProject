@@ -77,12 +77,34 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.TopUpAsync(UserId, id, model));
         }
 
-        // Parol yoxlaması olduğu üçün giriş endpoint-ləri kimi sürət limitlidir
+        // Bloklama / blokdan çıxarma iki addımdır: əvvəl kod emailə göndərilir (.../code), sonra kodla təsdiq olunur.
+        // Email göndərən və kodu yoxlayan endpoint-lər giriş endpoint-ləri kimi sürət limitlidir
+        [EnableRateLimiting("auth")]
+        [HttpPost("{id:int}/block/code")]
+        public async Task<IActionResult> SendBlockCode(int id)
+        {
+            return ToResponse(await _cardService.SendBlockCodeAsync(UserId, id));
+        }
+
         [EnableRateLimiting("auth")]
         [HttpPost("{id:int}/block")]
         public async Task<IActionResult> Block(int id, [FromBody] BlockCardDto model)
         {
             return ToResponse(await _cardService.BlockAsync(UserId, id, model));
+        }
+
+        [EnableRateLimiting("auth")]
+        [HttpPost("{id:int}/unblock/code")]
+        public async Task<IActionResult> SendUnblockCode(int id)
+        {
+            return ToResponse(await _cardService.SendUnblockCodeAsync(UserId, id));
+        }
+
+        [EnableRateLimiting("auth")]
+        [HttpPost("{id:int}/unblock")]
+        public async Task<IActionResult> Unblock(int id, [FromBody] UnblockCardDto model)
+        {
+            return ToResponse(await _cardService.UnblockAsync(UserId, id, model));
         }
 
         private IActionResult ToResponse<T>(ServiceResult<T> result)

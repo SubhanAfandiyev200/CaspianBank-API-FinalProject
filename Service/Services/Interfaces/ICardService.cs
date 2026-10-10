@@ -23,7 +23,11 @@ namespace Service.Services.Interfaces
         // Bütün kartların son əməliyyatları (Cards səhifəsindəki "Recent activity")
         Task<IEnumerable<TransactionDto>> GetRecentActivityAsync(string userId, int take);
 
-        // Email + parolla təsdiq edib kartı bloklayır
+        // Kartı bloklamaq / blokdan çıxarmaq: əvvəl hesabın emailinə 6 rəqəmli kod göndərilir (Send...CodeAsync),
+        // sonra istifadəçi kodu yazır (BlockAsync / UnblockAsync)
+        Task<ServiceResult<CardCodeSentDto>> SendBlockCodeAsync(string userId, int cardId);
         Task<ServiceResult<CardDto>> BlockAsync(string userId, int cardId, BlockCardDto model);
+        Task<ServiceResult<CardCodeSentDto>> SendUnblockCodeAsync(string userId, int cardId);
+        Task<ServiceResult<CardDto>> UnblockAsync(string userId, int cardId, UnblockCardDto model);
     }
 }

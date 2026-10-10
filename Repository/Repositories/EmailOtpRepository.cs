@@ -11,20 +11,20 @@ namespace Repository.Repositories
         {
         }
 
-        // Ən son yaradılmış, hələ istifadə olunmamış və vaxtı keçməmiş kod
-        public Task<EmailOtp?> GetLatestActiveAsync(string email)
+        // Ən son yaradılmış, hələ istifadə olunmamış və vaxtı keçməmiş kod (yalnız bu məqsəd üçün)
+        public Task<EmailOtp?> GetLatestActiveAsync(string email, string purpose)
         {
             return _dbSet
-                    .Where(o => o.Email == email && !o.IsUsed && o.ExpiresAt > DateTime.UtcNow)
+                    .Where(o => o.Email == email && o.Purpose == purpose && !o.IsUsed && o.ExpiresAt > DateTime.UtcNow)
                     .OrderByDescending(o => o.CreatedAt)
                     .FirstOrDefaultAsync();
         }
 
         // Ən son kod (istifadə olunub-olunmamasından asılı olmayaraq): yenidən göndərmə gözləmə müddəti üçün
-        public Task<EmailOtp?> GetLatestAsync(string email)
+        public Task<EmailOtp?> GetLatestAsync(string email, string purpose)
         {
             return _dbSet
-                    .Where(o => o.Email == email)
+                    .Where(o => o.Email == email && o.Purpose == purpose)
                     .OrderByDescending(o => o.CreatedAt)
                     .FirstOrDefaultAsync();
         }
@@ -38,11 +38,11 @@ namespace Repository.Repositories
                     && o.VerifiedAt >= verifiedAfter);
         }
 
-        // Yeni kod göndəriləndə köhnə aktiv kodlar etibarsız olur
-        public Task InvalidateActiveAsync(string email)
+        // Yeni kod göndəriləndə eyni məqsədli köhnə aktiv kodlar etibarsız olur
+        public Task InvalidateActiveAsync(string email, string purpose)
         {
             return _dbSet
-                    .Where(o => o.Email == email && !o.IsUsed)
+                    .Where(o => o.Email == email && o.Purpose == purpose && !o.IsUsed)
                     .ExecuteUpdateAsync(s => s.SetProperty(o => o.IsUsed, true));
         }
     }

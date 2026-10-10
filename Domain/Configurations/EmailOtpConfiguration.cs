@@ -9,6 +9,7 @@ namespace Domain.Configurations
         public void Configure(EntityTypeBuilder<EmailOtp> builder)
         {
             builder.Property(m => m.Email).IsRequired().HasMaxLength(256);
+            builder.Property(m => m.Purpose).IsRequired().HasMaxLength(50).HasDefaultValue("Register");
             builder.Property(m => m.CodeHash).IsRequired().HasMaxLength(100);
             builder.Property(m => m.VerificationTokenHash).HasMaxLength(100);
 

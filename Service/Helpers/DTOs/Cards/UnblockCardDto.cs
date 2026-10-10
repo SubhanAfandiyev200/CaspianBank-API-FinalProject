@@ -1,7 +1,7 @@
 namespace Service.Helpers.DTOs.Cards
 {
-    // Kartı bloklamaq: emailə gələn 6 rəqəmli kod
-    public class BlockCardDto
+    // Kartı blokdan çıxarmaq: emailə gələn 6 rəqəmli kod
+    public class UnblockCardDto
     {
         public string Code { get; set; } = string.Empty;
     }
