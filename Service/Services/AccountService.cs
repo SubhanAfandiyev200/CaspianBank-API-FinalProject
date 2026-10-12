@@ -141,6 +141,37 @@ namespace Service.Services
             };
         }
 
+        public async Task<ProfileDto?> GetProfileAsync(string userId)
+        {
+            var user = await _accountRepository.GetByIdAsync(userId);
+            if (user is null)
+            {
+                return null;
+            }
+
+            return new ProfileDto
+            {
+                Name = user.Name,
+                Surname = user.Surname,
+                Fin = user.FinKod,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
+                PhotoUrl = await GetPhotoUrlAsync(user)
+            };
+        }
+
+        // Şəkil reyestrdəki vətəndaşdadır (işçilərin reyestr sətri və şəkli yoxdur)
+        private async Task<string?> GetPhotoUrlAsync(AppUser user)
+        {
+            if (user.CustomerId is null)
+            {
+                return null;
+            }
+
+            var customer = await _customerRepository.GetByIdAsync(user.CustomerId.Value);
+            return customer?.PhotoUrl;
+        }
+
         // Reyestrdən vətəndaşı tapır. Tapılmasa və ya qeydiyyat olmazsa səbəb mətni qayıdır
         private async Task<(Customer? Customer, string? Error)> FindCitizenAsync(string fin, string idCardNumber, string name, string surname)
         {

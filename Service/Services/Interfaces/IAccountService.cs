@@ -11,5 +11,8 @@ namespace Service.Services.Interfaces
 
         // Qeydiyyatdan əvvəl "Bu sizsiniz?" təsdiqi: FİN + vəsiqə nömrəsi reyestrdə eyni vətəndaşa aiddirmi
         Task<CheckIdentityResponse> CheckIdentityAsync(CheckIdentityDto model);
+
+        // Giriş etmiş müştərinin profili (şəkil reyestrdən). Hesab tapılmasa null
+        Task<ProfileDto?> GetProfileAsync(string userId);
     }
 }

@@ -139,6 +139,26 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return Ok(result);
         }
 
+        // Müştərinin öz profili (UserId tokendən götürülür, başqasının profilinə baxmaq mümkün deyil)
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var profile = await _accountService.GetProfileAsync(userId);
+            if (profile is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(profile);
+        }
+
         // Tokenin işlədiyini yoxlamaq üçün: Authorization: Bearer <token>
         [Authorize]
         [HttpGet("me")]
