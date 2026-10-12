@@ -22,6 +22,12 @@ namespace Repository.Data
         public DbSet<BenefitItem> BenefitItems { get; set; }
         public DbSet<BenefitSection> BenefitSections { get; set; }
         public DbSet<HomeTicker> HomeTickers { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Workplace> Workplaces { get; set; }
+        public DbSet<Employment> Employments { get; set; }
+        public DbSet<ExternalBank> ExternalBanks { get; set; }
+        public DbSet<ExternalLoan> ExternalLoans { get; set; }
+        public DbSet<OwnBank> OwnBanks { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }

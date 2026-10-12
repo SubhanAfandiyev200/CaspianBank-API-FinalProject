@@ -23,6 +23,16 @@ namespace Domain.Configurations
             builder.HasIndex(u => u.FinKod)
                 .IsUnique()
                 .HasFilter("[FinKod] IS NOT NULL");
+
+            // Bir vətəndaş yalnız bir hesaba bağlana bilər (işçilərdə CustomerId boşdur)
+            builder.HasIndex(u => u.CustomerId)
+                .IsUnique()
+                .HasFilter("[CustomerId] IS NOT NULL");
+
+            builder.HasOne(u => u.Customer)
+                .WithMany()
+                .HasForeignKey(u => u.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
