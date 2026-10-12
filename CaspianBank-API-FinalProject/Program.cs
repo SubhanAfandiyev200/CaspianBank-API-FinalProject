@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
 using Repository.Data;
+using Repository.Repositories.Interfaces;
 using Service;
 using Service.Services.Interfaces;
 using Service.Helpers.Settings;
@@ -176,6 +177,16 @@ using (var scope = app.Services.CreateScope())
     var seedAdmins = app.Configuration.GetSection("SeedAdmins").Get<List<SeedAdminSettings>>() ?? new List<SeedAdminSettings>();
     var seedLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("AdminSeeder");
     await AdminSeeder.SeedAsync(userManager, seedAdmins, seedLogger);
+
+    // Saxta dövlət reyestri koddan yox, SQL skriptindən gəlir (Repository/Data/Seed/registry.sql): boş bazada onu SSMS-də bir dəfə işlət.
+    // Qeydiyyatdan keçmiş sınaq müştəriləri (appsettings.Local.json -> SeedCustomers): email yazılandan sonra onlarla giriş olur.
+    // Onlar reyestrdəki vətəndaşlara bağlanır, reyestr boşdursa sətir atlanır (xəbərdarlıq loglanır)
+    var seedCustomers = app.Configuration.GetSection("SeedCustomers").Get<List<SeedCustomerSettings>>() ?? new List<SeedCustomerSettings>();
+    var customerLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("CustomerAccountSeeder");
+    await CustomerAccountSeeder.SeedAsync(db, userManager,
+        scope.ServiceProvider.GetRequiredService<ICardService>(),
+        scope.ServiceProvider.GetRequiredService<ICardRepository>(),
+        seedCustomers, customerLogger);
 }
 
 // Configure the HTTP request pipeline.
