@@ -11,8 +11,11 @@ namespace Repository.Repositories.Interfaces
         Task<AppUser?> GetByEmailAsync(string email);
         Task<AppUser?> GetByIdAsync(string id);
 
-        // FİN başqa istifadəçidə varmı (öz FİN-i sayılmır)
-        Task<bool> FinInUseAsync(string fin, string exceptUserId);
+        // Bu vətəndaşa (reyestr sətri) artıq hesab bağlanıb? Bir vətəndaş yalnız bir hesab aça bilər
+        Task<bool> CustomerHasAccountAsync(int customerId);
+
+        // Telefon başqa hesabda varmı (0-lu və 0-suz yazılış eyni sayılır)
+        Task<bool> PhoneInUseAsync(string phoneNumber);
         Task<IdentityResult> UpdateAsync(AppUser user);
         Task<bool> CheckPasswordAsync(AppUser user, string password);
         Task<IList<string>> GetRolesAsync(AppUser user);

@@ -21,7 +21,6 @@ namespace Service.Services
         private readonly ICardTierConfigRepository _tiers;
         private readonly ITransactionRepository _transactions;
         private readonly IAccountRepository _accounts;
-        private readonly IValidator<CreateInitialCardsDto> _initialValidator;
         private readonly IValidator<AddCardDto> _addValidator;
         private readonly IValidator<BlockCardDto> _blockValidator;
         private readonly IValidator<UnblockCardDto> _unblockValidator;
@@ -32,7 +31,6 @@ namespace Service.Services
                            ICardTierConfigRepository tiers,
                            ITransactionRepository transactions,
                            IAccountRepository accounts,
-                           IValidator<CreateInitialCardsDto> initialValidator,
                            IValidator<AddCardDto> addValidator,
                            IValidator<BlockCardDto> blockValidator,
                            IValidator<UnblockCardDto> unblockValidator,
@@ -43,7 +41,6 @@ namespace Service.Services
             _tiers = tiers;
             _transactions = transactions;
             _accounts = accounts;
-            _initialValidator = initialValidator;
             _addValidator = addValidator;
             _blockValidator = blockValidator;
             _unblockValidator = unblockValidator;
@@ -87,18 +84,18 @@ namespace Service.Services
             return ServiceResult<CardDetailDto>.Ok(dto);
         }
 
-        public async Task<ServiceResult<IEnumerable<CardDto>>> CreateInitialCardsAsync(string userId, CreateInitialCardsDto model)
+        public async Task<ServiceResult<IEnumerable<CardDto>>> CreateInitialCardsAsync(string userId)
         {
-            var validation = await _initialValidator.ValidateAsync(model);
-            if (!validation.IsValid)
-            {
-                return ServiceResult<IEnumerable<CardDto>>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
-            }
-
             var user = await _accounts.GetByIdAsync(userId);
             if (user is null)
             {
                 return ServiceResult<IEnumerable<CardDto>>.NotFound();
+            }
+
+            // Kartlar yalnız reyestrdəki vətəndaşa bağlı hesaba açılır (qeydiyyatda bağlanır)
+            if (user.CustomerId is null)
+            {
+                return ServiceResult<IEnumerable<CardDto>>.Fail("Your account is not linked to a citizen record, so cards can't be opened.");
             }
 
             if (await _cards.UserHasCardsAsync(userId))
@@ -106,28 +103,11 @@ namespace Service.Services
                 return ServiceResult<IEnumerable<CardDto>>.Fail("Your first cards have already been created.");
             }
 
-            var fin = model.Fin.Trim().ToUpperInvariant();
-            if (await _accounts.FinInUseAsync(fin, userId))
-            {
-                return ServiceResult<IEnumerable<CardDto>>.Fail("This FIN code is already registered to another account.");
-            }
-
             var standard = await _tiers.GetByTierAsync(CardTier.Standard);
             var cashback = await _tiers.GetByTierAsync(CardTier.Cashback);
             if (standard is null || cashback is null)
             {
                 return ServiceResult<IEnumerable<CardDto>>.Fail("Card settings are not available right now. Please try again later.");
-            }
-
-            // FİN hesaba yazılır (bazada unikaldır)
-            if (user.FinKod != fin)
-            {
-                user.FinKod = fin;
-                var update = await _accounts.UpdateAsync(user);
-                if (!update.Succeeded)
-                {
-                    return ServiceResult<IEnumerable<CardDto>>.Fail("This FIN code could not be saved. Check it and try again.");
-                }
             }
 
             var created = new List<Card>

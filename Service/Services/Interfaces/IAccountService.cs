@@ -8,5 +8,8 @@ namespace Service.Services.Interfaces
         Task<RegisterResponse> RegisterAsync(RegisterDto model);
         Task<LoginResponse> LoginAsync(LoginDto model);
         Task<CheckEmailResponse> CheckEmailAsync(CheckEmailDto model);
+
+        // Qeydiyyatdan əvvəl "Bu sizsiniz?" təsdiqi: FİN + vəsiqə nömrəsi reyestrdə eyni vətəndaşa aiddirmi
+        Task<CheckIdentityResponse> CheckIdentityAsync(CheckIdentityDto model);
     }
 }

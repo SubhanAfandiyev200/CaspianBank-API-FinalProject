@@ -8,8 +8,8 @@ namespace Service.Services.Interfaces
         Task<IEnumerable<CardDto>> GetMyCardsAsync(string userId);
         Task<ServiceResult<CardDetailDto>> GetMyCardAsync(string userId, int cardId);
 
-        // İlk giriş: Standard + Cashback pulsuz (balans 0, pul top-up ilə əlavə olunur)
-        Task<ServiceResult<IEnumerable<CardDto>>> CreateInitialCardsAsync(string userId, CreateInitialCardsDto model);
+        // İlk kartlar: Standard + Cashback pulsuz (balans 0, pul top-up ilə əlavə olunur). Qeydiyyatda avtomatik çağırılır
+        Task<ServiceResult<IEnumerable<CardDto>>> CreateInitialCardsAsync(string userId);
 
         // Əlavə kart: haqq seçilən kartın balansından çıxılır
         Task<ServiceResult<CardDto>> AddCardAsync(string userId, AddCardDto model);

@@ -62,6 +62,21 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return Ok(result);
         }
 
+        // Qeydiyyatda "Bu sizsiniz?" təsdiqi: FİN + vəsiqə nömrəsi reyestrdə eyni vətəndaşa aiddirsə onun az məlumatını qaytarır.
+        // FİN və vəsiqə nömrəsini təxmin etməyin qarşısı üçün rate limiting məcburidir
+        [EnableRateLimiting("auth")]
+        [HttpPost("check-identity")]
+        public async Task<IActionResult> CheckIdentity([FromBody] CheckIdentityDto model)
+        {
+            var result = await _accountService.CheckIdentityAsync(model);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
         // Yeni email-ə 6 rəqəmli kod göndərir (emailin sahibi olduğunu təsdiqləmək üçün)
         [EnableRateLimiting("auth")]
         [HttpPost("send-otp")]

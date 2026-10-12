@@ -34,9 +34,18 @@ namespace Repository.Repositories
             return _userManager.FindByIdAsync(id);
         }
 
-        public Task<bool> FinInUseAsync(string fin, string exceptUserId)
+        public Task<bool> CustomerHasAccountAsync(int customerId)
         {
-            return _userManager.Users.AnyAsync(u => u.FinKod == fin && u.Id != exceptUserId);
+            return _userManager.Users.AnyAsync(u => u.CustomerId == customerId);
+        }
+
+        public Task<bool> PhoneInUseAsync(string phoneNumber)
+        {
+            // 0501234567 və 501234567 eyni nömrədir
+            var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+            var withZero = digits.StartsWith('0') ? digits : "0" + digits;
+            var withoutZero = withZero.Substring(1);
+            return _userManager.Users.AnyAsync(u => u.PhoneNumber == withZero || u.PhoneNumber == withoutZero);
         }
 
         public Task<IdentityResult> UpdateAsync(AppUser user)

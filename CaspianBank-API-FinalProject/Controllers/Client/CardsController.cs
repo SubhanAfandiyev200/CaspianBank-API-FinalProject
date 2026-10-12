@@ -56,11 +56,11 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.GetTransactionsAsync(UserId, id, take));
         }
 
-        // İlk kartlar: Standard + Cashback (pulsuz)
+        // İlk kartlar: Standard + Cashback (pulsuz). Qeydiyyatda onsuz da açılır; bu yalnız o addım alınmayıbsa təkrar cəhd üçündür
         [HttpPost("initial")]
-        public async Task<IActionResult> CreateInitial([FromBody] CreateInitialCardsDto model)
+        public async Task<IActionResult> CreateInitial()
         {
-            return ToResponse(await _cardService.CreateInitialCardsAsync(UserId, model));
+            return ToResponse(await _cardService.CreateInitialCardsAsync(UserId));
         }
 
         // Əlavə kart (haqq seçilən kartdan çıxılır)
