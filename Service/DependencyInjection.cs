@@ -33,6 +33,7 @@ namespace Service
                     : ActivatorUtilities.CreateInstance<LogEmailSender>(sp));
             services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
             services.AddScoped<IHomeTickerService, HomeTickerService>();
+            services.AddScoped<IHomeStatsService, HomeStatsService>();
             services.AddScoped<IAboutService, AboutService>();
             services.AddScoped<IAboutPillarService, AboutPillarService>();
             services.AddScoped<IServiceSectionService, ServiceSectionService>();

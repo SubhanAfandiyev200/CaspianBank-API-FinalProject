@@ -17,6 +17,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         private readonly IServiceItemService _serviceItem;
         private readonly IBenefitSectionService _benefitSection;
         private readonly IBenefitItemService _benefitItem;
+        private readonly IHomeStatsService _statsService;
 
         public HomeController(IHomeTickerService tickerService,
                               IBrandService brandService,
@@ -27,7 +28,8 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
                               IServiceItemService serviceItem,
                               IServiceSectionService serviceSection,
                               IBenefitSectionService benefitSection,
-                              IBenefitItemService benefitItem)
+                              IBenefitItemService benefitItem,
+                              IHomeStatsService statsService)
         {
             _tickerService = tickerService;
             _brandService = brandService;
@@ -39,6 +41,14 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             _serviceSection = serviceSection;
             _benefitSection = benefitSection;
             _benefitItem = benefitItem;
+            _statsService = statsService;
+        }
+
+        // "Trust indicators": müştəri, köçürmə və kart rəqəmləri bazadan canlı hesablanır (açıq endpoint, giriş tələb olunmur)
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStatsAsync()
+        {
+            return Ok(await _statsService.GetUIAsync());
         }
 
         // Home-un yuxarı hissəsinin (hero) sol tərəfindəki mətnlər; sətir yoxdursa 404 (MVC statik mətni göstərir)

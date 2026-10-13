@@ -28,6 +28,7 @@ namespace Repository
             services.AddScoped<ICardTierConfigRepository, CardTierConfigRepository>();
             services.AddScoped<ITransferRepository, TransferRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IHomeStatsRepository, HomeStatsRepository>();
             services.AddScoped<IServiceSectionRepository, ServiceSectionRepository>();
             services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
             services.AddScoped<IBenefitSectionRepository, BenefitSectionRepository>();
