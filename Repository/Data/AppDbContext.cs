@@ -28,6 +28,9 @@ namespace Repository.Data
         public DbSet<ExternalBank> ExternalBanks { get; set; }
         public DbSet<ExternalLoan> ExternalLoans { get; set; }
         public DbSet<OwnBank> OwnBanks { get; set; }
+        public DbSet<Loan> Loans { get; set; }
+        public DbSet<LoanInstallment> LoanInstallments { get; set; }
+        public DbSet<LoanPaymentRecord> LoanPaymentRecords { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }

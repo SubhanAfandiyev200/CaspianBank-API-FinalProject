@@ -18,6 +18,11 @@ namespace Domain.Configurations
             builder.Property(m => m.FixedPenalty).HasPrecision(18, 2);
             builder.Property(m => m.DailyPenaltyPercent).HasPrecision(5, 2);
             builder.Property(m => m.MaxPaymentToIncomePercent).HasPrecision(5, 2);
+            builder.Property(m => m.OfferValidDays).HasDefaultValue(7);
+            builder.Property(m => m.MinEarlyPayment).HasPrecision(18, 2).HasDefaultValue(10m);
+            builder.Property(m => m.EarlyRepaymentMinPercent).HasPrecision(5, 2).HasDefaultValue(10m);
+            builder.Property(m => m.EarlyRepaymentRateReduction).HasPrecision(5, 2).HasDefaultValue(1m);
+            builder.Property(m => m.MinAnnualInterestRate).HasPrecision(5, 2).HasDefaultValue(5m);
             builder.Property(m => m.InterbankFeePercent).HasPrecision(5, 2);
             builder.Property(m => m.InterbankMinFee).HasPrecision(18, 2);
             builder.Property(m => m.MaxInterbankAmount).HasPrecision(18, 2);

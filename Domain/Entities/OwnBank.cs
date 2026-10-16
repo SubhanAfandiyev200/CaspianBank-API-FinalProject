@@ -21,6 +21,14 @@ namespace Domain.Entities
         public int CourtAfterDays { get; set; }                         // 90 (bu qədər gecikmədən sonra məhkəməyə)
         public int MaxActiveLoans { get; set; }                         // 3
         public decimal? MaxPaymentToIncomePercent { get; set; }         // 45 (aylıq ödəniş maaşın ən çox bu faizi)
+        public int OfferValidDays { get; set; }                         // 7 (azaldılmış məbləğ təklifinin etibarlılıq müddəti, gün)
+
+        // Vaxtından əvvəl hissəvi ödəniş: əsas borcun ən azı EarlyRepaymentMinPercent faizi qədər ödənəndə illik faiz
+        // EarlyRepaymentRateReduction qədər azalır, lakin MinAnnualInterestRate-dən aşağı düşmür
+        public decimal MinEarlyPayment { get; set; }                    // 10 (hissəvi ödənişin minimum məbləği, AZN)
+        public decimal EarlyRepaymentMinPercent { get; set; }           // 10
+        public decimal EarlyRepaymentRateReduction { get; set; }        // 1 (faiz bəndi: 10% -> 9%)
+        public decimal MinAnnualInterestRate { get; set; }              // 5
 
         // Banklararası köçürmə qaydaları
         public decimal InterbankFeePercent { get; set; }                // 1
