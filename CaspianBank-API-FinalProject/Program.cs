@@ -74,6 +74,9 @@ builder.Services.AddScoped<INotificationPublisher, SignalRNotificationPublisher>
 // Gündəlik kredit işi: vaxtı bitmiş təkliflər, gecikmə cəriməsi, Court
 builder.Services.AddHostedService<LoanMaintenanceService>();
 
+// Aylıq hesab: internet, işıq, qaz və su abunəçilərinə hər ay bir dəfə
+builder.Services.AddHostedService<BillingMaintenanceService>();
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
