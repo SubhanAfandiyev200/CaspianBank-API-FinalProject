@@ -614,10 +614,14 @@ namespace Repository.Repositories
 
         // ---------- Gündəlik iş ----------
 
-        public async Task<int> RunMaintenanceAsync(DateTime utcNow)
+        // Ödənişə neçə gün qalmış xatırlatma bildirişi yazılır
+        private const int DueSoonDays = 3;
+
+        public async Task<LoanMaintenanceResult> RunMaintenanceAsync(DateTime utcNow)
         {
             _dbContext.ChangeTracker.Clear();
             var today = LoanEngine.BakuToday(utcNow);
+            var notices = new List<LoanNotice>();
 
             // Vaxtı bitmiş təkliflər
             var expired = await _dbContext.Loans
@@ -627,6 +631,8 @@ namespace Repository.Repositories
             {
                 loan.Status = LoanStatus.Declined;
                 loan.RejectReason = "The offer expired.";
+                notices.Add(new LoanNotice(LoanNoticeKind.OfferExpired, loan.BorrowerUserId, loan.Id, loan.ContractNumber,
+                    "offer-expired:" + loan.Id, loan.ApprovedAmount ?? loan.RequestedAmount, null, 0));
             }
 
             // Açıq kreditlər: cərimə yaz, 90 gün gecikənləri Court-a keç
@@ -638,7 +644,33 @@ namespace Repository.Repositories
             foreach (var loan in open)
             {
                 LoanEngine.AccrueAll(loan, today);
-                LoanEngine.MoveToCourtIfNeeded(loan, utcNow, loan.OwnBank.CourtAfterDays);
+                if (LoanEngine.MoveToCourtIfNeeded(loan, utcNow, loan.OwnBank.CourtAfterDays))
+                {
+                    notices.Add(new LoanNotice(LoanNoticeKind.Court, loan.BorrowerUserId, loan.Id, loan.ContractNumber,
+                        "court:" + loan.Id, 0m, null, loan.OwnBank.CourtAfterDays));
+                }
+
+                // Müştəriyə deyiləcəklər: gecikmiş ödənişlər və tezliklə gələnlər (eyni hadisə təkrar yazılmır: servis Key ilə yoxlayır)
+                foreach (var installment in loan.Installments.Where(i => !i.IsCancelled).OrderBy(i => i.Number))
+                {
+                    var unpaid = LoanEngine.InterestLeft(installment) + LoanEngine.PrincipalLeft(installment);
+                    if (unpaid <= 0m)
+                    {
+                        continue;
+                    }
+
+                    var due = installment.DueDate.Date;
+                    if (due < today)
+                    {
+                        notices.Add(new LoanNotice(LoanNoticeKind.Overdue, loan.BorrowerUserId, loan.Id, loan.ContractNumber,
+                            "late:" + installment.Id, unpaid + LoanEngine.PenaltyLeft(installment), due, (today - due).Days));
+                    }
+                    else if (due <= today.AddDays(DueSoonDays))
+                    {
+                        notices.Add(new LoanNotice(LoanNoticeKind.DueSoon, loan.BorrowerUserId, loan.Id, loan.ContractNumber,
+                            "due:" + installment.Id, unpaid, due, (due - today).Days));
+                    }
+                }
 
                 // Aylıq ödənişi dəyişən kredit sətri də "dəyişdi" sayılır: eyni anda müştəri ödəniş edibsə (RowVersion) yazma uğursuz olur və təkrar baxılır
                 _dbContext.ChangeTracker.DetectChanges();
@@ -657,16 +689,20 @@ namespace Repository.Repositories
             }
             catch (DbUpdateConcurrencyException)
             {
-                // Eyni anda müştəri ödəniş edib: növbəti işə düşmədə təkrar baxılacaq
+                // Eyni anda müştəri ödəniş edib: növbəti işə düşmədə təkrar baxılacaq (bildirişlər də o zaman)
                 _dbContext.ChangeTracker.Clear();
-                return 0;
+                return new LoanMaintenanceResult();
             }
             finally
             {
                 _dbContext.ChangeTracker.Clear();
             }
 
-            return changed;
+            return new LoanMaintenanceResult
+            {
+                Changed = changed,
+                Notices = notices
+            };
         }
 
         // ---------- Köməkçilər ----------

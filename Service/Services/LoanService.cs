@@ -1,3 +1,4 @@
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Loans;
@@ -24,6 +25,7 @@ namespace Service.Services
         private readonly IValidator<ApplyLoanDto> _applyValidator;
         private readonly IValidator<PayLoanDto> _payValidator;
         private readonly IValidator<PayByCodeDto> _payByCodeValidator;
+        private readonly INotificationService _notifications;
 
         public LoanService(ILoanRepository loans,
                            ICardRepository cards,
@@ -32,8 +34,10 @@ namespace Service.Services
                            IBaseRepository<OwnBank> ownBanks,
                            IValidator<ApplyLoanDto> applyValidator,
                            IValidator<PayLoanDto> payValidator,
-                           IValidator<PayByCodeDto> payByCodeValidator)
+                           IValidator<PayByCodeDto> payByCodeValidator,
+                           INotificationService notifications)
         {
+            _notifications = notifications;
             _loans = loans;
             _cards = cards;
             _accounts = accounts;
@@ -232,6 +236,18 @@ namespace Service.Services
             }
 
             var created = await _loans.CreateAsync(loan, now);
+
+            // Baxış gözləyən müraciət pul rolundakı işçilərin zəngində görünür (qara siyahıdan dərhal rədd olunan göstərilmir)
+            if (created.Status == LoanStatus.Pending)
+            {
+                await _notifications.NotifyRolesAsync(
+                    new[] { Roles.Accountant, Roles.Admin, Roles.SuperAdmin },
+                    NotificationCategory.Staff,
+                    "New loan application",
+                    $"{user.Name} {user.Surname} asked for {Money(created.RequestedAmount)} AZN over {created.TermMonths} months.",
+                    $"/Admin/Loans/Detail/{created.Id}");
+            }
+
             return ServiceResult<LoanSummaryDto>.Ok(LoanMapper.ToSummary(created, LoanEngine.BakuToday(now)));
         }
 
@@ -377,7 +393,31 @@ namespace Service.Services
                 return LoanMessages.ToFailure<LoanReceiptDto>(result);
             }
 
+            await NotifyOwnerAboutPaymentAsync(plan, result);
             return ServiceResult<LoanReceiptDto>.Ok(LoanMapper.ToReceipt(result));
+        }
+
+        // Kredit başqası tərəfindən (ödəniş kodu ilə) ödənibsə və ya bu ödənişlə bağlanıbsa, sahibi bildirişdə görür
+        private async Task NotifyOwnerAboutPaymentAsync(LoanPaymentPlan plan, LoanResult result)
+        {
+            var loan = await _loans.GetDetailAsync(plan.LoanId);
+            if (loan is null)
+            {
+                return;
+            }
+
+            if (loan.BorrowerUserId != plan.PayerUserId)
+            {
+                await _notifications.NotifyAsync(loan.BorrowerUserId, NotificationCategory.Loan, "Payment received",
+                    $"A payment of {result.Amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)} AZN was made on your loan {loan.ContractNumber} from another account.",
+                    $"/App/Loans/{loan.Id}");
+            }
+
+            if (result.LoanClosed)
+            {
+                await _notifications.NotifyAsync(loan.BorrowerUserId, NotificationCategory.Loan, "Loan paid off",
+                    $"Your loan {loan.ContractNumber} is fully paid. Thank you.", $"/App/Loans/{loan.Id}", "closed:" + loan.Id);
+            }
         }
 
         // ---------- Ödəniş kodu ilə axtarış ----------
@@ -415,7 +455,41 @@ namespace Service.Services
 
         public async Task<int> RunDailyMaintenanceAsync()
         {
-            return await _loans.RunMaintenanceAsync(DateTime.UtcNow);
+            var result = await _loans.RunMaintenanceAsync(DateTime.UtcNow);
+
+            // Müştəriyə deyilməli hadisələr bildirişə çevrilir. Key eyni hadisənin hər saat təkrar yazılmasının qarşısını alır
+            foreach (var notice in result.Notices)
+            {
+                await NotifyAboutAsync(notice);
+            }
+            return result.Changed;
+        }
+
+        private async Task NotifyAboutAsync(LoanNotice notice)
+        {
+            var link = "/App/Loans/" + notice.LoanId;
+            var amount = notice.Amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture);
+            var date = notice.DueDate.HasValue ? notice.DueDate.Value.ToString("dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+
+            switch (notice.Kind)
+            {
+                case LoanNoticeKind.OfferExpired:
+                    await _notifications.NotifyAsync(notice.UserId, NotificationCategory.Loan, "Offer expired",
+                        $"Your offer for loan {notice.ContractNumber} expired. You can apply again.", link, notice.Key);
+                    break;
+                case LoanNoticeKind.DueSoon:
+                    await _notifications.NotifyAsync(notice.UserId, NotificationCategory.Loan, "Payment due soon",
+                        $"Your payment of {amount} AZN for loan {notice.ContractNumber} is due on {date}.", link, notice.Key);
+                    break;
+                case LoanNoticeKind.Overdue:
+                    await _notifications.NotifyAsync(notice.UserId, NotificationCategory.Loan, "Payment overdue",
+                        $"Your payment for loan {notice.ContractNumber} was due on {date}. {amount} AZN is due now and a penalty grows every day until you pay.", link, notice.Key);
+                    break;
+                case LoanNoticeKind.Court:
+                    await _notifications.NotifyAsync(notice.UserId, NotificationCategory.Loan, "Loan passed to court",
+                        $"Loan {notice.ContractNumber} has been overdue for {notice.Days} days and was passed to court. Please pay what is due as soon as possible.", link, notice.Key);
+                    break;
+            }
         }
     }
 }

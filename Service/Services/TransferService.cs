@@ -17,18 +17,21 @@ namespace Service.Services
         private readonly ITransferRepository _transfers;
         private readonly IAccountRepository _accounts;
         private readonly IValidator<TransferDto> _validator;
+        private readonly INotificationService _notifications;
 
         public TransferService(ICardRepository cards,
                                ICardTierConfigRepository tiers,
                                ITransferRepository transfers,
                                IAccountRepository accounts,
-                               IValidator<TransferDto> validator)
+                               IValidator<TransferDto> validator,
+                               INotificationService notifications)
         {
             _cards = cards;
             _tiers = tiers;
             _transfers = transfers;
             _accounts = accounts;
             _validator = validator;
+            _notifications = notifications;
         }
 
         // Yoxlamalardan keçmiş köçürmənin bütün hissələri
@@ -89,6 +92,16 @@ namespace Service.Services
             switch (result.Outcome)
             {
                 case TransferOutcome.Success:
+                    // Başqa müştərinin kartına gedibsə, alıcı pulun gəldiyini dərhal görür (öz kartları arasında köçürmədə bildiriş yoxdur)
+                    if (!plan.IsOwn)
+                    {
+                        await _notifications.NotifyAsync(
+                            plan.Recipient.Id,
+                            NotificationCategory.Transfer,
+                            "Money received",
+                            $"You received {plan.Amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)} AZN from {MaskedName(plan.Sender)} on your card •••• {last4}.",
+                            $"/App/Card/{plan.Destination.Id}");
+                    }
                     return ServiceResult<TransferReceiptDto>.Ok(new TransferReceiptDto
                     {
                         Reference = reference,

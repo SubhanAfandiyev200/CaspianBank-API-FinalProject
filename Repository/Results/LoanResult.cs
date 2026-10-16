@@ -64,6 +64,32 @@ namespace Repository.Results
         bool OwnerOnly,
         DateTime UtcNow);
 
+    // Gündəlik işdən sonra müştəriyə deyilməli olan hadisələr (bildiriş yazmaq servisin işidir)
+    public enum LoanNoticeKind
+    {
+        OfferExpired,   // təklifin vaxtı bitdi
+        DueSoon,        // ödəniş tezliklə (bir neçə gün içində) olacaq
+        Overdue,        // ödəniş gecikib
+        Court           // kredit məhkəməyə keçdi
+    }
+
+    // Bir bildirişlik hadisə. Key eyni hadisənin təkrar bildirilməməsi üçündür (məs. "late:42")
+    public record LoanNotice(
+        LoanNoticeKind Kind,
+        string UserId,
+        int LoanId,
+        string ContractNumber,
+        string Key,
+        decimal Amount,
+        DateTime? DueDate,
+        int Days);
+
+    public class LoanMaintenanceResult
+    {
+        public int Changed { get; set; }
+        public IReadOnlyList<LoanNotice> Notices { get; set; } = new List<LoanNotice>();
+    }
+
     // İşçi siyahısının bir səhifəsi
     public class LoanReviewPage
     {

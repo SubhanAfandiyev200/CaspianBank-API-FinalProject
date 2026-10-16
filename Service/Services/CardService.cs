@@ -26,6 +26,7 @@ namespace Service.Services
         private readonly IValidator<UnblockCardDto> _unblockValidator;
         private readonly IOtpService _otp;
         private readonly IValidator<TopUpDto> _topUpValidator;
+        private readonly INotificationService _notifications;
 
         public CardService(ICardRepository cards,
                            ICardTierConfigRepository tiers,
@@ -35,8 +36,10 @@ namespace Service.Services
                            IValidator<BlockCardDto> blockValidator,
                            IValidator<UnblockCardDto> unblockValidator,
                            IOtpService otp,
-                           IValidator<TopUpDto> topUpValidator)
+                           IValidator<TopUpDto> topUpValidator,
+                           INotificationService notifications)
         {
+            _notifications = notifications;
             _cards = cards;
             _tiers = tiers;
             _transactions = transactions;
@@ -306,6 +309,9 @@ namespace Service.Services
             card.IsBlocked = true;
             await _cards.UpdateAsync(card);
 
+            await _notifications.NotifyAsync(userId, NotificationCategory.Card, "Card blocked",
+                $"Your card •••• {card.CardNumber[^4..]} was blocked. You can unblock it with a code sent to your email.", $"/App/Card/{card.Id}");
+
             return ServiceResult<CardDto>.Ok(ToDto(card, HolderName(user), card.CardDesign.Image));
         }
 
@@ -366,6 +372,9 @@ namespace Service.Services
 
             card.IsBlocked = false;
             await _cards.UpdateAsync(card);
+
+            await _notifications.NotifyAsync(userId, NotificationCategory.Card, "Card unblocked",
+                $"Your card •••• {card.CardNumber[^4..]} is active again.", $"/App/Card/{card.Id}");
 
             return ServiceResult<CardDto>.Ok(ToDto(card, HolderName(user), card.CardDesign.Image));
         }

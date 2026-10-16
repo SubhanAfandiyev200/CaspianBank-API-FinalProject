@@ -20,6 +20,7 @@ namespace Service.Services
         private readonly IValidator<LoanReviewFilterDto> _filterValidator;
         private readonly IValidator<ApproveLoanDto> _approveValidator;
         private readonly IValidator<RejectLoanDto> _rejectValidator;
+        private readonly INotificationService _notifications;
 
         public LoanReviewService(ILoanRepository loans,
                                  ICustomerRepository customers,
@@ -27,8 +28,10 @@ namespace Service.Services
                                  IBaseRepository<OwnBank> ownBanks,
                                  IValidator<LoanReviewFilterDto> filterValidator,
                                  IValidator<ApproveLoanDto> approveValidator,
-                                 IValidator<RejectLoanDto> rejectValidator)
+                                 IValidator<RejectLoanDto> rejectValidator,
+                                 INotificationService notifications)
         {
+            _notifications = notifications;
             _loans = loans;
             _customers = customers;
             _accounts = accounts;
@@ -367,7 +370,27 @@ namespace Service.Services
             }
 
             var result = await _loans.ApproveAsync(loanId, staffUserId, model.ApprovedAmount, DateTime.UtcNow);
-            return await ToSummaryResultAsync(result);
+            var summary = await ToSummaryResultAsync(result);
+
+            // Müştəri qərarı dərhal görür: tam məbləğdə pul karta düşüb, azdırsa cavab verməlidir
+            if (summary.IsSuccess && summary.Data is not null)
+            {
+                var link = "/App/Loans/" + loan.Id;
+                var amount = model.ApprovedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture);
+                if (summary.Data.Status == LoanStatus.Offered.ToString())
+                {
+                    var asked = loan.RequestedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture);
+                    await _notifications.NotifyAsync(loan.BorrowerUserId, NotificationCategory.Loan, "We have an offer for you",
+                        $"We can approve {amount} AZN instead of {asked} AZN for loan {loan.ContractNumber}. Open the loan to accept or decline.", link);
+                }
+                else if (summary.Data.Status == LoanStatus.Active.ToString())
+                {
+                    await _notifications.NotifyAsync(loan.BorrowerUserId, NotificationCategory.Loan, "Your loan was approved",
+                        $"{amount} AZN for loan {loan.ContractNumber} was sent to your card.", link);
+                }
+            }
+
+            return summary;
         }
 
         public async Task<ServiceResult<LoanSummaryDto>> RejectAsync(string staffUserId, int loanId, RejectLoanDto model)
@@ -379,7 +402,20 @@ namespace Service.Services
             }
 
             var result = await _loans.RejectAsync(loanId, staffUserId, model.Reason.Trim(), DateTime.UtcNow);
-            return await ToSummaryResultAsync(result);
+            var summary = await ToSummaryResultAsync(result);
+
+            // Müştəri yalnız ümumi mətn görür; rədd səbəbi daxilidir
+            if (summary.IsSuccess)
+            {
+                var loan = await _loans.GetDetailAsync(loanId);
+                if (loan is not null)
+                {
+                    await _notifications.NotifyAsync(loan.BorrowerUserId, NotificationCategory.Loan, "Application not approved",
+                        "We can't approve your loan application right now. You can apply again later.", "/App/Loans/" + loan.Id);
+                }
+            }
+
+            return summary;
         }
 
         private async Task<ServiceResult<LoanSummaryDto>> ToSummaryResultAsync(LoanResult result)

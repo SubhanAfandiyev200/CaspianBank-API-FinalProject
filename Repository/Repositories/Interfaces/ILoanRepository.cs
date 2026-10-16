@@ -54,7 +54,8 @@ namespace Repository.Repositories.Interfaces
         // Eyni Reference ikinci dəfə gələndə (forma iki dəfə göndərilib) əvvəlki ödənişin qəbzi. Yalnız ödəyənin özünün ödənişi qaytarılır
         Task<LoanResult?> FindPaymentAsync(string reference, string userId);
 
-        // Gündəlik iş: vaxtı bitmiş təkliflər Declined olur, gecikmiş kreditlərə cərimə yazılır, 90 gün gecikənlər Court olur. Dəyişən kredit sayını qaytarır
-        Task<int> RunMaintenanceAsync(DateTime utcNow);
+        // Gündəlik iş: vaxtı bitmiş təkliflər Declined olur, gecikmiş kreditlərə cərimə yazılır, 90 gün gecikənlər Court olur.
+        // Dəyişən kredit sayını və müştəriyə deyilməli hadisələri (təklif bitdi, ödəniş yaxınlaşır, gecikmə, Court) qaytarır
+        Task<LoanMaintenanceResult> RunMaintenanceAsync(DateTime utcNow);
     }
 }
