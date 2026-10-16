@@ -8,5 +8,8 @@ namespace Repository.Repositories.Interfaces
         Task<Customer?> GetByFinAndIdCardAsync(string fin, string idCardNumber);
 
         Task<Customer?> GetByIdAsync(int id);
+
+        // Kredit baxışı üçün: iş yerləri (maaşla) və başqa banklardakı kreditləri ilə birlikdə
+        Task<Customer?> GetWithHistoryAsync(int id);
     }
 }

@@ -21,6 +21,18 @@ namespace Repository.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public Task<Customer?> GetWithHistoryAsync(int id)
+        {
+            return _context.Customers
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(c => c.Employments)
+                    .ThenInclude(e => e.Workplace)
+                .Include(c => c.ExternalLoans)
+                    .ThenInclude(l => l.ExternalBank)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
         public Task<Customer?> GetByFinAndIdCardAsync(string fin, string idCardNumber)
         {
             return _context.Customers
