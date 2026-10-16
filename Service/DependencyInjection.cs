@@ -34,6 +34,8 @@ namespace Service
             services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
             services.AddScoped<IHomeTickerService, HomeTickerService>();
             services.AddScoped<IHomeStatsService, HomeStatsService>();
+            services.AddScoped<ILoanService, LoanService>();
+            services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();
             services.AddScoped<IAboutPillarService, AboutPillarService>();
             services.AddScoped<IServiceSectionService, ServiceSectionService>();
