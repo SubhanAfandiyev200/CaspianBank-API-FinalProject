@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Service.Helpers.Settings;
 using Service.Helpers.Validators.Accounts;
@@ -34,6 +35,9 @@ namespace Service
             services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
             services.AddScoped<IHomeTickerService, HomeTickerService>();
             services.AddScoped<IHomeStatsService, HomeStatsService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            // Canlı kanal API layihəsində SignalR ilə əvəzlənir; qurulmayıbsa bildiriş yalnız bazaya yazılır
+            services.TryAddScoped<INotificationPublisher, NullNotificationPublisher>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();

@@ -42,5 +42,28 @@ namespace Service.Services
 
             return (new JwtSecurityTokenHandler().WriteToken(token), expiresAt);
         }
+
+        public (string Token, DateTime ExpiresAt) CreateHubToken(string userId)
+        {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, userId),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expiresAt = DateTime.UtcNow.Add(JwtSettings.HubTokenLifetime);
+
+            // Fərqli audience: bu bilet adi API endpoint-lərində keçmir, yalnız hub-ın ayrıca sxemində
+            var token = new JwtSecurityToken(
+                issuer: _settings.Issuer,
+                audience: _settings.HubAudience,
+                claims: claims,
+                expires: expiresAt,
+                signingCredentials: credentials);
+
+            return (new JwtSecurityTokenHandler().WriteToken(token), expiresAt);
+        }
     }
 }
