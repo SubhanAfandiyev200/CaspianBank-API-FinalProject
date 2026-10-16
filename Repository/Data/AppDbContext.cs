@@ -32,6 +32,11 @@ namespace Repository.Data
         public DbSet<LoanInstallment> LoanInstallments { get; set; }
         public DbSet<LoanPaymentRecord> LoanPaymentRecords { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<BillProvider> BillProviders { get; set; }
+        public DbSet<BillSubscriber> BillSubscribers { get; set; }
+        public DbSet<BillCharge> BillCharges { get; set; }
+        public DbSet<BillPayment> BillPayments { get; set; }
+        public DbSet<RecurringPayment> RecurringPayments { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }

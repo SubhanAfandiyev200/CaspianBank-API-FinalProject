@@ -6,6 +6,7 @@ namespace Domain.Enums
         Loan,       // kredit: təklif, təsdiq, gecikmə, məhkəmə
         Transfer,   // köçürmə: pul gəldi
         Card,       // kart: bloklandı, blokdan çıxarıldı
-        Staff       // işçilər üçün: yeni müraciət və s.
+        Staff,      // işçilər üçün: yeni müraciət və s.
+        Bill        // ödənişlər: aylıq təkrarlanan ödəniş edildi və ya alınmadı
     }
 }
