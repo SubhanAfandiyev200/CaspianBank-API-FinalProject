@@ -20,6 +20,9 @@ namespace Repository.Repositories.Interfaces
         Task<bool> CheckPasswordAsync(AppUser user, string password);
         Task<IList<string>> GetRolesAsync(AppUser user);
 
+        // Verilən rollardan hər hansı birində olan istifadəçilərin id-ləri (təkrarsız). İşçilərə bildiriş göndərmək üçün
+        Task<IReadOnlyList<string>> GetUserIdsInRolesAsync(params string[] roles);
+
         // Şifrə bərpası (Identity-nin öz token mexanizmi)
         Task<string> GeneratePasswordResetTokenAsync(AppUser user);
         Task<IdentityResult> ResetPasswordAsync(AppUser user, string token, string newPassword);

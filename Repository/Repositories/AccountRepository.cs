@@ -34,6 +34,20 @@ namespace Repository.Repositories
             return _userManager.FindByIdAsync(id);
         }
 
+        public async Task<IReadOnlyList<string>> GetUserIdsInRolesAsync(params string[] roles)
+        {
+            var ids = new HashSet<string>();
+            foreach (var role in roles)
+            {
+                var users = await _userManager.GetUsersInRoleAsync(role);
+                foreach (var user in users)
+                {
+                    ids.Add(user.Id);
+                }
+            }
+            return ids.ToList();
+        }
+
         public Task<bool> CustomerHasAccountAsync(int customerId)
         {
             return _userManager.Users.AnyAsync(u => u.CustomerId == customerId);
