@@ -31,6 +31,8 @@ namespace Repository
             services.AddScoped<IHomeStatsRepository, HomeStatsRepository>();
             services.AddScoped<ILoanRepository, LoanRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IBillRepository, BillRepository>();
+            services.AddScoped<IRecurringPaymentRepository, RecurringPaymentRepository>();
             services.AddScoped<IServiceSectionRepository, ServiceSectionRepository>();
             services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
             services.AddScoped<IBenefitSectionRepository, BenefitSectionRepository>();
