@@ -566,7 +566,8 @@ namespace Domain.Loans
             }
         }
 
-        // courtAfterDays gün və ya daha çox gecikmiş ödəniş varsa kredit məhkəməyə keçir
+        // courtAfterDays gün və ya daha çox gecikmiş ödəniş varsa kredit məhkəməyə keçir.
+        // Gecikmə günü cərimə ilə eyni hesabla (Bakı günü) sayılır; asOf UTC andır (CourtAt kimi yazılır)
         public static bool MoveToCourtIfNeeded(Loan loan, DateTime asOf, int courtAfterDays)
         {
             if (loan.Status != LoanStatus.Active)
@@ -574,7 +575,7 @@ namespace Domain.Loans
                 return false;
             }
 
-            var today = asOf.Date;
+            var today = BakuToday(asOf);
             foreach (var installment in Unsettled(loan))
             {
                 var unpaid = InterestLeft(installment) + PrincipalLeft(installment);
