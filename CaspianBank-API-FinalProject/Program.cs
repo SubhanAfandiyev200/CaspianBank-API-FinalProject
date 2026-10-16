@@ -66,6 +66,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddServiceLayer();
 builder.Services.AddRepositoryLayer();
 
+// Gündəlik kredit işi: vaxtı bitmiş təkliflər, gecikmə cəriməsi, Court
+builder.Services.AddHostedService<LoanMaintenanceService>();
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -187,6 +190,10 @@ using (var scope = app.Services.CreateScope())
         scope.ServiceProvider.GetRequiredService<ICardService>(),
         scope.ServiceProvider.GetRequiredService<ICardRepository>(),
         seedCustomers, customerLogger);
+
+    // Hazır müştərilərin Caspian kredit tarixçəsi (hər vəziyyətdən bir nümunə): kredit artıq varsa toxunulmur
+    var loanLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("LoanSeeder");
+    await LoanSeeder.SeedAsync(db, loanLogger);
 }
 
 // Configure the HTTP request pipeline.
