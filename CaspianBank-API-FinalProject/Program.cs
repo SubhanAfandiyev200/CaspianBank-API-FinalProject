@@ -1,4 +1,5 @@
 using CaspianBank_API_FinalProject.Helpers;
+using CaspianBank_API_FinalProject.Hubs;
 using CaspianBank_API_FinalProject.Middlewares;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,6 +67,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddServiceLayer();
 builder.Services.AddRepositoryLayer();
 
+// Canlı bildirişlər (SignalR): servis qatı yalnız INotificationPublisher-i tanıyır, real göndərmə burada
+builder.Services.AddSignalR();
+builder.Services.AddScoped<INotificationPublisher, SignalRNotificationPublisher>();
+
 // Gündəlik kredit işi: vaxtı bitmiş təkliflər, gecikmə cəriməsi, Court
 builder.Services.AddHostedService<LoanMaintenanceService>();
 
@@ -128,6 +133,34 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
         ClockSkew = TimeSpan.FromMinutes(1)
+    };
+})
+// Bildiriş hub-ı üçün ayrıca sxem: yalnız qısa ömürlü "hub bileti" (başqa audience) keçir, adi JWT burada etibarsızdır.
+// WebSocket başlıq göndərə bilmir, ona görə bilet ?access_token=... ilə gəlir və yalnız /hubs yolunda oxunur
+.AddJwtBearer(HubAuth.Scheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidateAudience = true,
+        ValidAudience = jwtSettings.HubAudience,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+        ClockSkew = TimeSpan.FromSeconds(30)
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Query["access_token"];
+            if (!string.IsNullOrEmpty(token) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -219,6 +252,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>(HubAuth.Path);
 
 app.Run();
 
