@@ -38,6 +38,9 @@ namespace Service
             services.AddScoped<INotificationService, NotificationService>();
             // Canlı kanal API layihəsində SignalR ilə əvəzlənir; qurulmayıbsa bildiriş yalnız bazaya yazılır
             services.TryAddScoped<INotificationPublisher, NullNotificationPublisher>();
+            services.AddScoped<IBillService, BillService>();
+            services.AddScoped<IBillProviderService, BillProviderService>();
+            services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();
