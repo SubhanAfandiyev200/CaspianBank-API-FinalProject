@@ -25,6 +25,7 @@ namespace Service.Services
         private readonly IBaseRepository<OwnBank> _ownBanks;
         private readonly IValidator<TransferDto> _validator;
         private readonly INotificationService _notifications;
+        private readonly ISecurityMonitor _security;
 
         public TransferService(ICardRepository cards,
                                ICardTierConfigRepository tiers,
@@ -33,7 +34,8 @@ namespace Service.Services
                                IBankDirectoryRepository directory,
                                IBaseRepository<OwnBank> ownBanks,
                                IValidator<TransferDto> validator,
-                               INotificationService notifications)
+                               INotificationService notifications,
+                               ISecurityMonitor security)
         {
             _cards = cards;
             _tiers = tiers;
@@ -43,6 +45,7 @@ namespace Service.Services
             _ownBanks = ownBanks;
             _validator = validator;
             _notifications = notifications;
+            _security = security;
         }
 
         // Yoxlamalardan keçmiş köçürmənin bütün hissələri. Başqa banka gedəndə Destination və Recipient boşdur, External dolu olur
@@ -130,6 +133,11 @@ namespace Service.Services
                             "Money received",
                             $"You received {plan.Amount.ToString("N2", CultureInfo.InvariantCulture)} AZN from {MaskedName(plan.Sender)} on your card •••• {last4}.",
                             $"/App/Card/{plan.Destination.Id}");
+                    }
+                    // Başqasına göndərilən pul şübhəli fəaliyyət qaydalarından keçir (öz kartları arasında köçürmə sayılmır). Xəta köçürməni pozmur
+                    if (!plan.IsOwn)
+                    {
+                        await _security.EvaluateTransferAsync(userId, plan.Amount, reference);
                     }
                     return ServiceResult<TransferReceiptDto>.Ok(new TransferReceiptDto
                     {
