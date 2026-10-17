@@ -13,10 +13,14 @@
         public const string TicketAnswered = "TicketAnswered";
         public const string TicketClosed = "TicketClosed";
         public const string DepositPlanChanged = "DepositPlanChanged";
+        public const string StaffAdded = "StaffAdded";
+        public const string StaffRoleChanged = "StaffRoleChanged";
+        public const string StaffDeactivated = "StaffDeactivated";
+        public const string StaffActivated = "StaffActivated";
 
         public static readonly string[] All =
         {
-            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged
+            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged, StaffAdded, StaffRoleChanged, StaffDeactivated, StaffActivated
         };
     }
 }
