@@ -10,6 +10,11 @@ namespace Domain.Entities
         public string? FinKod { get; set; }
         public bool IsRestricted { get; set; } = false;
 
+        // Dondurma (restrict) məlumatı: səbəb, vaxt və dondurğan işçinin adı. Açılanda silinir
+        public string? RestrictionReason { get; set; }
+        public DateTime? RestrictedAt { get; set; }
+        public string? RestrictedBy { get; set; }
+
         // Reyestrdəki vətəndaş (qeydiyyatdan keçən müştərilər üçün). İşçilərdə boşdur
         public int? CustomerId { get; set; }
         public Customer? Customer { get; set; }
