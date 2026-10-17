@@ -1,4 +1,5 @@
-using Domain.Constants;
+﻿using Domain.Constants;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Helpers.DTOs.Bills;
@@ -13,10 +14,12 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     public class BillProviderController : ControllerBase
     {
         private readonly IBillProviderService _service;
+        private readonly IAuditService _audit;
 
-        public BillProviderController(IBillProviderService service)
+        public BillProviderController(IBillProviderService service, IAuditService audit)
         {
             _service = service;
+            _audit = audit;
         }
 
         [HttpGet]
@@ -36,6 +39,8 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         public async Task<IActionResult> Update(int id, [FromForm] UpdateBillProviderDto request)
         {
             await _service.UpdateAsync(id, request);
+            await _audit.LogAsync(User.FindFirstValue(ClaimTypes.NameIdentifier), AuditActions.BillProviderChanged, "BillProvider", request.Name!.Trim(),
+                (request.IsActive ? "Shown to customers" : "Hidden from customers") + (request.Logo is not null && request.Logo.Length > 0 ? ", new logo uploaded" : ""));
             return NoContent();
         }
     }
