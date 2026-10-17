@@ -376,9 +376,22 @@ namespace Repository.Repositories
                     "The card chosen for the loan can't receive the money (it is missing, blocked or a Cashback card).");
             }
 
+            var amount = loan.ApprovedAmount ?? loan.RequestedAmount;
+
+            // Bankın xəzinəsi: kredit verildikdən sonra qalan vəsait məcburi ehtiyatdan az olmamalıdır (ehtiyat = müştəri kartları və depozitlərinin ReservePercent-i)
+            var bank = await _dbContext.OwnBanks.AsNoTracking().FirstAsync(b => b.Id == loan.OwnBankId);
+            var treasury = await _dbContext.TreasuryEntries.AsNoTracking().SumAsync(t => (decimal?)t.Amount) ?? 0m;
+            var onCards = await _dbContext.Cards.AsNoTracking().SumAsync(c => (decimal?)c.Balance) ?? 0m;
+            var inDeposits = await _dbContext.Deposits.AsNoTracking().Where(d => d.Status == DepositStatus.Active).SumAsync(d => (decimal?)d.Principal) ?? 0m;
+            var reserve = Math.Round((onCards + inDeposits) * bank.ReservePercent / 100m, 2, MidpointRounding.AwayFromZero);
+            if (treasury - amount < reserve)
+            {
+                return LoanResult.Of(LoanOutcome.TreasuryLow,
+                    "The bank can't pay out this loan right now. Please try again later.");
+            }
+
             LoanEngine.Activate(loan, utcNow);
 
-            var amount = loan.ApprovedAmount ?? loan.RequestedAmount;
             card.Balance += amount;
             _dbContext.Transactions.Add(new Transaction
             {

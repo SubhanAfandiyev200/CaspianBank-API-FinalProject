@@ -18,7 +18,8 @@ namespace Repository.Results
         NothingDue,             // ödəniləcək məbləğ yoxdur
         NotPayable,             // erkən ödəniş qaydalarına uyğun deyil (səbəb Message-dədir)
         Duplicate,              // eyni Reference artıq işlənib (forma iki dəfə göndərilib)
-        Conflict                // eyni anda başqa əməliyyat krediti və ya kartı dəyişdi
+        Conflict,               // eyni anda başqa əməliyyat krediti və ya kartı dəyişdi
+        TreasuryLow             // bankın xəzinəsində bu krediti verməyə kifayət qədər vəsait yoxdur
     }
 
     // Kredit əməliyyatlarının nəticəsi. Pul əməliyyatlarında ödənilən hissələr və kartın yeni balansı da buradadır (qəbz üçün)
