@@ -1,5 +1,6 @@
 ﻿using Domain.Configurations;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,8 +45,88 @@ namespace Repository.Data
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SupportMessage> SupportMessages { get; set; }
+        public DbSet<TreasuryEntry> TreasuryEntries { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+        }
+
+        // Bankın xəzinəsinin jurnalı hər pul əməliyyatı ilə EYNI saxlamada yazılır: ya əməliyyat və xəzinə sətri birlikdə olur, ya heç biri.
+        // Bunun üçün əməliyyatları yazan hər yerə toxunmaq lazım gəlmir
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            AddTreasuryEntries();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            AddTreasuryEntries();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void AddTreasuryEntries()
+        {
+            var entries = new List<TreasuryEntry>();
+
+            foreach (var entry in ChangeTracker.Entries<Transaction>().Where(e => e.State == EntityState.Added))
+            {
+                var row = entry.Entity;
+                switch (row.Type)
+                {
+                    case TransactionType.Commission:
+                        entries.Add(NewTreasury(TreasuryEntryKind.Commission, row.Amount, "Transfer commission", row.Reference));
+                        break;
+                    case TransactionType.CardFee:
+                        entries.Add(NewTreasury(TreasuryEntryKind.CardFee, row.Amount, "Card opening fee", row.Reference));
+                        break;
+                    case TransactionType.Cashback:
+                        entries.Add(NewTreasury(TreasuryEntryKind.Cashback, -row.Amount, "Cashback paid to a customer", row.Reference));
+                        break;
+                    case TransactionType.LoanDisbursement:
+                        entries.Add(NewTreasury(TreasuryEntryKind.LoanPaidOut, -row.Amount, "Loan paid out", row.Reference));
+                        break;
+                    case TransactionType.DepositOpen:
+                        entries.Add(NewTreasury(TreasuryEntryKind.DepositReceived, row.Amount, "Deposit received", row.Reference));
+                        break;
+                    case TransactionType.DepositPayout:
+                        entries.Add(NewTreasury(TreasuryEntryKind.DepositReturned, -row.Amount, "Deposit returned to a customer", row.Reference));
+                        break;
+                    case TransactionType.DepositInterest:
+                        entries.Add(NewTreasury(TreasuryEntryKind.DepositInterest, -row.Amount, "Deposit interest paid", row.Reference));
+                        break;
+                }
+            }
+
+            // Kredit ödənişi bir neçə aylıq ödənişi örtə bilər: eyni kodlu qeydlər birləşdirilir (əsas borc, faiz və cərimə ayrıca)
+            var payments = ChangeTracker.Entries<LoanPaymentRecord>().Where(e => e.State == EntityState.Added).Select(e => e.Entity).ToList();
+            foreach (var group in payments.GroupBy(p => p.TransactionReference))
+            {
+                var principal = group.Sum(p => p.PrincipalPart);
+                var interest = group.Sum(p => p.InterestPart);
+                var penalty = group.Sum(p => p.PenaltyPart);
+                if (principal > 0m)
+                {
+                    entries.Add(NewTreasury(TreasuryEntryKind.LoanPrincipal, principal, "Loan principal repaid", group.Key));
+                }
+                if (interest > 0m)
+                {
+                    entries.Add(NewTreasury(TreasuryEntryKind.LoanInterest, interest, "Loan interest received", group.Key));
+                }
+                if (penalty > 0m)
+                {
+                    entries.Add(NewTreasury(TreasuryEntryKind.LoanPenalty, penalty, "Loan late penalty received", group.Key));
+                }
+            }
+
+            if (entries.Count > 0)
+            {
+                TreasuryEntries.AddRange(entries);
+            }
+        }
+
+        private static TreasuryEntry NewTreasury(TreasuryEntryKind kind, decimal amount, string description, string reference)
+        {
+            return new TreasuryEntry { Kind = kind, Amount = amount, Description = description, Reference = reference };
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
