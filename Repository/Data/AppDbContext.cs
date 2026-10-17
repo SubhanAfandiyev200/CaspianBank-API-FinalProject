@@ -1,4 +1,4 @@
-using Domain.Configurations;
+﻿using Domain.Configurations;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +37,7 @@ namespace Repository.Data
         public DbSet<BillCharge> BillCharges { get; set; }
         public DbSet<BillPayment> BillPayments { get; set; }
         public DbSet<RecurringPayment> RecurringPayments { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
