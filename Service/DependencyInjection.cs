@@ -40,6 +40,7 @@ namespace Service
             services.TryAddScoped<INotificationPublisher, NullNotificationPublisher>();
             services.AddScoped<IBillService, BillService>();
             services.AddScoped<IDepositService, DepositService>();
+            services.AddScoped<ITreasuryService, TreasuryService>();
             services.AddScoped<IBillProviderService, BillProviderService>();
             services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();
             services.AddScoped<IUserAdminService, UserAdminService>();
