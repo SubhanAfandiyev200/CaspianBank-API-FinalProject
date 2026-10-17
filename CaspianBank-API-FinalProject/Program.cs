@@ -1,4 +1,4 @@
-using CaspianBank_API_FinalProject.Helpers;
+﻿using CaspianBank_API_FinalProject.Helpers;
 using CaspianBank_API_FinalProject.Hubs;
 using CaspianBank_API_FinalProject.Middlewares;
 using Domain.Entities;
@@ -107,6 +107,8 @@ var jwtSection = builder.Configuration.GetSection("Jwt");
 builder.Services.Configure<JwtSettings>(jwtSection);
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<FrontendSettings>(builder.Configuration.GetSection("Frontend"));
+// Home "Trust indicators" rəqəmlərinə əlavə olunan başlanğıc dəyərlər (Bank dashboard bunları işlətmir)
+builder.Services.Configure<HomeStatsSettings>(builder.Configuration.GetSection("HomeStats"));
 
 // Şifrə bərpası linki 30 dəqiqə etibarlıdır (Identity defoltu 1 gündür)
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
