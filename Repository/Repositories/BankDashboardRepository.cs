@@ -55,6 +55,7 @@ namespace Repository.Repositories
 
             var deposits = await _dbContext.Cards.AsNoTracking().SumAsync(c => (decimal?)c.Balance);
             var activeDeposits = _dbContext.Deposits.AsNoTracking().Where(d => d.Status == DepositStatus.Active);
+            var treasuryBalance = await _dbContext.TreasuryEntries.AsNoTracking().SumAsync(t => (decimal?)t.Amount);
             var termDeposits = await activeDeposits.SumAsync(d => (decimal?)d.Principal);
             var interestOwed = await activeDeposits.SumAsync(d => (decimal?)d.ExpectedInterest);
             var outstanding = await _dbContext.Loans.AsNoTracking()
@@ -70,6 +71,7 @@ namespace Repository.Repositories
                 RestrictedUsers = restricted,
                 CustomerDeposits = deposits ?? 0m,
                 TermDeposits = termDeposits ?? 0m,
+                TreasuryBalance = treasuryBalance ?? 0m,
                 TermDepositInterestOwed = interestOwed ?? 0m,
                 LoansOutstanding = outstanding ?? 0m,
                 PendingLoans = pendingLoans,

@@ -19,6 +19,7 @@ namespace Repository.Results
         public int RestrictedUsers { get; set; }
         public decimal CustomerDeposits { get; set; }   // müştəri kartlarındakı pulun cəmi
         public decimal TermDeposits { get; set; }       // müddətli depozitlərdə saxlanılan əsas məbləğ (aktiv)
+        public decimal TreasuryBalance { get; set; }    // bankın xəzinəsinin hazırkı balansı (öz vəsait)
         public decimal TermDepositInterestOwed { get; set; }   // aktiv depozitlər üçün gələcəkdə ödəniləcək faiz
         public decimal LoansOutstanding { get; set; }   // verilib hələ qayıtmayan əsas borc
         public int PendingLoans { get; set; }

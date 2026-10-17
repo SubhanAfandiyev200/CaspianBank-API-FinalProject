@@ -73,7 +73,8 @@ namespace Service.Services
 
             var required = Round((snapshot.CustomerDeposits + snapshot.TermDeposits) * bank.ReservePercent / 100m);
             var needed = required + quarterTax;
-            decimal? coverage = needed > 0m ? Math.Round(bank.OwnFunds / needed, 1) : null;
+            var ownFunds = snapshot.TreasuryBalance;
+            decimal? coverage = needed > 0m ? Math.Round(ownFunds / needed, 1) : null;
 
             var months = new List<DashboardMonthOptionDto>();
             for (var i = 0; i < 12; i++)
@@ -115,10 +116,10 @@ namespace Service.Services
                 QuarterTaxAccrued = quarterTax,
                 ReservePercent = bank.ReservePercent,
                 RequiredReserve = required,
-                OwnFunds = bank.OwnFunds,
-                ReserveAfterTax = Round(bank.OwnFunds - quarterTax),
+                OwnFunds = ownFunds,
+                ReserveAfterTax = Round(ownFunds - quarterTax),
                 CoverageRatio = coverage,
-                ReserveHealthy = bank.OwnFunds >= needed,
+                ReserveHealthy = ownFunds >= needed,
                 PendingLoans = snapshot.PendingLoans,
                 PendingTickets = snapshot.PendingTickets,
                 RestrictedAccounts = snapshot.RestrictedUsers
