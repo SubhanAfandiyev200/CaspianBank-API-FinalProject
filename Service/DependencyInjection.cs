@@ -39,6 +39,7 @@ namespace Service
             // Canlı kanal API layihəsində SignalR ilə əvəzlənir; qurulmayıbsa bildiriş yalnız bazaya yazılır
             services.TryAddScoped<INotificationPublisher, NullNotificationPublisher>();
             services.AddScoped<IBillService, BillService>();
+            services.AddScoped<IDepositService, DepositService>();
             services.AddScoped<IBillProviderService, BillProviderService>();
             services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();
             services.AddScoped<IUserAdminService, UserAdminService>();
