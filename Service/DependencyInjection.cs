@@ -43,6 +43,7 @@ namespace Service
             services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();
             services.AddScoped<IUserAdminService, UserAdminService>();
             services.AddScoped<IAuditService, AuditService>();
+            services.AddScoped<ISupportTicketService, SupportTicketService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();
