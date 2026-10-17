@@ -1,4 +1,4 @@
-using Domain.Constants;
+﻿using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Helpers.DTOs.Loans;
@@ -16,10 +16,12 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     public class LoansController : ControllerBase
     {
         private readonly ILoanReviewService _reviewService;
+        private readonly IAuditService _audit;
 
-        public LoansController(ILoanReviewService reviewService)
+        public LoansController(ILoanReviewService reviewService, IAuditService audit)
         {
             _reviewService = reviewService;
+            _audit = audit;
         }
 
         private string StaffUserId
@@ -46,13 +48,26 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         [HttpPost("{id:int}/approve")]
         public async Task<IActionResult> Approve(int id, [FromBody] ApproveLoanDto model)
         {
-            return ToResponse(await _reviewService.ApproveAsync(StaffUserId, id, model));
+            var result = await _reviewService.ApproveAsync(StaffUserId, id, model);
+            if (result.IsSuccess)
+            {
+                var offered = result.Data!.Status == "Offered";
+                await _audit.LogAsync(StaffUserId, offered ? AuditActions.LoanOffered : AuditActions.LoanApproved, "Loan", result.Data.ContractNumber,
+                    (offered ? "Offered " : "Approved ") + model.ApprovedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)
+                    + " AZN of " + result.Data.RequestedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture) + " AZN requested");
+            }
+            return ToResponse(result);
         }
 
         [HttpPost("{id:int}/reject")]
         public async Task<IActionResult> Reject(int id, [FromBody] RejectLoanDto model)
         {
-            return ToResponse(await _reviewService.RejectAsync(StaffUserId, id, model));
+            var result = await _reviewService.RejectAsync(StaffUserId, id, model);
+            if (result.IsSuccess)
+            {
+                await _audit.LogAsync(StaffUserId, AuditActions.LoanRejected, "Loan", result.Data!.ContractNumber, model.Reason);
+            }
+            return ToResponse(result);
         }
 
         private IActionResult ToResponse<T>(ServiceResult<T> result)
