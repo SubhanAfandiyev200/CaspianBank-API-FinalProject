@@ -41,6 +41,7 @@ namespace Service
             services.AddScoped<IBillService, BillService>();
             services.AddScoped<IBillProviderService, BillProviderService>();
             services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();
+            services.AddScoped<IUserAdminService, UserAdminService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();
