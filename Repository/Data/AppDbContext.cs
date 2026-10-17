@@ -38,6 +38,8 @@ namespace Repository.Data
         public DbSet<BillPayment> BillPayments { get; set; }
         public DbSet<RecurringPayment> RecurringPayments { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<SupportTicket> SupportTickets { get; set; }
+        public DbSet<SupportMessage> SupportMessages { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
