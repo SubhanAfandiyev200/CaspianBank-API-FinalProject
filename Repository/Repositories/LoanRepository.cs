@@ -435,10 +435,6 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.CardBlocked);
                 }
-                if (card.Tier == CardTier.Cashback)
-                {
-                    return LoanResult.Of(LoanOutcome.CardNotAllowed, "A loan can't be paid from a Cashback card.");
-                }
 
                 var today = LoanEngine.BakuToday(plan.UtcNow);
                 var records = new List<LoanPaymentRecord>();
@@ -453,12 +449,17 @@ namespace Repository.Repositories
                         {
                             return LoanResult.Of(LoanOutcome.NothingDue, "There is nothing to pay right now.");
                         }
-                        total = due.Total;
+                        // Məbləğ yazılıbsa və borcdan azdırsa hissə-hissə ödəniş: qalanı başqa kartdan ödənilə bilər
+                        if (plan.Amount > due.Total)
+                        {
+                            return LoanResult.Of(LoanOutcome.NotPayable, "That is more than what is due now (" + due.Total.ToString("N2", System.Globalization.CultureInfo.InvariantCulture) + " AZN).");
+                        }
+                        total = plan.Amount > 0m ? plan.Amount : due.Total;
                         if (card.Balance < total)
                         {
                             return LoanResult.Of(LoanOutcome.InsufficientFunds);
                         }
-                        records = LoanEngine.ApplyInstallmentPayment(loan, due, plan.UtcNow, card.CardNumber, plan.Reference);
+                        records = LoanEngine.ApplyInstallmentPayment(loan, due, plan.UtcNow, card.CardNumber, plan.Reference, plan.Amount);
                         break;
 
                     case LoanPaymentType.PartialEarly:

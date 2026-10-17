@@ -22,6 +22,14 @@ namespace Service.Helpers.Validators.Loans
                     .Must(a => decimal.Round(a, 2) == a).WithMessage("Use at most two decimal places.");
             });
 
+            // Aylıq ödənişdə məbləğ boş (0) ola bilər: onda bütün borc ödənir. Yazılıbsa hissə-hissə ödəniş olur
+            When(x => string.Equals(x.Type, nameof(LoanPaymentType.Installment), StringComparison.OrdinalIgnoreCase), () =>
+            {
+                RuleFor(x => x.Amount)
+                    .GreaterThanOrEqualTo(0).WithMessage("Enter a valid amount.")
+                    .Must(a => decimal.Round(a, 2) == a).WithMessage("Use at most two decimal places.");
+            });
+
             RuleFor(x => x.RequestId)
                 .Must(id => Guid.TryParse(id, out _)).WithMessage("Invalid request id.");
         }

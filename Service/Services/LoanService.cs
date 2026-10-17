@@ -321,7 +321,7 @@ namespace Service.Services
                 LoanId: loanId,
                 CardId: model.CardId,
                 Type: type,
-                Amount: type == LoanPaymentType.PartialEarly ? model.Amount : 0m,
+                Amount: type == LoanPaymentType.FullEarly ? 0m : model.Amount,
                 Reference: ReferenceFor(model.RequestId!),
                 OwnerOnly: type != LoanPaymentType.Installment,
                 UtcNow: DateTime.UtcNow);
