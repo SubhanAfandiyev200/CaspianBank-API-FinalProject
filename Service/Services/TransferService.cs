@@ -369,9 +369,9 @@ namespace Service.Services
         // Kart tapılmayanda: bankı tanınırsa hansı bankda tapılmadığı deyilir
         private async Task<string> NotFoundMessageAsync(string number)
         {
-            if (number.Length >= 8)
+            if (number.Length >= 6)
             {
-                var bank = await _directory.FindExternalBankByBinAsync(number.Substring(0, 8));
+                var bank = await _directory.FindExternalBankByBinAsync(number.Substring(0, 6));
                 if (bank is not null)
                 {
                     return $"We couldn't find a card with that number at {BankShort(bank.Name)}.";

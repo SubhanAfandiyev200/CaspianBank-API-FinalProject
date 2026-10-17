@@ -20,11 +20,12 @@ namespace Service.Services
         public async Task<ServiceResult<BankLookupDto>> LookupAsync(string? bin)
         {
             var digits = new string((bin ?? string.Empty).Where(char.IsAsciiDigit).ToArray());
-            if (digits.Length < 8)
+            // Bank kart nömrəsinin ilk 6 rəqəmindən (real kartlarda olduğu kimi) tanınır; 8 rəqəmlik BIN-in qalan 2 rəqəmi bankı dəyişmir
+            if (digits.Length < 6)
             {
-                return ServiceResult<BankLookupDto>.Fail("Enter at least the first 8 digits of the card number.");
+                return ServiceResult<BankLookupDto>.Fail("Enter at least the first 6 digits of the card number.");
             }
-            digits = digits.Substring(0, 8);
+            digits = digits.Substring(0, 6);
 
             var external = await _directory.FindExternalBankByBinAsync(digits);
             if (external is not null)
@@ -34,7 +35,7 @@ namespace Service.Services
 
             // Caspian: bank qaydalarındakı BIN və ya mövcud Caspian kartlarının başlanğıcı
             var own = await _ownBanks.GetAsync();
-            if ((own is not null && own.Bin == digits) || await _directory.AnyCaspianCardStartsWithAsync(digits))
+            if ((own is not null && own.Bin.StartsWith(digits)) || await _directory.AnyCaspianCardStartsWithAsync(digits))
             {
                 return ServiceResult<BankLookupDto>.Ok(new BankLookupDto { Name = own?.Name ?? "Caspian Bank", LogoUrl = own?.LogoUrl, IsCaspian = true });
             }

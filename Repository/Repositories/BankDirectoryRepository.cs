@@ -16,7 +16,7 @@ namespace Repository.Repositories
 
         public async Task<ExternalBank?> FindExternalBankByBinAsync(string bin)
         {
-            return await _dbContext.ExternalBanks.AsNoTracking().FirstOrDefaultAsync(b => b.Bin == bin);
+            return await _dbContext.ExternalBanks.AsNoTracking().FirstOrDefaultAsync(b => b.Bin.StartsWith(bin));
         }
 
         public async Task<ExternalCard?> FindExternalCardAsync(string cardNumber)
