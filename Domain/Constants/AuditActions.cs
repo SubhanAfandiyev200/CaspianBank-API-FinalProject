@@ -12,10 +12,11 @@
         public const string SettingChanged = "SettingChanged";
         public const string TicketAnswered = "TicketAnswered";
         public const string TicketClosed = "TicketClosed";
+        public const string DepositPlanChanged = "DepositPlanChanged";
 
         public static readonly string[] All =
         {
-            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed
+            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged
         };
     }
 }

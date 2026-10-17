@@ -29,6 +29,8 @@ namespace Repository.Data
         public DbSet<ExternalCard> ExternalCards { get; set; }
         public DbSet<ExternalTransfer> ExternalTransfers { get; set; }
         public DbSet<ExternalLoan> ExternalLoans { get; set; }
+        public DbSet<DepositPlan> DepositPlans { get; set; }
+        public DbSet<Deposit> Deposits { get; set; }
         public DbSet<OwnBank> OwnBanks { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<LoanInstallment> LoanInstallments { get; set; }
