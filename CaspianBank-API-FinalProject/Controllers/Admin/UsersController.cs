@@ -1,4 +1,4 @@
-using Domain.Constants;
+﻿using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Helpers.DTOs.Users;
@@ -17,10 +17,20 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         private const string RestrictRoles = Roles.SuperAdmin + "," + Roles.Admin + "," + Roles.Security;
 
         private readonly IUserAdminService _service;
+        private readonly IAuditService _audit;
 
-        public UsersController(IUserAdminService service)
+        public UsersController(IUserAdminService service, IAuditService audit)
         {
             _service = service;
+            _audit = audit;
+        }
+
+        private string StaffUserId
+        {
+            get
+            {
+                return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            }
         }
 
         private string StaffName
@@ -47,14 +57,24 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
         [HttpPost("{id}/restrict")]
         public async Task<IActionResult> Restrict(string id, [FromBody] RestrictUserDto model)
         {
-            return ToResponse(await _service.RestrictAsync(StaffName, id, model));
+            var result = await _service.RestrictAsync(StaffName, id, model);
+            if (result.IsSuccess)
+            {
+                await _audit.LogAsync(StaffUserId, AuditActions.AccountRestricted, "Customer", result.Data!.Name + " " + result.Data.Surname, model.Reason);
+            }
+            return ToResponse(result);
         }
 
         [Authorize(Roles = RestrictRoles)]
         [HttpPost("{id}/unrestrict")]
         public async Task<IActionResult> Unrestrict(string id)
         {
-            return ToResponse(await _service.UnrestrictAsync(id));
+            var result = await _service.UnrestrictAsync(id);
+            if (result.IsSuccess)
+            {
+                await _audit.LogAsync(StaffUserId, AuditActions.AccountRestored, "Customer", result.Data!.Name + " " + result.Data.Surname, "Account restored");
+            }
+            return ToResponse(result);
         }
 
         private IActionResult ToResponse<T>(ServiceResult<T> result)
