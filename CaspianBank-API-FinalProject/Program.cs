@@ -140,6 +140,35 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
         ClockSkew = TimeSpan.FromMinutes(1)
     };
+
+    // İşçilərin tokeni hər sorğuda bazaya qarşı yoxlanır: deaktiv edilən və ya rolu dəyişən işçinin köhnə tokeni dərhal etibarsız olur
+    // (yoxsa 60 dəqiqəyə qədər köhnə yetkiylə işləyərdi). Müştəri tokenləri yoxlanmır, onların dondurulması əməliyyatlarda yoxlanır
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var tokenRoles = context.Principal?.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value).ToList() ?? new List<string>();
+            if (!tokenRoles.Any(r => r != Domain.Constants.Roles.Customer))
+            {
+                return;
+            }
+
+            var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var accounts = context.HttpContext.RequestServices.GetRequiredService<IAccountRepository>();
+            var user = userId is null ? null : await accounts.GetByIdAsync(userId);
+            if (user is null || user.IsRestricted)
+            {
+                context.Fail("This staff account is switched off.");
+                return;
+            }
+
+            var currentRoles = await accounts.GetRolesAsync(user);
+            if (!currentRoles.OrderBy(r => r).SequenceEqual(tokenRoles.OrderBy(r => r)))
+            {
+                context.Fail("The role of this account changed. Please sign in again.");
+            }
+        }
+    };
 })
 // Bildiriş hub-ı üçün ayrıca sxem: yalnız qısa ömürlü "hub bileti" (başqa audience) keçir, adi JWT burada etibarsızdır.
 // WebSocket başlıq göndərə bilmir, ona görə bilet ?access_token=... ilə gəlir və yalnız /hubs yolunda oxunur
