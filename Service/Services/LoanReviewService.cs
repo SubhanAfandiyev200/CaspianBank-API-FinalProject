@@ -306,11 +306,17 @@ namespace Service.Services
             }
             if (loan.RequestedAmount > suggestedMax)
             {
-                rules.Warnings.Add("The requested amount is above the suggested maximum of " + suggestedMax.ToString("N0", System.Globalization.CultureInfo.InvariantCulture) + " AZN.");
+                rules.Warnings.Add(suggestedMax <= 0m
+                    ? "Based on the income and the payments the customer already has, no new loan amount fits the monthly payment limit."
+                    : "The requested amount is above the suggested maximum of " + suggestedMax.ToString("N0", System.Globalization.CultureInfo.InvariantCulture) + " AZN.");
             }
             if (bank.MaxPaymentToIncomePercent.HasValue && percent > bank.MaxPaymentToIncomePercent.Value)
             {
-                rules.Warnings.Add("Monthly payments would be " + percent + "% of the income (limit " + bank.MaxPaymentToIncomePercent.Value + "%).");
+                var inv = System.Globalization.CultureInfo.InvariantCulture;
+                rules.Warnings.Add("Existing payments " + LoanEngine.Round(existingMonthly).ToString("N2", inv)
+                    + " AZN + this loan " + LoanEngine.Round(requestedMonthly).ToString("N2", inv)
+                    + " AZN a month would be " + percent.ToString("0.##", inv) + "% of the income (limit "
+                    + bank.MaxPaymentToIncomePercent.Value.ToString("0.##", inv) + "%).");
             }
             if (activeCount >= bank.MaxActiveLoans)
             {
