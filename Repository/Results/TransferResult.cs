@@ -1,4 +1,4 @@
-namespace Repository.Results
+﻿namespace Repository.Results
 {
     public enum TransferOutcome
     {
@@ -14,6 +14,20 @@ namespace Repository.Results
     }
 
     public record TransferResult(TransferOutcome Outcome, decimal SourceBalanceAfter = 0m);
+
+    // Başqa bankın kartına köçürmə planı: göndərənin balansı azalır, alıcı tərəfdə balans yoxdur
+    public record ExternalTransferPlan(
+        string UserId,
+        int FromCardId,
+        int ExternalCardId,
+        string BankName,
+        string CardLast4,
+        string HolderMasked,
+        decimal Amount,
+        decimal Commission,
+        string Reference,
+        string? Note,
+        string DescriptionOut);
 
     // Servisin hesabladığı və yoxladığı köçürmə planı: repository yalnız onu atomik icra edir
     public record TransferPlan(
