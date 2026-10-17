@@ -32,6 +32,7 @@ namespace Repository
             services.AddScoped<ILoanRepository, LoanRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IBillRepository, BillRepository>();
+            services.AddScoped<IDepositRepository, DepositRepository>();
             services.AddScoped<IRecurringPaymentRepository, RecurringPaymentRepository>();
             services.AddScoped<IUserAdminRepository, UserAdminRepository>();
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
