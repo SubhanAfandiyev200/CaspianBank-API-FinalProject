@@ -35,6 +35,7 @@ namespace Repository
             services.AddScoped<IRecurringPaymentRepository, RecurringPaymentRepository>();
             services.AddScoped<IUserAdminRepository, UserAdminRepository>();
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<IServiceSectionRepository, ServiceSectionRepository>();
             services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
             services.AddScoped<IBenefitSectionRepository, BenefitSectionRepository>();
