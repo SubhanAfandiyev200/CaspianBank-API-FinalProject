@@ -46,6 +46,7 @@ namespace Repository.Data
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SupportMessage> SupportMessages { get; set; }
         public DbSet<TreasuryEntry> TreasuryEntries { get; set; }
+        public DbSet<SecurityAlert> SecurityAlerts { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
