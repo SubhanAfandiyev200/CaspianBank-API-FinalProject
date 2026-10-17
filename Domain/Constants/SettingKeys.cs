@@ -11,5 +11,9 @@ namespace Domain.Constants
         public const string FooterTitle = "FooterTitle";
         public const string FooterDescription = "FooterDescription";
         public const string Copyright = "Copyright";
+        public const string InstagramUrl = "InstagramUrl";          // footer-dakı sosial şəbəkə linkləri: tam ünvan (https://...)
+        public const string FacebookUrl = "FacebookUrl";
+        public const string TwitterUrl = "TwitterUrl";
+        public const string LinkedInUrl = "LinkedInUrl";
     }
 }

@@ -1,3 +1,4 @@
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Enums;
 using FluentValidation;
@@ -20,27 +21,33 @@ namespace Service.Services
         private readonly ICardTierConfigRepository _tiers;
         private readonly ITransactionRepository _transactions;
         private readonly IAccountRepository _accounts;
-        private readonly IValidator<CreateInitialCardsDto> _initialValidator;
         private readonly IValidator<AddCardDto> _addValidator;
         private readonly IValidator<BlockCardDto> _blockValidator;
+        private readonly IValidator<UnblockCardDto> _unblockValidator;
+        private readonly IOtpService _otp;
         private readonly IValidator<TopUpDto> _topUpValidator;
+        private readonly INotificationService _notifications;
 
         public CardService(ICardRepository cards,
                            ICardTierConfigRepository tiers,
                            ITransactionRepository transactions,
                            IAccountRepository accounts,
-                           IValidator<CreateInitialCardsDto> initialValidator,
                            IValidator<AddCardDto> addValidator,
                            IValidator<BlockCardDto> blockValidator,
-                           IValidator<TopUpDto> topUpValidator)
+                           IValidator<UnblockCardDto> unblockValidator,
+                           IOtpService otp,
+                           IValidator<TopUpDto> topUpValidator,
+                           INotificationService notifications)
         {
+            _notifications = notifications;
             _cards = cards;
             _tiers = tiers;
             _transactions = transactions;
             _accounts = accounts;
-            _initialValidator = initialValidator;
             _addValidator = addValidator;
             _blockValidator = blockValidator;
+            _unblockValidator = unblockValidator;
+            _otp = otp;
             _topUpValidator = topUpValidator;
         }
 
@@ -80,18 +87,18 @@ namespace Service.Services
             return ServiceResult<CardDetailDto>.Ok(dto);
         }
 
-        public async Task<ServiceResult<IEnumerable<CardDto>>> CreateInitialCardsAsync(string userId, CreateInitialCardsDto model)
+        public async Task<ServiceResult<IEnumerable<CardDto>>> CreateInitialCardsAsync(string userId)
         {
-            var validation = await _initialValidator.ValidateAsync(model);
-            if (!validation.IsValid)
-            {
-                return ServiceResult<IEnumerable<CardDto>>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
-            }
-
             var user = await _accounts.GetByIdAsync(userId);
             if (user is null)
             {
                 return ServiceResult<IEnumerable<CardDto>>.NotFound();
+            }
+
+            // Kartlar yalnız reyestrdəki vətəndaşa bağlı hesaba açılır (qeydiyyatda bağlanır)
+            if (user.CustomerId is null)
+            {
+                return ServiceResult<IEnumerable<CardDto>>.Fail("Your account is not linked to a citizen record, so cards can't be opened.");
             }
 
             if (await _cards.UserHasCardsAsync(userId))
@@ -99,28 +106,11 @@ namespace Service.Services
                 return ServiceResult<IEnumerable<CardDto>>.Fail("Your first cards have already been created.");
             }
 
-            var fin = model.Fin.Trim().ToUpperInvariant();
-            if (await _accounts.FinInUseAsync(fin, userId))
-            {
-                return ServiceResult<IEnumerable<CardDto>>.Fail("This FIN code is already registered to another account.");
-            }
-
             var standard = await _tiers.GetByTierAsync(CardTier.Standard);
             var cashback = await _tiers.GetByTierAsync(CardTier.Cashback);
             if (standard is null || cashback is null)
             {
                 return ServiceResult<IEnumerable<CardDto>>.Fail("Card settings are not available right now. Please try again later.");
-            }
-
-            // FİN hesaba yazılır (bazada unikaldır)
-            if (user.FinKod != fin)
-            {
-                user.FinKod = fin;
-                var update = await _accounts.UpdateAsync(user);
-                if (!update.Succeeded)
-                {
-                    return ServiceResult<IEnumerable<CardDto>>.Fail("This FIN code could not be saved. Check it and try again.");
-                }
             }
 
             var created = new List<Card>
@@ -246,6 +236,55 @@ namespace Service.Services
             return ServiceResult<IEnumerable<TransactionDto>>.Ok(result);
         }
 
+        public async Task<IEnumerable<TransactionDto>> GetRecentActivityAsync(string userId, int take)
+        {
+            var limit = Math.Clamp(take, 1, 50);
+            var rows = await _transactions.GetRecentForUserAsync(userId, limit);
+
+            return rows.Select(t => new TransactionDto
+            {
+                Id = t.Id,
+                CardId = t.CardId,
+                CardLabel = t.Card.Tier + " •••• " + t.Card.CardNumber[^4..],
+                Type = t.Type.ToString(),
+                IsIncome = t.IsIncome,
+                Amount = t.Amount,
+                BalanceAfter = t.BalanceAfter,
+                Description = t.Description,
+                Note = t.Note,
+                Reference = t.Reference,
+                CreatedAt = t.CreatedAt
+            }).ToList();
+        }
+
+        // ---- Kartı OTP kodu ilə bloklamaq / blokdan çıxarmaq ----
+        // Hər iki əməliyyat iki addımdır: 1) kod hesabın emailinə göndərilir, 2) istifadəçi kodu yazır
+
+        public async Task<ServiceResult<CardCodeSentDto>> SendBlockCodeAsync(string userId, int cardId)
+        {
+            var user = await _accounts.GetByIdAsync(userId);
+            var card = await _cards.GetByIdForUserAsync(cardId, userId);
+            if (user is null || card is null)
+            {
+                return ServiceResult<CardCodeSentDto>.NotFound();
+            }
+
+            // Cashback kartı yalnız cashback yığır, ona görə bloklanmır (blok olsa cashback düşə bilməzdi)
+            if (card.Tier == CardTier.Cashback)
+            {
+                return ServiceResult<CardCodeSentDto>.Fail("The Cashback card can't be blocked.");
+            }
+
+            if (card.IsBlocked)
+            {
+                return ServiceResult<CardCodeSentDto>.Fail("This card is already blocked.");
+            }
+
+            return await SendCardCodeAsync(user, OtpPurposes.CardBlock(card.Id),
+                "Your Caspian Bank card block code",
+                $"Use this code to block your card •••• {card.CardNumber[^4..]}:");
+        }
+
         public async Task<ServiceResult<CardDto>> BlockAsync(string userId, int cardId, BlockCardDto model)
         {
             var validation = await _blockValidator.ValidateAsync(model);
@@ -261,34 +300,118 @@ namespace Service.Services
                 return ServiceResult<CardDto>.NotFound();
             }
 
+            if (card.Tier == CardTier.Cashback)
+            {
+                return ServiceResult<CardDto>.Fail("The Cashback card can't be blocked.");
+            }
+
             if (card.IsBlocked)
             {
                 return ServiceResult<CardDto>.Fail("This card is already blocked.");
             }
 
-            if (await _accounts.IsLockedOutAsync(user))
+            // Kod bu kart üçün göndərilməlidir (OtpPurposes.CardBlock(cardId)); 5 yanlış cəhddən sonra kod ləğv olunur
+            var confirmed = await _otp.ConfirmCodeAsync(user.Email!, OtpPurposes.CardBlock(card.Id), model.Code);
+            if (!confirmed.IsSuccess)
             {
-                return ServiceResult<CardDto>.Fail("Too many failed attempts. Try again in a few minutes.");
+                return ServiceResult<CardDto>.Fail(confirmed.Errors);
             }
-
-            if (!string.Equals(model.Email.Trim(), user.Email, StringComparison.OrdinalIgnoreCase))
-            {
-                return ServiceResult<CardDto>.Fail("Enter the email on this account.");
-            }
-
-            // Parol yanlışdırsa giriş cəhdləri kimi sayılır (5 uğursuz cəhddən sonra hesab müvəqqəti bloklanır)
-            if (!await _accounts.CheckPasswordAsync(user, model.Password))
-            {
-                await _accounts.RegisterFailedAttemptAsync(user);
-                return ServiceResult<CardDto>.Fail("Password doesn't match.");
-            }
-
-            await _accounts.ResetFailedAttemptsAsync(user);
 
             card.IsBlocked = true;
             await _cards.UpdateAsync(card);
 
+            await _notifications.NotifyAsync(userId, NotificationCategory.Card, "Card blocked",
+                $"Your card •••• {card.CardNumber[^4..]} was blocked. You can unblock it with a code sent to your email.", $"/App/Card/{card.Id}");
+
             return ServiceResult<CardDto>.Ok(ToDto(card, HolderName(user), card.CardDesign.Image));
+        }
+
+        public async Task<ServiceResult<CardCodeSentDto>> SendUnblockCodeAsync(string userId, int cardId)
+        {
+            var user = await _accounts.GetByIdAsync(userId);
+            var card = await _cards.GetByIdForUserAsync(cardId, userId);
+            if (user is null || card is null)
+            {
+                return ServiceResult<CardCodeSentDto>.NotFound();
+            }
+
+            if (!card.IsBlocked)
+            {
+                return ServiceResult<CardCodeSentDto>.Fail("This card is not blocked.");
+            }
+
+            if (user.IsRestricted)
+            {
+                return ServiceResult<CardCodeSentDto>.Fail("This account is restricted. Contact the bank.");
+            }
+
+            return await SendCardCodeAsync(user, OtpPurposes.CardUnblock(card.Id),
+                "Your Caspian Bank card unblock code",
+                $"Use this code to unblock your card •••• {card.CardNumber[^4..]}:");
+        }
+
+        public async Task<ServiceResult<CardDto>> UnblockAsync(string userId, int cardId, UnblockCardDto model)
+        {
+            var validation = await _unblockValidator.ValidateAsync(model);
+            if (!validation.IsValid)
+            {
+                return ServiceResult<CardDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
+
+            var user = await _accounts.GetByIdAsync(userId);
+            var card = await _cards.GetByIdForUserAsync(cardId, userId);
+            if (user is null || card is null)
+            {
+                return ServiceResult<CardDto>.NotFound();
+            }
+
+            if (!card.IsBlocked)
+            {
+                return ServiceResult<CardDto>.Fail("This card is not blocked.");
+            }
+
+            if (user.IsRestricted)
+            {
+                return ServiceResult<CardDto>.Fail("This account is restricted. Contact the bank.");
+            }
+
+            var confirmed = await _otp.ConfirmCodeAsync(user.Email!, OtpPurposes.CardUnblock(card.Id), model.Code);
+            if (!confirmed.IsSuccess)
+            {
+                return ServiceResult<CardDto>.Fail(confirmed.Errors);
+            }
+
+            card.IsBlocked = false;
+            await _cards.UpdateAsync(card);
+
+            await _notifications.NotifyAsync(userId, NotificationCategory.Card, "Card unblocked",
+                $"Your card •••• {card.CardNumber[^4..]} is active again.", $"/App/Card/{card.Id}");
+
+            return ServiceResult<CardDto>.Ok(ToDto(card, HolderName(user), card.CardDesign.Image));
+        }
+
+        // Kodu hesabın emailinə göndərir; gözləmə müddəti bitməyibsə qalan saniyə mesajda yazılır
+        private async Task<ServiceResult<CardCodeSentDto>> SendCardCodeAsync(AppUser user, string purpose, string subject, string intro)
+        {
+            var email = user.Email ?? string.Empty;
+            var sent = await _otp.SendCodeAsync(email, purpose, subject, intro);
+            if (!sent.IsSuccess)
+            {
+                return ServiceResult<CardCodeSentDto>.Fail(sent.Errors);
+            }
+
+            return ServiceResult<CardCodeSentDto>.Ok(new CardCodeSentDto
+            {
+                MaskedEmail = MaskEmail(email),
+                DevCode = sent.DevCode
+            });
+        }
+
+        // "nurlan@mail.com" → "n****@mail.com"
+        private static string MaskEmail(string email)
+        {
+            var parts = email.Split('@');
+            return parts.Length == 2 && parts[0].Length > 0 ? parts[0][..1] + "****@" + parts[1] : email;
         }
 
         // ---- köməkçilər ----

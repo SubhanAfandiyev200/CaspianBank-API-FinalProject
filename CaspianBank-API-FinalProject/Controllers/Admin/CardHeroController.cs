@@ -8,7 +8,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // Home-un yuxarı hissəsindəki sol mətn. Tək yazıdır: yalnız oxunur və dəyişdirilir
     [Route("api/admin/card-hero")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class CardHeroController : ControllerBase
     {
         private readonly ICardHeroService _cardHeroService;

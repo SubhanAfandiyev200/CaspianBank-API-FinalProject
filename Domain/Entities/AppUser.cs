@@ -9,6 +9,15 @@ namespace Domain.Entities
         public DateTime BirthDay { get; set; }
         public string? FinKod { get; set; }
         public bool IsRestricted { get; set; } = false;
+
+        // Dondurma (restrict) məlumatı: səbəb, vaxt və dondurğan işçinin adı. Açılanda silinir
+        public string? RestrictionReason { get; set; }
+        public DateTime? RestrictedAt { get; set; }
+        public string? RestrictedBy { get; set; }
+
+        // Reyestrdəki vətəndaş (qeydiyyatdan keçən müştərilər üçün). İşçilərdə boşdur
+        public int? CustomerId { get; set; }
+        public Customer? Customer { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // İstifadəçinin kartları (one-to-many)

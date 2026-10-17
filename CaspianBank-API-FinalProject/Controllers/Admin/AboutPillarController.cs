@@ -8,7 +8,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // About blokunun altındakı sütunlar (şəkil, başlıq, açıqlama). Mətn bloku AboutController-dədir
     [Route("api/admin/about-pillars")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class AboutPillarController : ControllerBase
     {
         private readonly IAboutPillarService _pillarService;

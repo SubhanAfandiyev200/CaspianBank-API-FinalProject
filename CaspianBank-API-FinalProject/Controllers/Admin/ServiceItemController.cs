@@ -8,7 +8,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // Home-dakı altı xidmət kartı. Hər kart proqramın bir bölməsinə aparır, ona görə mətnləri və ikonu dəyişir, amma əlavə/silmə yoxdur
     [Route("api/admin/service-items")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class ServiceItemController : ControllerBase
     {
         private readonly IServiceItemService _serviceItemService;

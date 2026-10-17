@@ -17,6 +17,11 @@ namespace Service.Helpers.Validators.Settings
             LimitFor(SettingKeys.FooterTitle, "footer title", 200);
             LimitFor(SettingKeys.Copyright, "copyright line", 100);
 
+            foreach (var socialKey in new[] { SettingKeys.InstagramUrl, SettingKeys.FacebookUrl, SettingKeys.TwitterUrl, SettingKeys.LinkedInUrl })
+            {
+                LinkFor(socialKey);
+            }
+
             When(x => x.Key == SettingKeys.Email, () =>
             {
                 RuleFor(x => x.Value)
@@ -30,6 +35,19 @@ namespace Service.Helpers.Validators.Settings
                 RuleFor(x => x.Value)
                     .Must(value => string.IsNullOrWhiteSpace(value) || System.Text.RegularExpressions.Regex.IsMatch(value.Trim(), @"^\+?[0-9][0-9 ()\-]{5,19}$"))
                         .WithMessage("Enter a valid phone number, for example +994 12 345 67 89.");
+            });
+        }
+
+        // Sosial şəbəkə linki: https:// və ya http:// ilə başlayan düzgün ünvan (javascript: kimi təhlükəli ünvanlar keçmir)
+        private void LinkFor(string key)
+        {
+            When(x => x.Key == key, () =>
+            {
+                RuleFor(x => x.Value)
+                    .Must(value => string.IsNullOrWhiteSpace(value) || value.Trim().Length <= 200)
+                        .WithMessage("The link can be at most 200 characters.")
+                    .Must(value => Uri.TryCreate(value?.Trim(), UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp))
+                        .WithMessage("Enter a full link that starts with https://, for example https://www.instagram.com/caspianbank.");
             });
         }
 

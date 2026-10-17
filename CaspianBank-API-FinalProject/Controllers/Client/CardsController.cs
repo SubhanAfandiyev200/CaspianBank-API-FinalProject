@@ -42,6 +42,13 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.GetMyCardAsync(UserId, id));
         }
 
+        // Bütün kartların ən son əməliyyatları (Cards səhifəsindəki "Recent activity"). "activity" sabit sözdür, {id:int} ilə qarışmır
+        [HttpGet("activity")]
+        public async Task<IActionResult> GetActivity([FromQuery] int take = 8)
+        {
+            return Ok(await _cardService.GetRecentActivityAsync(UserId, take));
+        }
+
         // Kartın ən son əməliyyatları (kart səhifəsindəki "Recent activity")
         [HttpGet("{id:int}/transactions")]
         public async Task<IActionResult> GetTransactions(int id, [FromQuery] int take = 20)
@@ -49,11 +56,11 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.GetTransactionsAsync(UserId, id, take));
         }
 
-        // İlk kartlar: Standard + Cashback (pulsuz)
+        // İlk kartlar: Standard + Cashback (pulsuz). Qeydiyyatda onsuz da açılır; bu yalnız o addım alınmayıbsa təkrar cəhd üçündür
         [HttpPost("initial")]
-        public async Task<IActionResult> CreateInitial([FromBody] CreateInitialCardsDto model)
+        public async Task<IActionResult> CreateInitial()
         {
-            return ToResponse(await _cardService.CreateInitialCardsAsync(UserId, model));
+            return ToResponse(await _cardService.CreateInitialCardsAsync(UserId));
         }
 
         // Əlavə kart (haqq seçilən kartdan çıxılır)
@@ -70,12 +77,34 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.TopUpAsync(UserId, id, model));
         }
 
-        // Parol yoxlaması olduğu üçün giriş endpoint-ləri kimi sürət limitlidir
+        // Bloklama / blokdan çıxarma iki addımdır: əvvəl kod emailə göndərilir (.../code), sonra kodla təsdiq olunur.
+        // Email göndərən və kodu yoxlayan endpoint-lər giriş endpoint-ləri kimi sürət limitlidir
+        [EnableRateLimiting("auth")]
+        [HttpPost("{id:int}/block/code")]
+        public async Task<IActionResult> SendBlockCode(int id)
+        {
+            return ToResponse(await _cardService.SendBlockCodeAsync(UserId, id));
+        }
+
         [EnableRateLimiting("auth")]
         [HttpPost("{id:int}/block")]
         public async Task<IActionResult> Block(int id, [FromBody] BlockCardDto model)
         {
             return ToResponse(await _cardService.BlockAsync(UserId, id, model));
+        }
+
+        [EnableRateLimiting("auth")]
+        [HttpPost("{id:int}/unblock/code")]
+        public async Task<IActionResult> SendUnblockCode(int id)
+        {
+            return ToResponse(await _cardService.SendUnblockCodeAsync(UserId, id));
+        }
+
+        [EnableRateLimiting("auth")]
+        [HttpPost("{id:int}/unblock")]
+        public async Task<IActionResult> Unblock(int id, [FromBody] UnblockCardDto model)
+        {
+            return ToResponse(await _cardService.UnblockAsync(UserId, id, model));
         }
 
         private IActionResult ToResponse<T>(ServiceResult<T> result)

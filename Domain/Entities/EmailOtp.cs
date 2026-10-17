@@ -5,6 +5,9 @@ namespace Domain.Entities
     public class EmailOtp : BaseEntity
     {
         public string Email { get; set; } = string.Empty;
+
+        // Kodun nə üçün göndərildiyi (Domain/Constants/OtpPurposes.cs): qeydiyyat kodu ilə kart kodu bir-birini əvəz edə bilməsin
+        public string Purpose { get; set; } = "Register";
         public string CodeHash { get; set; } = string.Empty;   // kod düz saxlanmır, HMAC hash-i saxlanır
         public DateTime ExpiresAt { get; set; }
         public bool IsUsed { get; set; }

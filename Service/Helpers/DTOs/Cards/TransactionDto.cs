@@ -4,6 +4,8 @@ namespace Service.Helpers.DTOs.Cards
     public class TransactionDto
     {
         public int Id { get; set; }
+        public int CardId { get; set; }
+        public string CardLabel { get; set; } = string.Empty;   // yalnız bütün kartların son əməliyyatlarında dolur (məs. "Standard •••• 9594")
         public string Type { get; set; } = string.Empty;        // TopUp, TransferOut, TransferIn, Commission, CardFee
         public bool IsIncome { get; set; }
         public decimal Amount { get; set; }

@@ -8,7 +8,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
     // Home-dakı "About" blokunun mətni və videosu. Tək yazıdır: yalnız oxunur, mətni və videosu dəyişdirilir. Üç sütun (pillar) AboutPillarController-dədir
     [Route("api/admin/about")]
     [ApiController]
-    [Authorize(Roles = "WebDesigner,SuperAdmin,Admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public class AboutController : ControllerBase
     {
         // Video 50 MB-a qədərdir (FileService yoxlayır). Kestrel-in ümumi 30 MB limiti və form limiti bu əməliyyat üçün yüksəldilir

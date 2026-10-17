@@ -19,10 +19,23 @@ namespace Domain.Configurations
             builder.Property(u => u.FinKod)
                 .HasMaxLength(10);
 
+            builder.Property(u => u.RestrictionReason).HasMaxLength(300);
+            builder.Property(u => u.RestrictedBy).HasMaxLength(100);
+
             // FİN yalnız ilk kart alanda daxil edilir, ona görə NULL-lar unique yoxlamadan kənardır
             builder.HasIndex(u => u.FinKod)
                 .IsUnique()
                 .HasFilter("[FinKod] IS NOT NULL");
+
+            // Bir vətəndaş yalnız bir hesaba bağlana bilər (işçilərdə CustomerId boşdur)
+            builder.HasIndex(u => u.CustomerId)
+                .IsUnique()
+                .HasFilter("[CustomerId] IS NOT NULL");
+
+            builder.HasOne(u => u.Customer)
+                .WithMany()
+                .HasForeignKey(u => u.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

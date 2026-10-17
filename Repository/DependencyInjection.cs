@@ -16,6 +16,7 @@ namespace Repository
             services.AddScoped<IBrandRepository, BrandRepository>();
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IHomeTickerRepository, HomeTickerRepository>();
             services.AddScoped<IAboutRepository, AboutRepository>();
             services.AddScoped<IAboutPillarRepository, AboutPillarRepository>();
@@ -27,6 +28,14 @@ namespace Repository
             services.AddScoped<ICardTierConfigRepository, CardTierConfigRepository>();
             services.AddScoped<ITransferRepository, TransferRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IHomeStatsRepository, HomeStatsRepository>();
+            services.AddScoped<ILoanRepository, LoanRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IBillRepository, BillRepository>();
+            services.AddScoped<IRecurringPaymentRepository, RecurringPaymentRepository>();
+            services.AddScoped<IUserAdminRepository, UserAdminRepository>();
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
             services.AddScoped<IServiceSectionRepository, ServiceSectionRepository>();
             services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
             services.AddScoped<IBenefitSectionRepository, BenefitSectionRepository>();

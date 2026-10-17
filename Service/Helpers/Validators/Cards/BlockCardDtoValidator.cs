@@ -7,12 +7,10 @@ namespace Service.Helpers.Validators.Cards
     {
         public BlockCardDtoValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Enter the email on this account.")
-                .EmailAddress().WithMessage("Enter a valid email address.");
-
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Enter your password.");
+            RuleFor(x => x.Code)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Enter the 6-digit code.")
+                .Matches(@"^\d{6}$").WithMessage("The code is 6 digits.");
         }
     }
 }

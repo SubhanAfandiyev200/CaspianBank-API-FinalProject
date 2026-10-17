@@ -6,10 +6,10 @@ using Service.Services.Interfaces;
 
 namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
-    // Home səhifəsindəki kart dizaynlarını idarə edir (WebDesigner, Admin, SuperAdmin)
+    // Home səhifəsindəki kart dizaynlarını idarə edir (Admin, SuperAdmin)
     [Route("api/admin/card-designs")]
     [ApiController]
-    [Authorize(Roles = Roles.WebDesigner + "," + Roles.Admin + "," + Roles.SuperAdmin)]
+    [Authorize(Roles = Roles.Admin + "," + Roles.SuperAdmin)]
     public class CardDesignController : ControllerBase
     {
         private readonly ICardDesignService _service;
