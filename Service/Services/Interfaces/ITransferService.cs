@@ -10,5 +10,8 @@ namespace Service.Services.Interfaces
 
         // Eyni yoxlamalardan sonra pulu atomik köçürür
         Task<ServiceResult<TransferReceiptDto>> TransferAsync(string userId, TransferDto model);
+
+        // İstifadəçinin hər kartı üçün aylıq limit və bu ay artıq göndərilən məbləğ (formada komissiya canlı göstərilir)
+        Task<IEnumerable<CardLimitDto>> GetLimitsAsync(string userId);
     }
 }

@@ -44,6 +44,8 @@ namespace Service
             services.AddScoped<IUserAdminService, UserAdminService>();
             services.AddScoped<IAuditService, AuditService>();
             services.AddScoped<ISupportTicketService, SupportTicketService>();
+            services.AddScoped<IBankDashboardService, BankDashboardService>();
+            services.AddScoped<IBankDirectoryService, BankDirectoryService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();
