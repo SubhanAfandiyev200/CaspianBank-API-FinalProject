@@ -2,10 +2,10 @@ using System.Security.Cryptography;
 
 namespace Service.Helpers
 {
-    // 16 rəqəmli kart nömrəsi: 4532 + 11 təsadüfi rəqəm + Luhn yoxlama rəqəmi
+    // 16 rəqəmli kart nömrəsi: Caspian Bank BIN-i (ilk 8 rəqəm, OwnBanks.Bin ilə eynidir) + 7 təsadüfi rəqəm + Luhn yoxlama rəqəmi
     public static class CardNumberGenerator
     {
-        private const string Prefix = "4532";
+        public const string Prefix = "96301020";
 
         public static string Generate()
         {
