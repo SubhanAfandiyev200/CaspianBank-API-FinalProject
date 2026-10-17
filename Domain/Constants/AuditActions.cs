@@ -17,10 +17,12 @@
         public const string StaffRoleChanged = "StaffRoleChanged";
         public const string StaffDeactivated = "StaffDeactivated";
         public const string StaffActivated = "StaffActivated";
+        public const string SecurityAlertDismissed = "SecurityAlertDismissed";
+        public const string SecurityAlertFrozen = "SecurityAlertFrozen";
 
         public static readonly string[] All =
         {
-            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged, StaffAdded, StaffRoleChanged, StaffDeactivated, StaffActivated
+            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged, StaffAdded, StaffRoleChanged, StaffDeactivated, StaffActivated, SecurityAlertDismissed, SecurityAlertFrozen
         };
     }
 }
