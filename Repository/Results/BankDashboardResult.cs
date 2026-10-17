@@ -8,6 +8,7 @@ namespace Repository.Results
         public decimal LoanInterest { get; set; }       // kredit ödənişlərinin faiz hissəsi
         public decimal Penalties { get; set; }          // gecikmə cərimələri
         public decimal Cashback { get; set; }           // müştərilərə ödənilən cashback (bankın xərci)
+        public decimal DepositInterest { get; set; }    // depozitlər üçün müştərilərə ödənilən faiz (bankın xərci)
     }
 
     // Hazırkı vəziyyət (aya aid olmayan hissə) və ayın müştəri sayı
@@ -17,6 +18,8 @@ namespace Repository.Results
         public int NewUsers { get; set; }               // seçilmiş ayda qeydiyyatdan keçənlər
         public int RestrictedUsers { get; set; }
         public decimal CustomerDeposits { get; set; }   // müştəri kartlarındakı pulun cəmi
+        public decimal TermDeposits { get; set; }       // müddətli depozitlərdə saxlanılan əsas məbləğ (aktiv)
+        public decimal TermDepositInterestOwed { get; set; }   // aktiv depozitlər üçün gələcəkdə ödəniləcək faiz
         public decimal LoansOutstanding { get; set; }   // verilib hələ qayıtmayan əsas borc
         public int PendingLoans { get; set; }
         public int PendingTickets { get; set; }

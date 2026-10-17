@@ -71,7 +71,7 @@ namespace Service.Services
 
             var snapshot = await _dashboard.GetSnapshotAsync(ToUtc(selected), ToUtc(selected.AddMonths(1)));
 
-            var required = Round(snapshot.CustomerDeposits * bank.ReservePercent / 100m);
+            var required = Round((snapshot.CustomerDeposits + snapshot.TermDeposits) * bank.ReservePercent / 100m);
             var needed = required + quarterTax;
             decimal? coverage = needed > 0m ? Math.Round(bank.OwnFunds / needed, 1) : null;
 
@@ -94,6 +94,8 @@ namespace Service.Services
                 TotalUsers = snapshot.TotalUsers,
                 NewUsers = snapshot.NewUsers,
                 CustomerDeposits = snapshot.CustomerDeposits,
+                TermDeposits = snapshot.TermDeposits,
+                TermDepositInterestOwed = snapshot.TermDepositInterestOwed,
                 LoansOutstanding = snapshot.LoansOutstanding,
                 TransferCommissions = current.Money.Commissions,
                 CardOpeningFees = current.Money.CardFees,
@@ -102,6 +104,7 @@ namespace Service.Services
                 TotalIncome = current.Income,
                 IncomeChangePercent = Change(current.Income, previous.Income),
                 CashbackPaid = current.Money.Cashback,
+                DepositInterestPaid = current.Money.DepositInterest,
                 OperatingCosts = current.OperatingCosts,
                 ProfitTaxPercent = bank.ProfitTaxPercent,
                 ProfitTax = current.Tax,
@@ -127,8 +130,8 @@ namespace Service.Services
             var money = await _dashboard.GetMonthMoneyAsync(ToUtc(monthStart), ToUtc(monthStart.AddMonths(1)));
             var income = Round(money.Commissions + money.CardFees + money.LoanInterest + money.Penalties);
 
-            // Vergi mənfəətdən tutulur (gəlir - cashback - əməliyyat xərci). Zərər olanda vergi yoxdur
-            var profitBeforeTax = Round(income - money.Cashback - bank.OperatingCostMonthly);
+            // Vergi mənfəətdən tutulur (gəlir - cashback - depozit faizi - əməliyyat xərci). Zərər olanda vergi yoxdur
+            var profitBeforeTax = Round(income - money.Cashback - money.DepositInterest - bank.OperatingCostMonthly);
             var tax = profitBeforeTax > 0m ? Round(profitBeforeTax * bank.ProfitTaxPercent / 100m) : 0m;
 
             return new MonthResult
@@ -138,7 +141,7 @@ namespace Service.Services
                 OperatingCosts = bank.OperatingCostMonthly,
                 ProfitBeforeTax = profitBeforeTax,
                 Tax = tax,
-                Expenses = Round(money.Cashback + bank.OperatingCostMonthly + tax)
+                Expenses = Round(money.Cashback + money.DepositInterest + bank.OperatingCostMonthly + tax)
             };
         }
 

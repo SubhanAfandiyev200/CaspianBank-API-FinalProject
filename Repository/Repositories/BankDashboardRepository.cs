@@ -23,6 +23,7 @@ namespace Repository.Repositories
             var commissions = await transactions.Where(t => t.Type == TransactionType.Commission).SumAsync(t => (decimal?)t.Amount);
             var cardFees = await transactions.Where(t => t.Type == TransactionType.CardFee).SumAsync(t => (decimal?)t.Amount);
             var cashback = await transactions.Where(t => t.Type == TransactionType.Cashback).SumAsync(t => (decimal?)t.Amount);
+            var depositInterest = await transactions.Where(t => t.Type == TransactionType.DepositInterest).SumAsync(t => (decimal?)t.Amount);
 
             var payments = _dbContext.LoanPaymentRecords.AsNoTracking().Where(p => p.PaidAt >= fromUtc && p.PaidAt < toUtc);
             var interest = await payments.SumAsync(p => (decimal?)p.InterestPart);
@@ -34,7 +35,8 @@ namespace Repository.Repositories
                 CardFees = cardFees ?? 0m,
                 LoanInterest = interest ?? 0m,
                 Penalties = penalties ?? 0m,
-                Cashback = cashback ?? 0m
+                Cashback = cashback ?? 0m,
+                DepositInterest = depositInterest ?? 0m
             };
         }
 
@@ -52,6 +54,9 @@ namespace Repository.Repositories
             var restricted = await customers.CountAsync(u => u.IsRestricted);
 
             var deposits = await _dbContext.Cards.AsNoTracking().SumAsync(c => (decimal?)c.Balance);
+            var activeDeposits = _dbContext.Deposits.AsNoTracking().Where(d => d.Status == DepositStatus.Active);
+            var termDeposits = await activeDeposits.SumAsync(d => (decimal?)d.Principal);
+            var interestOwed = await activeDeposits.SumAsync(d => (decimal?)d.ExpectedInterest);
             var outstanding = await _dbContext.Loans.AsNoTracking()
                 .Where(l => l.Status == LoanStatus.Active || l.Status == LoanStatus.Court)
                 .SumAsync(l => (decimal?)l.OutstandingPrincipal);
@@ -64,6 +69,8 @@ namespace Repository.Repositories
                 NewUsers = newUsers,
                 RestrictedUsers = restricted,
                 CustomerDeposits = deposits ?? 0m,
+                TermDeposits = termDeposits ?? 0m,
+                TermDepositInterestOwed = interestOwed ?? 0m,
                 LoansOutstanding = outstanding ?? 0m,
                 PendingLoans = pendingLoans,
                 PendingTickets = pendingTickets

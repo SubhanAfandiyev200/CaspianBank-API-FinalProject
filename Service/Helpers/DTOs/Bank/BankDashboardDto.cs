@@ -17,6 +17,8 @@ namespace Service.Helpers.DTOs.Bank
         public int TotalUsers { get; set; }
         public int NewUsers { get; set; }
         public decimal CustomerDeposits { get; set; }
+        public decimal TermDeposits { get; set; }               // müddətli depozitlərdəki pul
+        public decimal TermDepositInterestOwed { get; set; }    // onlar üçün gələcəkdə ödəniləcək faiz
         public decimal LoansOutstanding { get; set; }
 
         // Gəlir
@@ -29,6 +31,7 @@ namespace Service.Helpers.DTOs.Bank
 
         // Xərc
         public decimal CashbackPaid { get; set; }
+        public decimal DepositInterestPaid { get; set; }
         public decimal OperatingCosts { get; set; }
         public decimal ProfitTaxPercent { get; set; }
         public decimal ProfitTax { get; set; }
