@@ -26,6 +26,8 @@ namespace Repository.Data
         public DbSet<Workplace> Workplaces { get; set; }
         public DbSet<Employment> Employments { get; set; }
         public DbSet<ExternalBank> ExternalBanks { get; set; }
+        public DbSet<ExternalCard> ExternalCards { get; set; }
+        public DbSet<ExternalTransfer> ExternalTransfers { get; set; }
         public DbSet<ExternalLoan> ExternalLoans { get; set; }
         public DbSet<OwnBank> OwnBanks { get; set; }
         public DbSet<Loan> Loans { get; set; }

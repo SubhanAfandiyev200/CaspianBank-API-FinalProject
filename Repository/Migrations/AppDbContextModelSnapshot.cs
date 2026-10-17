@@ -1112,6 +1112,45 @@ namespace Repository.Migrations
                     b.ToTable("ExternalBanks");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ExternalCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasMaxLength(19)
+                        .HasColumnType("nvarchar(19)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("ExternalBankId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HolderName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardNumber")
+                        .IsUnique();
+
+                    b.HasIndex("ExternalBankId");
+
+                    b.ToTable("ExternalCards");
+                });
+
             modelBuilder.Entity("Domain.Entities.ExternalLoan", b =>
                 {
                     b.Property<int>("Id")
@@ -1183,6 +1222,79 @@ namespace Repository.Migrations
                     b.HasIndex("ExternalBankId");
 
                     b.ToTable("ExternalLoans");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExternalTransfer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CardLast4")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.Property<decimal>("Commission")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("ExternalCardId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HolderMasked")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("SourceBalanceAfter")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SourceCardId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalCardId");
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
+
+                    b.HasIndex("SourceCardId");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("ExternalTransfers");
                 });
 
             modelBuilder.Entity("Domain.Entities.HomeTicker", b =>
@@ -1627,6 +1739,22 @@ namespace Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(7);
+
+                    b.Property<decimal>("OperatingCostMonthly")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OwnFunds")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ProfitTaxPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("ReservePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
 
@@ -2243,6 +2371,17 @@ namespace Repository.Migrations
                     b.Navigation("Workplace");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ExternalCard", b =>
+                {
+                    b.HasOne("Domain.Entities.ExternalBank", "ExternalBank")
+                        .WithMany()
+                        .HasForeignKey("ExternalBankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ExternalBank");
+                });
+
             modelBuilder.Entity("Domain.Entities.ExternalLoan", b =>
                 {
                     b.HasOne("Domain.Entities.Customer", "Customer")
@@ -2260,6 +2399,33 @@ namespace Repository.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("ExternalBank");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExternalTransfer", b =>
+                {
+                    b.HasOne("Domain.Entities.ExternalCard", "ExternalCard")
+                        .WithMany()
+                        .HasForeignKey("ExternalCardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Card", "SourceCard")
+                        .WithMany()
+                        .HasForeignKey("SourceCardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ExternalCard");
+
+                    b.Navigation("SourceCard");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Loan", b =>
