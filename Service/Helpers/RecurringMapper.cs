@@ -1,3 +1,4 @@
+﻿using Domain.Bills;
 using Domain.Entities;
 using Domain.Enums;
 using Service.Helpers.DTOs.Bills;
@@ -29,10 +30,8 @@ namespace Service.Helpers
                 status = "Active";
             }
 
-            // Bu ay artıq işlənibsə gələn ayın 1-i, yoxsa (hələ işlənməyib və ya uğursuz) bu gün
-            var nextRun = item.LastPeriod == currentPeriod
-                ? new DateTime(bakuToday.Year, bakuToday.Month, 1).AddMonths(1)
-                : bakuToday;
+            // Mobil, kommunal, internet: ayın 1-i. Kredit: ayın son günü (taksitin vaxtı). Hazırdırsa və ya uğursuzdursa bu gün
+            var nextRun = RecurringRules.NextRun(isLoan, bakuToday, item.LastPeriod);
 
             return new RecurringPaymentDto
             {

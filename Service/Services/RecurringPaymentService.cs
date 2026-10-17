@@ -1,4 +1,4 @@
-using Domain.Bills;
+﻿using Domain.Bills;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Loans;
@@ -143,7 +143,8 @@ namespace Service.Services
                     : found.Identifier;
             }
 
-            var period = BillingEngine.PeriodOf(Today());
+            var today = Today();
+            var period = RecurringRules.StartingPeriod(providerId is null, today);
             var existing = await _recurring.FindAsync(userId, providerId, identifier);
             if (existing is null)
             {
@@ -169,8 +170,7 @@ namespace Service.Services
             }
 
             var saved = await _recurring.GetOwnedAsync(existing.Id, userId);
-            var today = Today();
-            return ServiceResult<RecurringPaymentDto>.Ok(RecurringMapper.ToDto(saved!, today, period));
+            return ServiceResult<RecurringPaymentDto>.Ok(RecurringMapper.ToDto(saved!, today, BillingEngine.PeriodOf(today)));
         }
 
         // İlk ödəniş elə indi edilir, ona görə bu ay üçün işlənmiş sayılır: növbəti ödəniş gələn ayın 1-ində olur
@@ -251,6 +251,12 @@ namespace Service.Services
         {
             var item = await _recurring.GetForRunAsync(id);
             if (item is null || !item.IsActive || item.LastPeriod == period)
+            {
+                return false;
+            }
+
+            // Mobil, kommunal, internet: ayın 1-i. Kredit: taksitin vaxtı çatan gün, ayın sonu (RecurringRules)
+            if (!RecurringRules.IsDue(item.ProviderId is null, Today(), item.LastPeriod))
             {
                 return false;
             }
