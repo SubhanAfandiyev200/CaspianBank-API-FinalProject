@@ -1,4 +1,4 @@
-using Domain.Common;
+﻿using Domain.Common;
 
 namespace Domain.Entities
 {
@@ -7,7 +7,7 @@ namespace Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public string? LogoUrl { get; set; }
-        public string Bin { get; set; } = string.Empty;                 // 11223456
+        public string Bin { get; set; } = string.Empty;                 // 96301020
 
         // Kredit qaydaları
         public decimal MinLoanAmount { get; set; }                      // 500
@@ -30,9 +30,16 @@ namespace Domain.Entities
         public decimal EarlyRepaymentRateReduction { get; set; }        // 1 (faiz bəndi: 10% -> 9%)
         public decimal MinAnnualInterestRate { get; set; }              // 5
 
-        // Banklararası köçürmə qaydaları
-        public decimal InterbankFeePercent { get; set; }                // 1
+        // Banklararası köçürmə qaydaları. Ayrıca banklararası komissiya YOXDUR (hər köçürməyə yalnız aylıq limit komissiyası tətbiq olunur),
+        // InterbankFeePercent və InterbankMinFee istifadə edilmir (0 saxlanılır). Qüvvədə olan: MaxInterbankAmount
+        public decimal InterbankFeePercent { get; set; }                // 0 (istifadə edilmir)
         public decimal? InterbankMinFee { get; set; }
         public decimal MaxInterbankAmount { get; set; }                 // 10000
+
+        // Bankın maliyyə qaydaları (Bank dashboard-un hesabı bunlara əsaslanır)
+        public decimal OwnFunds { get; set; } = 2400000m;                // bankın öz vəsaiti (ehtiyat), AZN
+        public decimal OperatingCostMonthly { get; set; } = 150m;       // aylıq əməliyyat xərci (maaşlar, infrastruktur), AZN
+        public decimal ProfitTaxPercent { get; set; } = 20m;             // mənfəət vergisi %
+        public decimal ReservePercent { get; set; } = 10m;               // müştəri depozitlərinin neçə faizi məcburi ehtiyatdır
     }
 }
