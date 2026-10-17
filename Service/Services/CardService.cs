@@ -269,6 +269,12 @@ namespace Service.Services
                 return ServiceResult<CardCodeSentDto>.NotFound();
             }
 
+            // Cashback kartı yalnız cashback yığır, ona görə bloklanmır (blok olsa cashback düşə bilməzdi)
+            if (card.Tier == CardTier.Cashback)
+            {
+                return ServiceResult<CardCodeSentDto>.Fail("The Cashback card can't be blocked.");
+            }
+
             if (card.IsBlocked)
             {
                 return ServiceResult<CardCodeSentDto>.Fail("This card is already blocked.");
@@ -292,6 +298,11 @@ namespace Service.Services
             if (user is null || card is null)
             {
                 return ServiceResult<CardDto>.NotFound();
+            }
+
+            if (card.Tier == CardTier.Cashback)
+            {
+                return ServiceResult<CardDto>.Fail("The Cashback card can't be blocked.");
             }
 
             if (card.IsBlocked)
