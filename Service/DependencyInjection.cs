@@ -43,6 +43,13 @@ namespace Service
             services.AddScoped<IStaffService, StaffService>();
             services.AddScoped<ISecurityMonitor, SecurityMonitor>();
             services.AddScoped<ISecurityAlertService, SecurityAlertService>();
+            services.AddScoped<IRecurringTransferService, RecurringTransferService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
+            services.AddScoped<IBankRulesService, BankRulesService>();
+            services.AddScoped<ITranslationService, TranslationService>();
+            services.AddScoped<ReportService>();
+            services.AddScoped<IReportService>(sp => sp.GetRequiredService<ReportService>());
+            services.AddScoped<IReportAdminService>(sp => sp.GetRequiredService<ReportService>());
             services.AddScoped<ITreasuryService, TreasuryService>();
             services.AddScoped<IBillProviderService, BillProviderService>();
             services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();

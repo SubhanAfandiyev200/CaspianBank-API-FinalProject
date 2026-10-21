@@ -77,6 +77,7 @@ builder.Services.AddHostedService<LoanMaintenanceService>();
 // Aylıq hesab: internet, işıq, qaz və su abunəçilərinə hər ay bir dəfə
 builder.Services.AddHostedService<BillingMaintenanceService>();
 builder.Services.AddHostedService<DepositMaintenanceService>();
+builder.Services.AddHostedService<TreasuryMaintenanceService>();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
