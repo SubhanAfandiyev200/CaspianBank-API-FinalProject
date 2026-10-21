@@ -15,5 +15,7 @@ namespace Domain.Constants
         public const string FacebookUrl = "FacebookUrl";
         public const string TwitterUrl = "TwitterUrl";
         public const string LinkedInUrl = "LinkedInUrl";
+        public const string MapLatitude = "MapLatitude";            // Contact us səhifəsindəki xəritənin mərkəzi: onluq kəsr (məsələn 40.3730), nöqtə ilə
+        public const string MapLongitude = "MapLongitude";
     }
 }

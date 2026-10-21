@@ -1626,6 +1626,8 @@ INSERT INTO @t VALUES (N'az', N'What the account actually does.', N'Hesabın əs
 INSERT INTO @t VALUES (N'ru', N'What the account actually does.', N'Что на самом деле делает счёт.');
 INSERT INTO @t VALUES (N'az', N'Real figures from the bank, counted live from our own accounts, cards and transfers.', N'Bankdan real rəqəmlər: öz hesablarımızdan, kartlarımızdan və köçürmələrimizdən canlı sayılır.');
 INSERT INTO @t VALUES (N'ru', N'Real figures from the bank, counted live from our own accounts, cards and transfers.', N'Реальные цифры банка, подсчитанные в реальном времени по нашим счетам, картам и переводам.');
+INSERT INTO @t VALUES (N'az', N'Map showing the Caspian Bank head office', N'Caspian Bank-ın baş ofisini göstərən xəritə');
+INSERT INTO @t VALUES (N'ru', N'Map showing the Caspian Bank head office', N'Карта с головным офисом Caspian Bank');
 INSERT INTO Translations ([Language], [Key], [Value], CreatedAt)
 SELECT s.[Language], s.[Key], s.[Value], GETUTCDATE() FROM @t s
 WHERE NOT EXISTS (SELECT 1 FROM Translations x WHERE x.[Language] = s.[Language] AND x.[Key] = s.[Key]);

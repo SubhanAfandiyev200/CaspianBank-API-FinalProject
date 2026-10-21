@@ -22,6 +22,9 @@ namespace Service.Helpers.Validators.Settings
                 LinkFor(socialKey);
             }
 
+            CoordinateFor(SettingKeys.MapLatitude, "latitude", -90, 90);
+            CoordinateFor(SettingKeys.MapLongitude, "longitude", -180, 180);
+
             When(x => x.Key == SettingKeys.Email, () =>
             {
                 RuleFor(x => x.Value)
@@ -48,6 +51,19 @@ namespace Service.Helpers.Validators.Settings
                         .WithMessage("The link can be at most 200 characters.")
                     .Must(value => Uri.TryCreate(value?.Trim(), UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp))
                         .WithMessage("Enter a full link that starts with https://, for example https://www.instagram.com/caspianbank.");
+            });
+        }
+
+
+        // Xəritənin koordinatı: nöqtə ilə yazılmış rəqəm (40.3730), aralıq daxilində. Vergül qəbul edilmir ki, ünvanda səhv olmasın
+        private void CoordinateFor(string key, string name, double min, double max)
+        {
+            When(x => x.Key == key, () =>
+            {
+                RuleFor(x => x.Value)
+                    .Must(value => double.TryParse(value?.Trim(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var number)
+                                   && number >= min && number <= max)
+                        .WithMessage($"Enter the {name} as a number between {min} and {max}, with a dot, for example 40.3730.");
             });
         }
 
