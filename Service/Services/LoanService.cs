@@ -359,7 +359,7 @@ namespace Service.Services
                 LoanId: loan.Id,
                 CardId: model.CardId,
                 Type: LoanPaymentType.Installment,
-                Amount: 0m,
+                Amount: model.Amount,
                 Reference: ReferenceFor(model.RequestId!),
                 OwnerOnly: false,
                 UtcNow: DateTime.UtcNow);

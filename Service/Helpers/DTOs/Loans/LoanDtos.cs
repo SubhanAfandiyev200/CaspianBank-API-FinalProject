@@ -166,6 +166,7 @@ namespace Service.Helpers.DTOs.Loans
     {
         public string ContractNumber { get; set; } = string.Empty;
         public int CardId { get; set; }
+        public decimal Amount { get; set; }                 // 0 = həmin ayın bütün borcu; azdırsa hissə-hissə ödəniş (qalanı başqa kartdan)
         public string? RequestId { get; set; }
     }
 }
