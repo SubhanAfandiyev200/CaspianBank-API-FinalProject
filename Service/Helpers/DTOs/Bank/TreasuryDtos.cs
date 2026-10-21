@@ -20,6 +20,15 @@ namespace Service.Helpers.DTOs.Bank
         public decimal BalanceAfter { get; set; }
     }
 
+    // Ayın bağlanması nəticəsi
+    public class TreasuryCloseDto
+    {
+        public string Month { get; set; } = string.Empty;
+        public decimal OperatingCost { get; set; }
+        public decimal ProfitTax { get; set; }
+        public bool AlreadyClosed { get; set; }
+    }
+
     // Bankın xəzinəsi: hazırkı balans, məcburi ehtiyat, kredit üçün qalan vəsait və jurnal
     public class TreasuryPageDto
     {
@@ -28,6 +37,7 @@ namespace Service.Helpers.DTOs.Bank
         public decimal ReservePercent { get; set; }
         public decimal RequiredReserve { get; set; }
         public decimal AvailableForLoans { get; set; }      // balans - məcburi ehtiyat (mənfi ola bilməz)
+        public bool InDebt { get; set; }                    // xəzinə mənfidir: bank borcdadır, yeni kredit verilmir
         public decimal MonthIn { get; set; }
         public decimal MonthOut { get; set; }
         public string MonthLabel { get; set; } = string.Empty;

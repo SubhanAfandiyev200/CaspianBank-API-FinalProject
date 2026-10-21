@@ -15,11 +15,16 @@ namespace Service.Services
 
         private readonly ITreasuryRepository _treasury;
         private readonly IBaseRepository<OwnBank> _bank;
+        private readonly IBankDashboardService _dashboard;
 
-        public TreasuryService(ITreasuryRepository treasury, IBaseRepository<OwnBank> bank)
+        // Ayları avtomatik bağlama bu aydan başlayır (köhnə aylar üçün geriyə dönük xərc yazılmır). Əl ilə istənilən tamamlanmış ay bağlana bilər
+        private static readonly DateTime AutoCloseFromMonth = new DateTime(2026, 10, 1);
+
+        public TreasuryService(ITreasuryRepository treasury, IBaseRepository<OwnBank> bank, IBankDashboardService dashboard)
         {
             _treasury = treasury;
             _bank = bank;
+            _dashboard = dashboard;
         }
 
         public async Task<ServiceResult<TreasuryPageDto>> GetPageAsync(TreasuryFilterDto filter)
@@ -75,6 +80,7 @@ namespace Service.Services
                 ReservePercent = bank.ReservePercent,
                 RequiredReserve = reserve,
                 AvailableForLoans = Math.Max(0m, balance - reserve),
+                InDebt = balance < 0m,
                 MonthIn = monthIn,
                 MonthOut = monthOut,
                 MonthLabel = monthStart.ToString("MMMM yyyy", CultureInfo.InvariantCulture),
@@ -93,6 +99,80 @@ namespace Service.Services
                 PageSize = pageSize,
                 TotalPages = Math.Max(1, (int)Math.Ceiling(total / (double)pageSize))
             });
+        }
+
+        public async Task<ServiceResult<TreasuryCloseDto>> CloseMonthAsync(string month)
+        {
+            if (!DateTime.TryParseExact((month ?? string.Empty).Trim(), "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                return ServiceResult<TreasuryCloseDto>.Fail("Choose a month like 2026-10.");
+            }
+
+            var monthStart = new DateTime(parsed.Year, parsed.Month, 1);
+            var today = LoanEngine.BakuToday(DateTime.UtcNow);
+            if (monthStart >= new DateTime(today.Year, today.Month, 1))
+            {
+                return ServiceResult<TreasuryCloseDto>.Fail("Only a finished month can be closed.");
+            }
+
+            return ServiceResult<TreasuryCloseDto>.Ok(await CloseAsync(monthStart));
+        }
+
+        public async Task<int> CloseDueMonthsAsync()
+        {
+            var today = LoanEngine.BakuToday(DateTime.UtcNow);
+            var previous = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
+            if (previous < AutoCloseFromMonth)
+            {
+                return 0;
+            }
+
+            // Proqram bağlı qalıbsa, buraxılmış aylar da bağlanır (köhnədən yeniyə)
+            var closed = 0;
+            for (var m = AutoCloseFromMonth; m <= previous; m = m.AddMonths(1))
+            {
+                var result = await CloseAsync(m);
+                if (!result.AlreadyClosed)
+                {
+                    closed++;
+                }
+            }
+            return closed;
+        }
+
+        // Ayın əməliyyat xərci və vergisi xəzinədən çıxış kimi yazılır; eyni ay təkrar bağlanmır (kodla yoxlanır)
+        private async Task<TreasuryCloseDto> CloseAsync(DateTime monthStart)
+        {
+            var key = monthStart.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+            var costRef = "CLOSE-" + key + "-OPEX";
+            var taxRef = "CLOSE-" + key + "-TAX";
+
+            if (await _treasury.ReferenceExistsAsync(costRef))
+            {
+                return new TreasuryCloseDto { Month = key, AlreadyClosed = true };
+            }
+
+            var costs = await _dashboard.GetMonthCostsAsync(monthStart);
+            var operating = costs?.OperatingCosts ?? 0m;
+            var tax = costs?.Tax ?? 0m;
+
+            var entries = new List<TreasuryEntry>();
+            if (operating > 0m)
+            {
+                entries.Add(new TreasuryEntry { Kind = TreasuryEntryKind.OperatingCost, Amount = -operating, Reference = costRef, Description = "Operating costs for " + key });
+            }
+            if (tax > 0m)
+            {
+                entries.Add(new TreasuryEntry { Kind = TreasuryEntryKind.ProfitTax, Amount = -tax, Reference = taxRef, Description = "Profit tax for " + key });
+            }
+            if (entries.Count == 0)
+            {
+                // Xərc də vergi də yoxdursa da ay "bağlanmış" sayılsın deyə sıfır sətir yazılır
+                entries.Add(new TreasuryEntry { Kind = TreasuryEntryKind.OperatingCost, Amount = 0m, Reference = costRef, Description = "Nothing to pay for " + key });
+            }
+
+            await _treasury.AddEntriesAsync(entries);
+            return new TreasuryCloseDto { Month = key, OperatingCost = operating, ProfitTax = tax };
         }
 
         private static DateTime? ParseDay(string? text, out bool error)

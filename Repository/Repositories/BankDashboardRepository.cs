@@ -23,7 +23,9 @@ namespace Repository.Repositories
             var commissions = await transactions.Where(t => t.Type == TransactionType.Commission).SumAsync(t => (decimal?)t.Amount);
             var cardFees = await transactions.Where(t => t.Type == TransactionType.CardFee).SumAsync(t => (decimal?)t.Amount);
             var cashback = await transactions.Where(t => t.Type == TransactionType.Cashback).SumAsync(t => (decimal?)t.Amount);
-            var depositInterest = await transactions.Where(t => t.Type == TransactionType.DepositInterest).SumAsync(t => (decimal?)t.Amount);
+            // Depozit faizi xərci hər ay yazılır (müddət sonunda yox): aya düşən faiz yazılışlarının cəmi
+            var depositInterest = await _dbContext.DepositInterestPostings.AsNoTracking()
+                .Where(p => p.CreatedAt >= fromUtc && p.CreatedAt < toUtc).SumAsync(p => (decimal?)p.Amount);
 
             var payments = _dbContext.LoanPaymentRecords.AsNoTracking().Where(p => p.PaidAt >= fromUtc && p.PaidAt < toUtc);
             var interest = await payments.SumAsync(p => (decimal?)p.InterestPart);

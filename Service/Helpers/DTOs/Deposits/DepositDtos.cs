@@ -29,7 +29,8 @@ namespace Service.Helpers.DTOs.Deposits
         public decimal AnnualRate { get; set; }
         public decimal Principal { get; set; }
         public decimal ExpectedInterest { get; set; }       // müddət sonunda veriləcək faiz
-        public decimal AccruedInterest { get; set; }        // bu günə qədər yığılan (göstəriş)
+        public decimal AccruedInterest { get; set; }        // bu günə qədər yazılmış faiz (ay-ay artır; pul müddət bitəndə ödənilir)
+        public List<DepositPostingDto> Postings { get; set; } = new List<DepositPostingDto>();
         public decimal TotalAtMaturity { get; set; }        // əsas məbləğ + faiz
         public int ProgressPercent { get; set; }            // müddətin neçə faizi keçib
         public int DaysLeft { get; set; }
@@ -39,6 +40,14 @@ namespace Service.Helpers.DTOs.Deposits
         public DateTime? PaidAt { get; set; }
         public string SourceCardLabel { get; set; } = string.Empty;
         public string PayoutCardLabel { get; set; } = string.Empty;
+    }
+
+    // Bir ayın faiz yazılışı
+    public class DepositPostingDto
+    {
+        public int Number { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime PostedAt { get; set; }
     }
 
     public class DepositsOverviewDto

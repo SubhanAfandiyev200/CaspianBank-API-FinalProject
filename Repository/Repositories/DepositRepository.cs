@@ -145,6 +145,7 @@ namespace Repository.Repositories
             return await _dbContext.Deposits
                 .AsNoTracking()
                 .Include(d => d.SourceCard)
+                .Include(d => d.Postings)
                 .Include(d => d.PayoutCard)
                 .Where(d => d.UserId == userId)
                 .OrderBy(d => d.Status)
@@ -156,6 +157,7 @@ namespace Repository.Repositories
         {
             return await _dbContext.Deposits
                 .AsNoTracking()
+                .Include(d => d.Postings)
                 .Include(d => d.SourceCard)
                 .Include(d => d.PayoutCard)
                 .FirstOrDefaultAsync(d => d.Reference == reference && d.UserId == userId);
@@ -203,8 +205,63 @@ namespace Repository.Repositories
             };
         }
 
+        public async Task<int> PostDueInterestAsync(DateTime utcNow)
+        {
+            _dbContext.ChangeTracker.Clear();
+            var deposits = await _dbContext.Deposits
+                .AsNoTracking()
+                .Include(d => d.Postings)
+                .Where(d => d.Status == DepositStatus.Active)
+                .ToListAsync();
+
+            var written = 0;
+            foreach (var deposit in deposits)
+            {
+                var posted = deposit.Postings.Select(p => p.Number).ToHashSet();
+                var added = new List<DepositInterestPosting>();
+                for (var number = 1; number <= deposit.TermMonths; number++)
+                {
+                    var dueAt = deposit.StartedAt.AddMonths(number);
+                    if (dueAt > utcNow)
+                    {
+                        break;
+                    }
+                    if (posted.Contains(number))
+                    {
+                        continue;
+                    }
+                    added.Add(new DepositInterestPosting
+                    {
+                        DepositId = deposit.Id,
+                        Number = number,
+                        Amount = DepositRules.MonthlyInterest(deposit.ExpectedInterest, deposit.TermMonths, number),
+                        CreatedAt = dueAt   // faiz vaxtı çatan ayın günü ilə yazılır (geriyə dönük yazılsa belə)
+                    });
+                }
+                if (added.Count == 0)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    _dbContext.DepositInterestPostings.AddRange(added);
+                    await _dbContext.SaveChangesAsync();
+                    written += added.Count;
+                }
+                catch (DbUpdateException)
+                {
+                    // Eyni anda başqa iş yazıb (unikal indeks): təkrar yazılmır
+                }
+                _dbContext.ChangeTracker.Clear();
+            }
+            return written;
+        }
+
         public async Task<List<MaturedDeposit>> PayMaturedAsync(DateTime utcNow)
         {
+            // Ödənişdən əvvəl bütün aylar yazılmış olmalıdır (cəm ExpectedInterest-ə bərabərdir)
+            await PostDueInterestAsync(utcNow);
             _dbContext.ChangeTracker.Clear();
             var dueIds = await _dbContext.Deposits
                 .AsNoTracking()

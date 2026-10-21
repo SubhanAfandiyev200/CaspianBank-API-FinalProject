@@ -213,6 +213,8 @@ namespace Service.Services
 
         public async Task<int> RunMaturityAsync()
         {
+            // Əvvəl hər ayın faizi yazılır (müddəti bitməyən depozitlərdə də), sonra müddəti bitənlər ödənilir
+            await _deposits.PostDueInterestAsync(DateTime.UtcNow);
             var paid = await _deposits.PayMaturedAsync(DateTime.UtcNow);
             foreach (var item in paid)
             {
@@ -252,7 +254,8 @@ namespace Service.Services
                 AnnualRate = deposit.AnnualRate,
                 Principal = deposit.Principal,
                 ExpectedInterest = deposit.ExpectedInterest,
-                AccruedInterest = DepositRules.Accrued(deposit.ExpectedInterest, progress),
+                AccruedInterest = paid ? deposit.ExpectedInterest : deposit.Postings.Sum(p => p.Amount),
+                Postings = deposit.Postings.OrderBy(p => p.Number).Select(p => new DepositPostingDto { Number = p.Number, Amount = p.Amount, PostedAt = p.CreatedAt }).ToList(),
                 TotalAtMaturity = deposit.Principal + deposit.ExpectedInterest,
                 ProgressPercent = (int)Math.Round(progress * 100m),
                 DaysLeft = daysLeft,

@@ -31,6 +31,18 @@ namespace Repository.Repositories
             return onCards + inDeposits;
         }
 
+        public async Task<bool> ReferenceExistsAsync(string reference)
+        {
+            return await _dbContext.TreasuryEntries.AsNoTracking().AnyAsync(t => t.Reference == reference);
+        }
+
+        public async Task AddEntriesAsync(IEnumerable<TreasuryEntry> entries)
+        {
+            _dbContext.TreasuryEntries.AddRange(entries);
+            await _dbContext.SaveChangesAsync();
+            _dbContext.ChangeTracker.Clear();
+        }
+
         public async Task<(decimal In, decimal Out)> GetFlowAsync(DateTime fromUtc, DateTime toUtc)
         {
             // Başlanğıc kapital gəlir sayılmır

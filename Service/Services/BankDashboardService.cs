@@ -126,6 +126,17 @@ namespace Service.Services
             });
         }
 
+        public async Task<(decimal OperatingCosts, decimal Tax)?> GetMonthCostsAsync(DateTime monthStart)
+        {
+            var bank = await _ownBanks.GetAsync();
+            if (bank is null)
+            {
+                return null;
+            }
+            var result = await ComputeMonthAsync(bank, new DateTime(monthStart.Year, monthStart.Month, 1));
+            return (result.OperatingCosts, result.Tax);
+        }
+
         private async Task<MonthResult> ComputeMonthAsync(OwnBank bank, DateTime monthStart)
         {
             var money = await _dashboard.GetMonthMoneyAsync(ToUtc(monthStart), ToUtc(monthStart.AddMonths(1)));
