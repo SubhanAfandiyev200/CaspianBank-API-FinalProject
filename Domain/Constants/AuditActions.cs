@@ -19,10 +19,15 @@
         public const string StaffActivated = "StaffActivated";
         public const string SecurityAlertDismissed = "SecurityAlertDismissed";
         public const string SecurityAlertFrozen = "SecurityAlertFrozen";
+        public const string TreasuryMonthClosed = "TreasuryMonthClosed";
+        public const string ReportReviewed = "ReportReviewed";
+        public const string ReportActionTaken = "ReportActionTaken";
+        public const string ReportDismissed = "ReportDismissed";
+        public const string BankRulesChanged = "BankRulesChanged";
 
         public static readonly string[] All =
         {
-            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged, StaffAdded, StaffRoleChanged, StaffDeactivated, StaffActivated, SecurityAlertDismissed, SecurityAlertFrozen
+            AccountRestricted, AccountRestored, LoanApproved, LoanOffered, LoanRejected, BillProviderChanged, SettingChanged, TicketAnswered, TicketClosed, DepositPlanChanged, StaffAdded, StaffRoleChanged, StaffDeactivated, StaffActivated, SecurityAlertDismissed, SecurityAlertFrozen, TreasuryMonthClosed, ReportReviewed, ReportActionTaken, ReportDismissed, BankRulesChanged
         };
     }
 }

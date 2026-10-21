@@ -32,6 +32,7 @@ namespace Repository.Data
         public DbSet<ExternalLoan> ExternalLoans { get; set; }
         public DbSet<DepositPlan> DepositPlans { get; set; }
         public DbSet<Deposit> Deposits { get; set; }
+        public DbSet<DepositInterestPosting> DepositInterestPostings { get; set; }
         public DbSet<OwnBank> OwnBanks { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<LoanInstallment> LoanInstallments { get; set; }
@@ -47,6 +48,9 @@ namespace Repository.Data
         public DbSet<SupportMessage> SupportMessages { get; set; }
         public DbSet<TreasuryEntry> TreasuryEntries { get; set; }
         public DbSet<SecurityAlert> SecurityAlerts { get; set; }
+        public DbSet<TransactionReport> TransactionReports { get; set; }
+        public DbSet<RecurringTransfer> RecurringTransfers { get; set; }
+        public DbSet<Translation> Translations { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }

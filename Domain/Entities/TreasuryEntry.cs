@@ -24,6 +24,8 @@ namespace Domain.Entities
         DepositReceived,    // müştərinin depozitə qoyduğu pul (giriş)
         DepositReturned,    // müddət bitəndə müştəriyə qaytarılan əsas məbləğ (çıxış)
         DepositInterest,    // müştəriyə ödənilən depozit faizi (çıxış)
-        Cashback            // müştəriyə ödənilən cashback (çıxış)
+        Cashback,           // müştəriyə ödənilən cashback (çıxış)
+        OperatingCost,      // ayın əməliyyat xərci (maaşlar, infrastruktur): ay bağlananda çıxış
+        ProfitTax           // ayın mənfəət vergisi: ay bağlananda çıxış
     }
 }

@@ -31,5 +31,8 @@ namespace Domain.Entities
         public int? PaidToCardId { get; set; }              // pulun həqiqətən qayıtdığı kart
 
         public string Reference { get; set; } = string.Empty;       // DP-... (açılış), eyni sorğu iki dəfə depozit açmasın
+
+        // Aylıq faiz yazılışları (hər ay bir sətir)
+        public ICollection<DepositInterestPosting> Postings { get; set; } = new List<DepositInterestPosting>();
     }
 }

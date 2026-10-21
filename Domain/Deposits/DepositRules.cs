@@ -25,6 +25,17 @@ namespace Domain.Deposits
             return (decimal)Math.Max(0d, Math.Min(1d, done));
         }
 
+        // Faizin aylıq yazılışı: N-ci ayın məbləği. Son ay yuvarlaqlaşdırma fərqini götürür ki, cəm tam ExpectedInterest olsun
+        public static decimal MonthlyInterest(decimal expectedInterest, int termMonths, int number)
+        {
+            var regular = Math.Round(expectedInterest / termMonths, 2, MidpointRounding.AwayFromZero);
+            if (number < termMonths)
+            {
+                return regular;
+            }
+            return expectedInterest - regular * (termMonths - 1);
+        }
+
         // Bu günə qədər yığılmış faiz (yalnız göstəriş, ödəniş müddət sonunda olur)
         public static decimal Accrued(decimal expectedInterest, decimal progress)
         {
