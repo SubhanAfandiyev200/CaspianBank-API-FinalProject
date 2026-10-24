@@ -227,24 +227,24 @@ namespace Service.Services
                 Status = LoanStatus.Pending
             };
 
-            // Qara siyahıdakı vətəndaşa kredit verilmir: müraciət qeydə alınır və dərhal rədd olunur (səbəb daxili qalır)
+            // Qara siyahıdakı vətəndaşın müraciəti də qəbul olunur, amma pul iki təsdiqdən sonra gedir: əvvəl kredit şöbəsi, sonra Super Admin
             if (customer.IsBlacklisted)
             {
-                loan.Status = LoanStatus.Rejected;
-                loan.RejectReason = "Blacklist: " + (customer.BlacklistReason ?? "no reason recorded");
-                loan.ReviewedAt = now;
+                loan.RequiresSuperAdminApproval = true;
             }
 
             var created = await _loans.CreateAsync(loan, now);
 
-            // Baxış gözləyən müraciət pul rolundakı işçilərin zəngində görünür (qara siyahıdan dərhal rədd olunan göstərilmir)
+            // Baxış gözləyən müraciət pul rolundakı işçilərin zəngində görünür
             if (created.Status == LoanStatus.Pending)
             {
+                var blacklisted = created.RequiresSuperAdminApproval;
                 await _notifications.NotifyRolesAsync(
                     new[] { Roles.Accountant, Roles.Admin, Roles.SuperAdmin },
                     NotificationCategory.Staff,
-                    "New loan application",
-                    $"{user.Name} {user.Surname} asked for {Money(created.RequestedAmount)} AZN over {created.TermMonths} months.",
+                    blacklisted ? "New loan application (blacklisted customer)" : "New loan application",
+                    $"{user.Name} {user.Surname} asked for {Money(created.RequestedAmount)} AZN over {created.TermMonths} months."
+                        + (blacklisted ? " The customer is on the blacklist: the loan staff and then the Super Admin must both approve." : string.Empty),
                     $"/Admin/Loans/Detail/{created.Id}");
             }
 
