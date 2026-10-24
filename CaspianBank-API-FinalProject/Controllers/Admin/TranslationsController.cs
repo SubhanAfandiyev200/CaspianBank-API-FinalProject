@@ -40,5 +40,29 @@ namespace CaspianBank_API_FinalProject.Controllers.Admin
             }
             return Ok(result.Data);
         }
+
+        // CMS səhifəsində dil seçiləndə həmin dilin tərcümələrini gətirir
+        [HttpPost("lookup")]
+        public async Task<IActionResult> Lookup([FromBody] LookupTranslationsDto model)
+        {
+            var result = await _service.LookupAsync(model);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(new { isSuccess = false, errors = result.Errors });
+            }
+            return Ok(result.Data);
+        }
+
+        // Bir dil üçün bir neçə mətnin tərcüməsini birlikdə yazır
+        [HttpPut("content")]
+        public async Task<IActionResult> SaveContent([FromBody] SaveContentTranslationsDto model)
+        {
+            var result = await _service.SaveContentAsync(model);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(new { isSuccess = false, errors = result.Errors });
+            }
+            return Ok(new { saved = result.Data });
+        }
     }
 }
