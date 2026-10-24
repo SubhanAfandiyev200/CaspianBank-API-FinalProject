@@ -41,6 +41,12 @@ namespace Domain.Entities
         public string? ReviewedByUserId { get; set; }
         public DateTime? ReviewedAt { get; set; }
 
+        // Qara siyahıdakı müştərinin krediti iki təsdiq tələb edir: əvvəl kredit şöbəsi (FirstApproved...), sonra Super Admin (ReviewedBy...). İkisi də olmasa pul getmir
+        public bool RequiresSuperAdminApproval { get; set; }
+        public string? FirstApprovedByUserId { get; set; }
+        public DateTime? FirstApprovedAt { get; set; }
+        public decimal? FirstApprovedAmount { get; set; }
+
         public DateTime? OfferExpiresAt { get; set; }       // Offered: təklifin etibarlılıq vaxtı
         public DateTime? AcceptedAt { get; set; }
         public DateTime? DisbursedAt { get; set; }          // pulun karta düşdüyü vaxt
