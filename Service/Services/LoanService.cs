@@ -331,6 +331,9 @@ namespace Service.Services
 
         public async Task<ServiceResult<LoanReceiptDto>> PayByCodeAsync(string userId, PayByCodeDto model)
         {
+            // Kod kiçik hərflə və ya boşluqla yazılıbsa da qəbul edilir (Lookup da belə edir); doğrulama normallaşdırılmış koda baxır
+            model.ContractNumber = (model.ContractNumber ?? string.Empty).Trim().ToUpperInvariant();
+
             var validation = await _payByCodeValidator.ValidateAsync(model);
             if (!validation.IsValid)
             {
