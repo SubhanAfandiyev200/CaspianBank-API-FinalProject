@@ -50,6 +50,7 @@ Bu qovluq layihəni **sıfırdan başa düşmək və yenidən yazmaq** üçünd�
 | `105-theme-and-languages.md` | Ağ/qara tema, dillər (az/ru/en), tərcümələrin DB-də saxlanması, dəyişənli cümlələrin şablon tərcüməsi, yeni mətn əlavə etmə |
 | `106-tests.md` | xUnit testləri: necə işlədilir, quruluş, paylaşılan/təcrid olunmuş baza, testlərin tapdığı xətalar |
 | `107-logging-serilog.md` | Jurnal (Serilog): fayllar, səviyyələr, nə yazılır və nə yazılmır |
+| `108-help-widget.md` | Help pəncərəsi: ziyarətçi emaili, şəkil, bütün işçilərə bildiriş, cavabın emailə / bildirişə getməsi |
 
 ## Layihənin bir cümləlik xəritəsi
 
