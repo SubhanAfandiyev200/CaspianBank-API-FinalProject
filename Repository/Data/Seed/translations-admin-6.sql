@@ -1,0 +1,43 @@
+-- İşçi bildirişləri (admin zəngi) və təhlükəsizlik siqnalı təsvirləri üçün şablonlar (az, ru). Təkrar işlədilə bilər.
+SET NOCOUNT ON;
+DECLARE @t TABLE ([Language] nvarchar(5), [Key] nvarchar(400), [Value] nvarchar(2000));
+INSERT INTO @t VALUES (N'az', N'New loan application', N'Yeni kredit müraciəti');
+INSERT INTO @t VALUES (N'ru', N'New loan application', N'Новая заявка на кредит');
+INSERT INTO @t VALUES (N'az', N'New loan application (blacklisted customer)', N'Yeni kredit müraciəti (qara siyahıdakı müştəri)');
+INSERT INTO @t VALUES (N'ru', N'New loan application (blacklisted customer)', N'Новая заявка на кредит (клиент в чёрном списке)');
+INSERT INTO @t VALUES (N'az', N'Loan for a blacklisted customer needs your approval', N'Qara siyahıdakı müştərinin krediti sizin təsdiqinizi gözləyir');
+INSERT INTO @t VALUES (N'ru', N'Loan for a blacklisted customer needs your approval', N'Кредит клиента из чёрного списка ждёт вашего одобрения');
+INSERT INTO @t VALUES (N'az', N'New term deposit', N'Yeni müddətli depozit');
+INSERT INTO @t VALUES (N'ru', N'New term deposit', N'Новый срочный вклад');
+INSERT INTO @t VALUES (N'az', N'Suspicious activity', N'Şübhəli fəaliyyət');
+INSERT INTO @t VALUES (N'ru', N'Suspicious activity', N'Подозрительная активность');
+INSERT INTO @t VALUES (N'az', N'Suspicious activity (high)', N'Şübhəli fəaliyyət (yüksək)');
+INSERT INTO @t VALUES (N'ru', N'Suspicious activity (high)', N'Подозрительная активность (высокий уровень)');
+INSERT INTO @t VALUES (N'az', N'Suspicious transaction reported', N'Şübhəli əməliyyat bildirildi');
+INSERT INTO @t VALUES (N'ru', N'Suspicious transaction reported', N'Сообщено о подозрительной операции');
+INSERT INTO @t VALUES (N'az', N'{0} asked for {1} AZN over {2} months.', N'{0} {2} ay müddətinə {1} AZN istədi.');
+INSERT INTO @t VALUES (N'ru', N'{0} asked for {1} AZN over {2} months.', N'{0} запросил(а) {1} AZN на {2} мес.');
+INSERT INTO @t VALUES (N'az', N'{0} asked for {1} AZN over {2} months. The customer is on the blacklist: the loan staff and then the Super Admin must both approve.', N'{0} {2} ay müddətinə {1} AZN istədi. Müştəri qara siyahıdadır: əvvəl kredit şöbəsi, sonra Super Admin təsdiq etməlidir.');
+INSERT INTO @t VALUES (N'ru', N'{0} asked for {1} AZN over {2} months. The customer is on the blacklist: the loan staff and then the Super Admin must both approve.', N'{0} запросил(а) {1} AZN на {2} мес. Клиент в чёрном списке: должны одобрить и кредитный отдел, и затем Супер-админ.');
+INSERT INTO @t VALUES (N'az', N'{0} approved {1} AZN for {2} (loan {3}), who is on the blacklist. Do you approve it too?', N'{0} qara siyahıdakı {2} üçün {1} AZN təsdiqlədi (kredit {3}). Siz də təsdiq edirsiniz?');
+INSERT INTO @t VALUES (N'ru', N'{0} approved {1} AZN for {2} (loan {3}), who is on the blacklist. Do you approve it too?', N'{0} одобрил(а) {1} AZN для {2} (кредит {3}), который(ая) в чёрном списке. Вы тоже одобряете?');
+INSERT INTO @t VALUES (N'az', N'{0} opened a term deposit of {1} for {2} months at {3}% a year.', N'{0} {2} ay müddətinə ildə {3}% ilə {1} müddətli depozit açdı.');
+INSERT INTO @t VALUES (N'ru', N'{0} opened a term deposit of {1} for {2} months at {3}% a year.', N'{0} открыл(а) срочный вклад {1} на {2} мес. под {3}% годовых.');
+INSERT INTO @t VALUES (N'az', N'{0} reported {1} ({2}).', N'{0} {1} əməliyyatını bildirdi ({2}).');
+INSERT INTO @t VALUES (N'ru', N'{0} reported {1} ({2}).', N'{0} сообщил(а) об операции {1} ({2}).');
+INSERT INTO @t VALUES (N'az', N'{0}: {1}', N'{0}: {1}');
+INSERT INTO @t VALUES (N'ru', N'{0}: {1}', N'{0}: {1}');
+INSERT INTO @t VALUES (N'az', N'Sent {0} in one transfer.', N'Bir köçürmədə {0} göndərildi.');
+INSERT INTO @t VALUES (N'ru', N'Sent {0} in one transfer.', N'Отправлено {0} одним переводом.');
+INSERT INTO @t VALUES (N'az', N'{0} transfers to other people in {1} minutes.', N'{1} dəqiqədə başqalarına {0} köçürmə.');
+INSERT INTO @t VALUES (N'ru', N'{0} transfers to other people in {1} minutes.', N'{0} переводов другим людям за {1} мин.');
+INSERT INTO @t VALUES (N'az', N'Sent {0} to other people today.', N'Bu gün başqalarına {0} göndərildi.');
+INSERT INTO @t VALUES (N'ru', N'Sent {0} to other people today.', N'Сегодня другим людям отправлено {0}.');
+INSERT INTO @t VALUES (N'az', N'Account is less than {0} days old and sent {1}.', N'Hesab {0} gündən təzədir və {1} göndərib.');
+INSERT INTO @t VALUES (N'ru', N'Account is less than {0} days old and sent {1}.', N'Счёту меньше {0} дн., и с него отправлено {1}.');
+INSERT INTO @t VALUES (N'az', N'The account was locked for a few minutes after repeated wrong passwords.', N'Hesab təkrarlanan yanlış paroldan sonra bir neçə dəqiqəlik bloklandı.');
+INSERT INTO @t VALUES (N'ru', N'The account was locked for a few minutes after repeated wrong passwords.', N'Счёт заблокирован на несколько минут после повторных неверных паролей.');
+INSERT INTO Translations ([Language], [Key], [Value], CreatedAt)
+SELECT s.[Language], s.[Key], s.[Value], GETUTCDATE() FROM @t s
+WHERE NOT EXISTS (SELECT 1 FROM Translations x WHERE x.[Language] = s.[Language] AND x.[Key] = s.[Key]);
+PRINT CONCAT('Translations added: ', @@ROWCOUNT);
