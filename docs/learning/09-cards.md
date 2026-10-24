@@ -55,7 +55,7 @@ Pul **yalnız həqiqi kartdan** gəlir (2026-10-24-dən; əvvəl istənilən Luh
 3. **Başqa bankın kartıdırsa** (`ExternalCards`, `IBankDirectoryRepository.FindExternalCardAsync`): pul heç yerdən çıxmır (xarici kartın balansı bizdə yoxdur), yalnız hədəf karta düşür. Jurnala yalnız son 4 rəqəm yazılır.
 4. İkisi də deyilsə: "We couldn't find a card with that number."
 
-Hazır kartlar `Repository/Data/Seed/topup-cards.sql`-dədir: demo xarici kart `4111 1111 1111 1111` və Rauf Quliyevin Gold kartı `9630 1020 7777 7772` (10/30, 5 000 000 AZN). Yeni `TransactionType.TopUpOut` enumun **sonunda** dayanır (bazada rəqəm kimi saxlanır, ortaya əlavə etmək köhnə sətirləri pozardı).
+Hazır kartlar `Repository/Data/Seed/topup-cards.sql`-dədir: demo xarici kart `4111 1111 1111 1111` və Rauf Quliyevin Gold kartı `9630 1020 7777 7772` (10/30, 100 000 AZN). Yeni `TransactionType.TopUpOut` enumun **sonunda** dayanır (bazada rəqəm kimi saxlanır, ortaya əlavə etmək köhnə sətirləri pozardı).
 ### 3.4 Kartı bloklama və blokdan çıxarma (emailə gələn OTP kodu ilə)
 Hər iki əməliyyat **iki addımdır**: əvvəl kod hesabın emailinə göndərilir, sonra istifadəçi kodu yazır.
 

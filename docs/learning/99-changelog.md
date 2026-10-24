@@ -132,7 +132,7 @@ Sənədləşdirilən funksiyalar:
 - Caspian kartı deyilsə `ExternalCards` cədvəlində axtarılır: tapılsa pul çıxmır (balansı bizdə yoxdur), tapılmasa "We couldn't find a card with that number.".
 - Yeni `TransactionType.TopUpOut` (enumun sonunda): göndərən kartdakı çıxış qeydi. `TransferOut` istifadə olunmur ki, aylıq pulsuz limit, təhlükəsizlik siqnalları və ana səhifə statistikası pozulmasın.
 - Endpoint `POST api/cards/{id}/top-up` artıq `transfer` rate limit altındadır (kart nömrəsi təxmin edilməsin).
-- Hazır kartlar (`Repository/Data/Seed/topup-cards.sql`, `sqlcmd -I` ilə): demo xarici kart `4111 1111 1111 1111` və Rauf Quliyevin Gold kartı `9630 1020 7777 7772` (10/30, 5 000 000 AZN). Mətnlər: `translations-topup.sql`.
+- Hazır kartlar (`Repository/Data/Seed/topup-cards.sql`, `sqlcmd -I` ilə): demo xarici kart `4111 1111 1111 1111` və Rauf Quliyevin Gold kartı `9630 1020 7777 7772` (10/30, 100 000 AZN). Mətnlər: `translations-topup.sql`.
 
 ### 2026-10-24 (2): Qara siyahıdakı müştərinin krediti iki təsdiq tələb edir
 - Əvvəl qara siyahıdakı müştərinin müraciəti dərhal rədd olunurdu. İndi qəbul olunur (`Loan.RequiresSuperAdminApproval = true`) və işçilərə "New loan application (blacklisted customer)" bildirişi gedir.
