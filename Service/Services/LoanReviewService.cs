@@ -2,6 +2,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Loans;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Repository.Repositories.Interfaces;
 using Repository.Results;
 using Service.Helpers;
@@ -21,6 +22,7 @@ namespace Service.Services
         private readonly IValidator<ApproveLoanDto> _approveValidator;
         private readonly IValidator<RejectLoanDto> _rejectValidator;
         private readonly INotificationService _notifications;
+        private readonly ILogger<LoanReviewService> _logger;
 
         public LoanReviewService(ILoanRepository loans,
                                  ICustomerRepository customers,
@@ -29,9 +31,11 @@ namespace Service.Services
                                  IValidator<LoanReviewFilterDto> filterValidator,
                                  IValidator<ApproveLoanDto> approveValidator,
                                  IValidator<RejectLoanDto> rejectValidator,
-                                 INotificationService notifications)
+                                 INotificationService notifications,
+                                 ILogger<LoanReviewService> logger)
         {
             _notifications = notifications;
+            _logger = logger;
             _loans = loans;
             _customers = customers;
             _accounts = accounts;
@@ -427,6 +431,7 @@ namespace Service.Services
             {
                 var firstResult = await _loans.FirstApproveAsync(loanId, staffUserId, approvedAmount, DateTime.UtcNow);
                 var firstSummary = await ToSummaryResultAsync(firstResult);
+                _logger.LogInformation("Loan {LoanId}: first approval of {Amount} AZN by {StaffId}, waiting for the Super Admin ({Success})", loanId, approvedAmount, staffUserId, firstSummary.IsSuccess);
                 if (firstSummary.IsSuccess)
                 {
                     var staffName = staff is null ? "The loan staff" : staff.Name + " " + staff.Surname;
@@ -443,6 +448,7 @@ namespace Service.Services
 
             var result = await _loans.ApproveAsync(loanId, staffUserId, approvedAmount, DateTime.UtcNow);
             var summary = await ToSummaryResultAsync(result);
+            _logger.LogInformation("Loan {LoanId}: approved {Amount} AZN by {StaffId}, status {Status}", loanId, approvedAmount, staffUserId, summary.Data?.Status ?? result.Outcome.ToString());
 
             // Müştəri qərarı dərhal görür: tam məbləğdə pul karta düşüb, azdırsa cavab verməlidir
             if (summary.IsSuccess && summary.Data is not null)
@@ -486,6 +492,7 @@ namespace Service.Services
             }
 
             var result = await _loans.RejectAsync(loanId, staffUserId, model.Reason.Trim(), DateTime.UtcNow);
+            _logger.LogInformation("Loan {LoanId}: rejected by {StaffId} ({Outcome})", loanId, staffUserId, result.Outcome);
             var summary = await ToSummaryResultAsync(result);
 
             // Müştəri yalnız ümumi mətn görür; rədd səbəbi daxilidir
