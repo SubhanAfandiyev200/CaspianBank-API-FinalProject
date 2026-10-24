@@ -2,6 +2,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Enums;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Repository.Repositories.Interfaces;
 using Repository.Results;
 using Service.Helpers;
@@ -28,6 +29,7 @@ namespace Service.Services
         private readonly IValidator<TopUpDto> _topUpValidator;
         private readonly INotificationService _notifications;
         private readonly IBankDirectoryRepository _directory;
+        private readonly ILogger<CardService> _logger;
 
         public CardService(ICardRepository cards,
                            ICardTierConfigRepository tiers,
@@ -39,10 +41,12 @@ namespace Service.Services
                            IOtpService otp,
                            IValidator<TopUpDto> topUpValidator,
                            INotificationService notifications,
-                           IBankDirectoryRepository directory)
+                           IBankDirectoryRepository directory,
+                           ILogger<CardService> logger)
         {
             _notifications = notifications;
             _directory = directory;
+            _logger = logger;
             _cards = cards;
             _tiers = tiers;
             _transactions = transactions;
@@ -231,6 +235,8 @@ namespace Service.Services
                     return ServiceResult<CardDto>.Fail("The balance changed while the top-up was processed. Please try again.");
                 }
 
+                _logger.LogInformation("Top up from a Caspian card: {Amount} AZN, source card {SourceCardId}, target card {TargetCardId}, user {UserId}", amount, source.Id, card.Id, userId);
+
                 if (source.UserId != userId)
                 {
                     await _notifications.NotifyAsync(source.UserId, NotificationCategory.Card, "Money left your card",
@@ -245,6 +251,7 @@ namespace Service.Services
                 return ServiceResult<CardDto>.Fail("We couldn't find a card with that number.");
             }
 
+            _logger.LogInformation("Top up from another bank card: {Amount} AZN, target card {TargetCardId}, user {UserId}", amount, card.Id, userId);
             var description = $"Top up from card •••• {digits[^4..]}";
             if (!await _cards.TopUpAsync(card, amount, description))
             {
