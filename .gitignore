@@ -8,3 +8,7 @@ obj/
 # Gizli məlumatlar
 secrets.json
 appsettings.Local.json
+
+# Jurnal faylları (logs/ qovluğu .gitkeep ilə qalır, içindəki fayllar yox)
+**/logs/*.log
+**/logs/*.txt
