@@ -8,10 +8,10 @@ using System.Security.Claims;
 
 namespace CaspianBank_API_FinalProject.Controllers.Admin
 {
-    // Müştərilərin mesajları: CustomerSupport, Admin və SuperAdmin görür, cavab verir və bağlayır. Hər cavab və bağlama audit-ə yazılır
+    // Müştərilərin və ziyarətçilərin mesajları (Help): hələlik bütün işçi rolları görür, cavab verir və bağlayır. Hər cavab və bağlama audit-ə yazılır
     [Route("api/admin/tickets")]
     [ApiController]
-    [Authorize(Roles = Roles.CustomerSupport + "," + Roles.Admin + "," + Roles.SuperAdmin)]
+    [Authorize(Roles = Roles.AllStaffCsv)]
     public class TicketsController : ControllerBase
     {
         private readonly ISupportTicketService _service;

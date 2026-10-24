@@ -2,6 +2,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Enums;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.Support;
 using Service.Helpers.Responses;
@@ -16,26 +17,144 @@ namespace Service.Services
         private const int MaxMessagesPerTicket = 100;
         private const int MaxPageSize = 50;
 
-        // Yeni mesajdan xəbər tutan işçilər
-        private static readonly string[] DeskRoles = { Roles.CustomerSupport, Roles.Admin, Roles.SuperAdmin };
+        private const int MaxOpenPerGuest = 3;
+
+        // Yeni mesajdan xəbər tutan işçilər: hələlik bütün işçi rolları (hamı bildirişi görür və yazışmanı aça bilir)
+        private static readonly string[] DeskRoles = Roles.AllStaff;
 
         private readonly ISupportTicketRepository _tickets;
         private readonly IAccountRepository _accounts;
         private readonly INotificationService _notifications;
         private readonly IValidator<CreateTicketDto> _createValidator;
         private readonly IValidator<ReplyTicketDto> _replyValidator;
+        private readonly IValidator<SendHelpDto> _helpValidator;
+        private readonly IFileService _files;
+        private readonly IEmailSender _email;
+        private readonly ILogger<SupportTicketService> _logger;
 
         public SupportTicketService(ISupportTicketRepository tickets,
                                     IAccountRepository accounts,
                                     INotificationService notifications,
                                     IValidator<CreateTicketDto> createValidator,
-                                    IValidator<ReplyTicketDto> replyValidator)
+                                    IValidator<ReplyTicketDto> replyValidator,
+                                    IValidator<SendHelpDto> helpValidator,
+                                    IFileService files,
+                                    IEmailSender email,
+                                    ILogger<SupportTicketService> logger)
         {
             _tickets = tickets;
             _accounts = accounts;
             _notifications = notifications;
             _createValidator = createValidator;
             _replyValidator = replyValidator;
+            _helpValidator = helpValidator;
+            _files = files;
+            _email = email;
+            _logger = logger;
+        }
+
+        // ---------- "Help" pəncərəsi (hər səhifədəki köməkçi) ----------
+
+        // Daxil olmuş müştəri: mesaj onun yazışmasına düşür (son 24 saatda açıq "Help" yazışması varsa ona əlavə olunur), cavab bildirişlərinə gəlir.
+        // Qeydiyyatsız ziyarətçi: email məcburidir, işçi cavabı həmin emailə gedir. İşçilər hər halda bildiriş alır
+        public async Task<ServiceResult<HelpSentDto>> SendHelpAsync(string? userId, SendHelpDto model)
+        {
+            var validation = await _helpValidator.ValidateAsync(model);
+            if (!validation.IsValid)
+            {
+                return ServiceResult<HelpSentDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).Distinct().ToArray());
+            }
+
+            AppUser? user = null;
+            string? email = null;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                user = await _accounts.GetByIdAsync(userId);
+                if (user is null)
+                {
+                    return ServiceResult<HelpSentDto>.NotFound();
+                }
+                if (user.IsRestricted)
+                {
+                    return ServiceResult<HelpSentDto>.Fail("Your account is restricted. Please contact support.");
+                }
+            }
+            else
+            {
+                email = (model.Email ?? string.Empty).Trim().ToLowerInvariant();
+                if (email.Length == 0)
+                {
+                    return ServiceResult<HelpSentDto>.Fail("Enter your email so we can answer you.");
+                }
+                if (await _tickets.CountOpenByGuestAsync(email) >= MaxOpenPerGuest)
+                {
+                    return ServiceResult<HelpSentDto>.Fail("You already have " + MaxOpenPerGuest + " open messages. We will answer them by email.");
+                }
+            }
+
+            var body = model.Message!.Trim();
+            string? imagePath = null;
+            if (model.Image is not null)
+            {
+                imagePath = await _files.UploadFileAsync(model.Image, "help");
+            }
+
+            var now = DateTime.UtcNow;
+            var authorId = user?.Id ?? "guest";
+            var authorName = user is null ? email! : (user.Name + " " + user.Surname).Trim();
+
+            SupportTicket? ticket = null;
+            if (user is not null)
+            {
+                ticket = await _tickets.FindOpenHelpTicketAsync(user.Id, now.AddHours(-24));
+            }
+
+            if (ticket is not null)
+            {
+                if (ticket.Messages.Count >= MaxMessagesPerTicket)
+                {
+                    return ServiceResult<HelpSentDto>.Fail("This conversation is too long. Please write a new message.");
+                }
+                AddMessage(ticket, authorId, authorName, false, body);
+                ticket.Messages.Last().ImagePath = imagePath;
+                ticket.Status = TicketStatus.Pending;
+                await _tickets.SaveAsync();
+            }
+            else
+            {
+                if (user is not null && await _tickets.CountOpenByUserAsync(user.Id) >= MaxOpenPerCustomer)
+                {
+                    return ServiceResult<HelpSentDto>.Fail("You already have " + MaxOpenPerCustomer + " open messages. Wait for an answer or close one before writing a new one.");
+                }
+
+                var subject = "Help: " + (body.Length > 60 ? body.Substring(0, 60) : body).Replace('\r', ' ').Replace('\n', ' ');
+                ticket = new SupportTicket
+                {
+                    UserId = user?.Id,
+                    GuestEmail = email,
+                    Subject = subject,
+                    Status = TicketStatus.Pending,
+                    LastActivityAt = now
+                };
+                ticket.Messages.Add(new SupportMessage
+                {
+                    AuthorUserId = authorId,
+                    AuthorName = authorName,
+                    IsStaff = false,
+                    Body = body,
+                    ImagePath = imagePath,
+                    CreatedAt = now
+                });
+                await _tickets.AddAsync(ticket);
+            }
+
+            var preview = body.Length > 140 ? body.Substring(0, 140) + "…" : body;
+            await _notifications.NotifyRolesAsync(DeskRoles, NotificationCategory.Staff,
+                user is null ? "New help message from a visitor" : "New help message",
+                authorName + (user is null ? " (not registered)" : string.Empty) + ": " + preview,
+                "/Admin/Tickets/Detail/" + ticket.Id);
+
+            return ServiceResult<HelpSentDto>.Ok(new HelpSentDto { TicketId = user is null ? null : ticket.Id, IsGuest = user is null });
         }
 
         // ---------- Müştəri ----------
@@ -122,7 +241,7 @@ namespace Service.Services
                 return ServiceResult<TicketDetailDto>.Fail("This conversation is too long. Please write a new message.");
             }
 
-            var name = (ticket.User.Name + " " + ticket.User.Surname).Trim();
+            var name = (ticket.User!.Name + " " + ticket.User.Surname).Trim();
             AddMessage(ticket, userId, name, false, model.Message!);
             ticket.Status = TicketStatus.Pending;
             await _tickets.SaveAsync();
@@ -217,10 +336,18 @@ namespace Service.Services
             ticket.Status = TicketStatus.Answered;
             await _tickets.SaveAsync();
 
-            await _notifications.NotifyAsync(ticket.UserId, NotificationCategory.Support,
-                "We answered your message",
-                "Re: " + ticket.Subject,
-                "/App/Support/Ticket/" + ticket.Id);
+            if (ticket.UserId is not null)
+            {
+                await _notifications.NotifyAsync(ticket.UserId, NotificationCategory.Support,
+                    "We answered your message",
+                    "Re: " + ticket.Subject,
+                    "/App/Support/Ticket/" + ticket.Id);
+            }
+            else if (!string.IsNullOrEmpty(ticket.GuestEmail))
+            {
+                // Qeydiyyatsız ziyarətçinin bildirişi yoxdur: cavab emailə gedir. Email getməsə yazışma qalır, işçi bunu jurnaldan görür
+                await SendGuestEmailAsync(ticket, "Re: " + ticket.Subject, model.Message!.Trim());
+            }
             return ServiceResult<TicketDetailDto>.Ok(ToDetail(ticket));
         }
 
@@ -240,10 +367,13 @@ namespace Service.Services
             ticket.LastActivityAt = DateTime.UtcNow;
             await _tickets.SaveAsync();
 
-            await _notifications.NotifyAsync(ticket.UserId, NotificationCategory.Support,
-                "Your message was closed",
-                "Re: " + ticket.Subject,
-                "/App/Support/Ticket/" + ticket.Id);
+            if (ticket.UserId is not null)
+            {
+                await _notifications.NotifyAsync(ticket.UserId, NotificationCategory.Support,
+                    "Your message was closed",
+                    "Re: " + ticket.Subject,
+                    "/App/Support/Ticket/" + ticket.Id);
+            }
             return ServiceResult<TicketDetailDto>.Ok(ToDetail(ticket));
         }
 
@@ -252,6 +382,21 @@ namespace Service.Services
         private async Task NotifyDeskAsync(SupportTicket ticket, string customerName, string title)
         {
             await _notifications.NotifyRolesAsync(DeskRoles, NotificationCategory.Staff, title, ticket.Subject, "/Admin/Tickets/Detail/" + ticket.Id);
+        }
+
+        // Qeydiyyatsız ziyarətçiyə işçinin cavabı email kimi gedir (HTML-ə təhlükəsiz çevrilir)
+        private async Task SendGuestEmailAsync(SupportTicket ticket, string subject, string reply)
+        {
+            try
+            {
+                var safe = System.Net.WebUtility.HtmlEncode(reply).Replace("\n", "<br />");
+                var html = "<p>" + safe + "</p><p style=\"color:#667\">Caspian Bank. You can answer this email to write to us again.</p>";
+                await _email.SendAsync(ticket.GuestEmail!, "Caspian Bank: " + subject, html);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Qeydiyyatsız ziyarətçiyə cavab emaili göndərilmədi: ticket {TicketId}", ticket.Id);
+            }
         }
 
         private static void AddMessage(SupportTicket ticket, string authorId, string authorName, bool isStaff, string body)
@@ -287,8 +432,9 @@ namespace Service.Services
                 LastActivityAt = ticket.LastActivityAt,
                 MessageCount = ticket.Messages.Count,
                 LastMessagePreview = preview,
-                CustomerName = ticket.User is null ? string.Empty : (ticket.User.Name + " " + ticket.User.Surname).Trim(),
-                CustomerEmail = ticket.User?.Email ?? string.Empty
+                IsGuest = ticket.User is null,
+                CustomerName = ticket.User is null ? "Guest" : (ticket.User.Name + " " + ticket.User.Surname).Trim(),
+                CustomerEmail = ticket.User?.Email ?? ticket.GuestEmail ?? string.Empty
             };
         }
 
@@ -300,9 +446,10 @@ namespace Service.Services
                 Subject = ticket.Subject,
                 Status = ticket.Status.ToString(),
                 CreatedAt = ticket.CreatedAt,
-                CustomerId = ticket.UserId,
-                CustomerName = (ticket.User.Name + " " + ticket.User.Surname).Trim(),
-                CustomerEmail = ticket.User.Email ?? string.Empty,
+                CustomerId = ticket.UserId ?? string.Empty,
+                IsGuest = ticket.User is null,
+                CustomerName = ticket.User is null ? "Guest" : (ticket.User.Name + " " + ticket.User.Surname).Trim(),
+                CustomerEmail = ticket.User?.Email ?? ticket.GuestEmail ?? string.Empty,
                 Messages = ticket.Messages
                     .OrderBy(m => m.CreatedAt).ThenBy(m => m.Id)
                     .Select(m => new TicketMessageDto
@@ -311,6 +458,7 @@ namespace Service.Services
                         AuthorName = m.AuthorName,
                         IsStaff = m.IsStaff,
                         Body = m.Body,
+                        ImageUrl = m.ImagePath,
                         CreatedAt = m.CreatedAt
                     }).ToList()
             };

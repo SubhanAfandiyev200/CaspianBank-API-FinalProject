@@ -47,3 +47,15 @@ C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-Fi
 C:\Users\User\cbcheck\Domain.deps.json
 C:\Users\User\cbcheck\Domain.dll
 C:\Users\User\cbcheck\Domain.pdb
+C:\Users\User\AppData\Local\Temp\cbtests\out\Domain.deps.json
+C:\Users\User\AppData\Local\Temp\cbtests\out\Domain.dll
+C:\Users\User\AppData\Local\Temp\cbtests\out\Domain.pdb
+C:\Users\User\AppData\Local\Temp\cbsvc\out\Domain.deps.json
+C:\Users\User\AppData\Local\Temp\cbsvc\out\Domain.dll
+C:\Users\User\AppData\Local\Temp\cbsvc\out\Domain.pdb
+C:\Users\User\AppData\Local\Temp\cbrepo\out\Domain.deps.json
+C:\Users\User\AppData\Local\Temp\cbrepo\out\Domain.dll
+C:\Users\User\AppData\Local\Temp\cbrepo\out\Domain.pdb
+C:\Users\User\AppData\Local\Temp\cbapi\out\Domain.deps.json
+C:\Users\User\AppData\Local\Temp\cbapi\out\Domain.dll
+C:\Users\User\AppData\Local\Temp\cbapi\out\Domain.pdb

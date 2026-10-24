@@ -10,6 +10,9 @@ namespace Service.Services.Interfaces
         Task<IEnumerable<TicketListItemDto>> GetMineAsync(string userId);
         Task<ServiceResult<TicketDetailDto>> GetMineDetailAsync(string userId, int id);
         Task<ServiceResult<TicketDetailDto>> CreateAsync(string userId, CreateTicketDto model);
+
+        // "Help" pəncərəsi: userId boşdursa qeydiyyatsız ziyarətçidir (model.Email məcburidir)
+        Task<ServiceResult<HelpSentDto>> SendHelpAsync(string? userId, SendHelpDto model);
         Task<ServiceResult<TicketDetailDto>> CustomerReplyAsync(string userId, int id, ReplyTicketDto model);
         Task<ServiceResult<TicketDetailDto>> CustomerCloseAsync(string userId, int id);
 

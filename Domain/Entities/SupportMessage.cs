@@ -12,5 +12,6 @@ namespace Domain.Entities
         public string AuthorName { get; set; } = string.Empty;
         public bool IsStaff { get; set; }
         public string Body { get; set; } = string.Empty;
+        public string? ImagePath { get; set; }              // əlavə olunmuş şəkil (/images/help/...): yoxdursa boşdur
     }
 }

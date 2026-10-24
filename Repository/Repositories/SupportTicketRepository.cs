@@ -28,6 +28,21 @@ namespace Repository.Repositories
             return await _dbSet.AsNoTracking().CountAsync(t => t.UserId == userId && t.Status != TicketStatus.Closed);
         }
 
+        public async Task<SupportTicket?> FindOpenHelpTicketAsync(string userId, DateTime since)
+        {
+            return await _dbSet
+                .Include(t => t.User)
+                .Include(t => t.Messages)
+                .Where(t => t.UserId == userId && t.Status != TicketStatus.Closed && t.Subject.StartsWith("Help: ") && t.LastActivityAt >= since)
+                .OrderByDescending(t => t.LastActivityAt)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> CountOpenByGuestAsync(string email)
+        {
+            return await _dbSet.AsNoTracking().CountAsync(t => t.GuestEmail == email && t.Status != TicketStatus.Closed);
+        }
+
         public async Task<SupportTicket?> GetWithMessagesAsync(int id, string? userId)
         {
             var query = _dbSet.Include(t => t.User).Include(t => t.Messages).AsQueryable();
@@ -55,7 +70,8 @@ namespace Repository.Repositories
                 var pattern = "%" + search.Trim().Replace("[", "[[]").Replace("%", "[%]").Replace("_", "[_]") + "%";
                 query = query.Where(t => EF.Functions.Like(t.Subject, pattern)
                                       || EF.Functions.Like(t.User.Name + " " + t.User.Surname, pattern)
-                                      || EF.Functions.Like(t.User.Email!, pattern));
+                                      || EF.Functions.Like(t.User.Email!, pattern)
+                                      || EF.Functions.Like(t.GuestEmail!, pattern));
             }
 
             var total = await query.CountAsync();

@@ -12,6 +12,12 @@ namespace Repository.Repositories.Interfaces
         // Müştərinin hələ bağlanmamış mesajlarının sayı (spam olmasın deyə limit)
         Task<int> CountOpenByUserAsync(string userId);
 
+        // Müştərinin son vaxtlar yazdığı, hələ bağlanmamış "Help" mesajı (yeni mesaj həmin yazışmaya əlavə olunsun). İzləyir. Yoxdursa null
+        Task<SupportTicket?> FindOpenHelpTicketAsync(string userId, DateTime since);
+
+        // Qeydiyyatsız ziyarətçinin (email) hələ bağlanmamış mesajlarının sayı: spam limiti
+        Task<int> CountOpenByGuestAsync(string email);
+
         // İzləyir. Mesajlar köhnədən yeniyə, müştərisi ilə. userId verilibsə yalnız onun mesajıdır (başqasınınkı null qayıdır)
         Task<SupportTicket?> GetWithMessagesAsync(int id, string? userId);
 
