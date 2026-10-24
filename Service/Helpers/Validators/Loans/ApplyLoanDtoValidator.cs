@@ -14,7 +14,7 @@ namespace Service.Helpers.Validators.Loans
                 .Must(a => decimal.Round(a, 2) == a).WithMessage("Use at most two decimal places.");
 
             RuleFor(x => x.Purpose)
-                .Must(p => Enum.TryParse<LoanPurpose>(p, true, out _)).WithMessage("Choose the purpose of the loan.");
+                .Must(p => EnumRules.IsName<LoanPurpose>(p)).WithMessage("Choose the purpose of the loan.");
 
             // "Other" seçiləndə səbəb yazılmalıdır
             When(x => string.Equals(x.Purpose, nameof(LoanPurpose.Other), StringComparison.OrdinalIgnoreCase), () =>

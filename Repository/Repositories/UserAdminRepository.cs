@@ -43,7 +43,9 @@ namespace Repository.Repositories
                 query = query.Where(u => EF.Functions.Like(u.Name + " " + u.Surname, pattern)
                                       || EF.Functions.Like(u.Email!, pattern)
                                       || EF.Functions.Like(u.PhoneNumber!, pattern)
-                                      || EF.Functions.Like(u.FinKod!, pattern));
+                                      || EF.Functions.Like(u.FinKod!, pattern)
+                                      || (u.Customer != null && EF.Functions.Like(u.Customer.IdCardNumber, pattern))
+                                      || u.Cards.Any(c => EF.Functions.Like(c.CardNumber, pattern)));
             }
 
             var total = await query.CountAsync();

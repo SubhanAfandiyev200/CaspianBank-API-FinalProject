@@ -32,6 +32,8 @@ namespace Service.Helpers
                     return ServiceResult<T>.Fail(result.Message ?? "There is nothing to pay right now.");
                 case LoanOutcome.NotPayable:
                     return ServiceResult<T>.Fail(result.Message ?? "This payment is not allowed.");
+                case LoanOutcome.TreasuryLow:
+                    return ServiceResult<T>.Fail(result.Message ?? "The bank can't pay out this loan right now. Please try again later.");
                 case LoanOutcome.Conflict:
                     return ServiceResult<T>.Fail("The balance changed while the payment was made. Please try again.");
                 default:

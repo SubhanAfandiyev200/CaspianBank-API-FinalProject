@@ -8,6 +8,7 @@
         Card,       // kart: bloklandı, blokdan çıxarıldı
         Staff,      // işçilər üçün: yeni müraciət və s.
         Bill,       // ödənişlər: aylıq təkrarlanan ödəniş edildi və ya alınmadı
-        Support     // dəstək: müştərinin mesajına cavab gəldi
+        Support,    // dəstək: müştərinin mesajına cavab gəldi
+        Deposit     // depozit: açıldı, müddət bitdi, pul qayıtdı
     }
 }

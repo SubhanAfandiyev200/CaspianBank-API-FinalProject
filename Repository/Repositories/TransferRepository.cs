@@ -47,9 +47,8 @@ namespace Repository.Repositories
                     return new TransferResult(TransferOutcome.DestinationBlocked);
                 }
 
-                // Cashback kartına heç bir köçürmə olmur; Cashback kartından yalnız öz kartlarına köçürmək olar
-                var isOwn = destination.UserId == plan.UserId;
-                if (destination.Tier == CardTier.Cashback || (!isOwn && source.Tier == CardTier.Cashback))
+                // Cashback kartına heç bir köçürmə olmur; Cashback kartından istənilən karta köçürmək olar
+                if (destination.Tier == CardTier.Cashback)
                 {
                     return new TransferResult(TransferOutcome.NotAllowed);
                 }
@@ -117,6 +116,94 @@ namespace Repository.Repositories
             var fee = rows.FirstOrDefault(r => r.Type == TransactionType.Commission);
             return new TransferRecord(outRow.Card, inRow.Card, outRow.Amount, fee?.Amount ?? 0m, outRow.Note,
                 fee?.BalanceAfter ?? outRow.BalanceAfter, outRow.CreatedAt);
+        }
+
+        public async Task<TransferResult> ExecuteExternalAsync(ExternalTransferPlan plan)
+        {
+            for (var attempt = 0; attempt < MaxAttempts; attempt++)
+            {
+                _dbContext.ChangeTracker.Clear();
+                await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+                var source = await _dbContext.Cards.FirstOrDefaultAsync(c => c.Id == plan.FromCardId && c.UserId == plan.UserId);
+                if (source is null)
+                {
+                    return new TransferResult(TransferOutcome.SourceNotFound);
+                }
+                if (source.IsBlocked)
+                {
+                    return new TransferResult(TransferOutcome.SourceBlocked);
+                }
+                if (source.Balance < plan.Amount + plan.Commission)
+                {
+                    return new TransferResult(TransferOutcome.InsufficientFunds);
+                }
+
+                source.Balance -= plan.Amount;
+                _dbContext.Transactions.Add(NewRow(source.Id, TransactionType.TransferOut, false, plan.Amount, source.Balance,
+                    plan.DescriptionOut, plan.Reference, plan.Note));
+
+                if (plan.Commission > 0)
+                {
+                    source.Balance -= plan.Commission;
+                    _dbContext.Transactions.Add(NewRow(source.Id, TransactionType.Commission, false, plan.Commission, source.Balance,
+                        "Transfer commission", plan.Reference, null));
+                }
+
+                _dbContext.ExternalTransfers.Add(new ExternalTransfer
+                {
+                    UserId = plan.UserId,
+                    SourceCardId = source.Id,
+                    ExternalCardId = plan.ExternalCardId,
+                    Reference = plan.Reference,
+                    BankName = plan.BankName,
+                    CardLast4 = plan.CardLast4,
+                    HolderMasked = plan.HolderMasked,
+                    Amount = plan.Amount,
+                    Commission = plan.Commission,
+                    Note = plan.Note,
+                    SourceBalanceAfter = source.Balance
+                });
+
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return new TransferResult(TransferOutcome.Success, source.Balance);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    await transaction.RollbackAsync();
+                    await Task.Delay(Random.Shared.Next(10, 60));
+                }
+                catch (DbUpdateException)
+                {
+                    // (Reference, Type) və ya Reference unikal indeksi: bu köçürmə artıq yazılıb
+                    await transaction.RollbackAsync();
+                    _dbContext.ChangeTracker.Clear();
+                    return new TransferResult(TransferOutcome.Duplicate);
+                }
+            }
+
+            _dbContext.ChangeTracker.Clear();
+            return new TransferResult(TransferOutcome.Conflict);
+        }
+
+        public async Task<ExternalTransfer?> FindExternalAsync(string reference, string userId)
+        {
+            return await _dbContext.ExternalTransfers
+                .AsNoTracking()
+                .Include(t => t.SourceCard)
+                .FirstOrDefaultAsync(t => t.Reference == reference && t.UserId == userId);
+        }
+
+        public async Task<decimal> SumSentAsync(int cardId, DateTime fromUtc, DateTime toUtc)
+        {
+            var total = await _dbContext.Transactions
+                .AsNoTracking()
+                .Where(t => t.CardId == cardId && t.Type == TransactionType.TransferOut && t.CreatedAt >= fromUtc && t.CreatedAt < toUtc)
+                .SumAsync(t => (decimal?)t.Amount);
+            return total ?? 0m;
         }
 
         private static Transaction NewRow(int cardId, TransactionType type, bool income, decimal amount, decimal balanceAfter,

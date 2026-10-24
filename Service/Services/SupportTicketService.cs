@@ -5,6 +5,7 @@ using FluentValidation;
 using Repository.Repositories.Interfaces;
 using Service.Helpers.DTOs.Support;
 using Service.Helpers.Responses;
+using Service.Helpers.Validators;
 using Service.Services.Interfaces;
 
 namespace Service.Services
@@ -153,7 +154,7 @@ namespace Service.Services
             TicketStatus? status = null;
             if (!string.IsNullOrWhiteSpace(filter.Status))
             {
-                if (!Enum.TryParse<TicketStatus>(filter.Status, true, out var parsed))
+                if (!EnumRules.IsName<TicketStatus>(filter.Status) || !Enum.TryParse<TicketStatus>(filter.Status, true, out var parsed))
                 {
                     return ServiceResult<TicketPageDto>.Fail("Choose Pending, Answered or Closed.");
                 }

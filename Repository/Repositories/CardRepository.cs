@@ -56,6 +56,45 @@ namespace Repository.Repositories
             }
         }
 
+        public async Task<bool> TopUpFromCardAsync(Card source, Card target, decimal amount)
+        {
+            var reference = "TU-" + Guid.NewGuid().ToString("N")[..12].ToUpperInvariant();
+
+            source.Balance -= amount;
+            target.Balance += amount;
+            _dbContext.Transactions.Add(new Transaction
+            {
+                CardId = source.Id,
+                Type = TransactionType.TopUpOut,
+                IsIncome = false,
+                Amount = amount,
+                BalanceAfter = source.Balance,
+                Description = $"Top up of card •••• {target.CardNumber[^4..]}",
+                Reference = reference
+            });
+            _dbContext.Transactions.Add(new Transaction
+            {
+                CardId = target.Id,
+                Type = TransactionType.TopUp,
+                IsIncome = true,
+                Amount = amount,
+                BalanceAfter = target.Balance,
+                Description = $"Top up from card •••• {source.CardNumber[^4..]}",
+                Reference = reference
+            });
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();   // iki balans və iki jurnal qeydi birlikdə yazılır
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                _dbContext.ChangeTracker.Clear();
+                return false;
+            }
+        }
+
         public async Task<Card?> GetByNumberAsync(string cardNumber)
         {
             return await _dbSet

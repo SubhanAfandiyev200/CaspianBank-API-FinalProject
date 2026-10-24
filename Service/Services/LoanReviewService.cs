@@ -2,6 +2,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Loans;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Repository.Repositories.Interfaces;
 using Repository.Results;
 using Service.Helpers;
@@ -21,6 +22,7 @@ namespace Service.Services
         private readonly IValidator<ApproveLoanDto> _approveValidator;
         private readonly IValidator<RejectLoanDto> _rejectValidator;
         private readonly INotificationService _notifications;
+        private readonly ILogger<LoanReviewService> _logger;
 
         public LoanReviewService(ILoanRepository loans,
                                  ICustomerRepository customers,
@@ -29,9 +31,11 @@ namespace Service.Services
                                  IValidator<LoanReviewFilterDto> filterValidator,
                                  IValidator<ApproveLoanDto> approveValidator,
                                  IValidator<RejectLoanDto> rejectValidator,
-                                 INotificationService notifications)
+                                 INotificationService notifications,
+                                 ILogger<LoanReviewService> logger)
         {
             _notifications = notifications;
+            _logger = logger;
             _loans = loans;
             _customers = customers;
             _accounts = accounts;
@@ -67,6 +71,7 @@ namespace Service.Services
 
             // Gözləyən müraciətlərin sayı süzgəcdən asılı olmayaraq göstərilir (işçinin işi)
             var pending = await _loans.GetReviewPageAsync(LoanStatus.Pending, null, 0, 1);
+            var awaiting = await _loans.GetReviewPageAsync(LoanStatus.AwaitingSuperAdmin, null, 0, 1);
 
             var dto = new LoanReviewPageDto
             {
@@ -74,6 +79,7 @@ namespace Service.Services
                 Page = filter.Page,
                 PageSize = filter.PageSize,
                 PendingCount = pending.TotalCount,
+                AwaitingSuperAdminCount = awaiting.TotalCount,
                 Items = page.Items.Select(l => new LoanReviewListItemDto
                 {
                     Id = l.Id,
@@ -85,7 +91,8 @@ namespace Service.Services
                     ApprovedAmount = l.ApprovedAmount,
                     TermMonths = l.TermMonths,
                     CreatedAt = l.CreatedAt,
-                    Status = l.Status.ToString()
+                    Status = l.Status.ToString(),
+                    RequiresSuperAdmin = l.RequiresSuperAdminApproval
                 }).ToList()
             };
 
@@ -114,11 +121,30 @@ namespace Service.Services
 
             var detail = new LoanReviewDetailDto
             {
-                Loan = LoanMapper.ToDetail(loan, today),
+                Loan = LoanMapper.ToDetail(loan, today, true),
                 RejectReason = loan.RejectReason,
                 ReviewedAt = loan.ReviewedAt,
-                CanDecide = loan.Status == LoanStatus.Pending
+                CanDecide = loan.Status == LoanStatus.Pending || loan.Status == LoanStatus.AwaitingSuperAdmin,
+                RequiresSuperAdminApproval = loan.RequiresSuperAdminApproval,
+                FirstApprovedAt = loan.FirstApprovedAt,
+                FirstApprovedAmount = loan.FirstApprovedAmount
             };
+
+            // İki təsdiqli (qara siyahı) kreditdə hansı mərhələdə olduğu: əvvəl kredit şöbəsi, sonra Super Admin
+            if (loan.Status == LoanStatus.AwaitingSuperAdmin)
+            {
+                detail.Stage = "FinalApproval";
+            }
+            else if (loan.Status == LoanStatus.Pending && loan.RequiresSuperAdminApproval)
+            {
+                detail.Stage = "FirstApproval";
+            }
+
+            if (!string.IsNullOrEmpty(loan.FirstApprovedByUserId))
+            {
+                var first = await _accounts.GetByIdAsync(loan.FirstApprovedByUserId);
+                detail.FirstApprovedBy = first is null ? null : first.Name + " " + first.Surname;
+            }
 
             if (!string.IsNullOrEmpty(loan.ReviewedByUserId))
             {
@@ -143,6 +169,13 @@ namespace Service.Services
                 PhoneNumber = borrower.PhoneNumber,
                 AccountRestricted = borrower.IsRestricted
             };
+
+            // Müraciətdən sonra qara siyahıya düşübsə də iki təsdiq tələb olunur
+            if (loan.Status == LoanStatus.Pending && detail.Applicant.IsBlacklisted)
+            {
+                detail.RequiresSuperAdminApproval = true;
+                detail.Stage = "FirstApproval";
+            }
 
             if (customer is not null)
             {
@@ -274,7 +307,7 @@ namespace Service.Services
 
             if (detail.Applicant.IsBlacklisted)
             {
-                rules.Warnings.Add("The customer is on the blacklist: " + (detail.Applicant.BlacklistReason ?? "no reason recorded") + ". A loan can't be approved.");
+                rules.Warnings.Add("The customer is on the blacklist: " + (detail.Applicant.BlacklistReason ?? "no reason recorded") + ". The loan needs two approvals: first the loan staff, then the Super Admin.");
             }
             if (detail.Applicant.AccountRestricted)
             {
@@ -341,30 +374,48 @@ namespace Service.Services
             {
                 return ServiceResult<LoanSummaryDto>.NotFound();
             }
-            if (loan.Status != LoanStatus.Pending)
+            if (loan.Status != LoanStatus.Pending && loan.Status != LoanStatus.AwaitingSuperAdmin)
             {
                 return ServiceResult<LoanSummaryDto>.Fail("This application has already been reviewed.");
             }
 
+            // Qara siyahıdakı müştəri: iki təsdiq lazımdır. Əvvəl kredit şöbəsi (Accountant/Admin), sonra Super Admin
+            var blacklisted = loan.RequiresSuperAdminApproval;
+            if (!blacklisted && loan.Borrower.CustomerId.HasValue)
+            {
+                var customer = await _customers.GetByIdAsync(loan.Borrower.CustomerId.Value);
+                blacklisted = customer is not null && customer.IsBlacklisted;
+            }
+
+            var staff = await _accounts.GetByIdAsync(staffUserId);
+            var roles = staff is null ? new List<string>() : (await _accounts.GetRolesAsync(staff)).ToList();
+            var isSuperAdmin = roles.Contains(Domain.Constants.Roles.SuperAdmin);
+            var isLoanStaff = roles.Contains(Domain.Constants.Roles.Accountant) || roles.Contains(Domain.Constants.Roles.Admin);
+
+            var approvedAmount = model.ApprovedAmount;
+            if (loan.Status == LoanStatus.AwaitingSuperAdmin)
+            {
+                if (!isSuperAdmin)
+                {
+                    return ServiceResult<LoanSummaryDto>.Fail("Only the Super Admin can give the final approval for a customer on the blacklist.");
+                }
+                // Super Admin kredit şöbəsinin təsdiq etdiyi məbləği təsdiq edir
+                approvedAmount = loan.FirstApprovedAmount ?? model.ApprovedAmount;
+            }
+            else if (blacklisted && !isLoanStaff && !isSuperAdmin)
+            {
+                return ServiceResult<LoanSummaryDto>.Fail("A loan for a customer on the blacklist must first be approved by the loan staff. The Super Admin gives the final approval after that.");
+            }
+
             var bank = loan.OwnBank;
-            if (model.ApprovedAmount > loan.RequestedAmount)
+            if (approvedAmount > loan.RequestedAmount)
             {
                 return ServiceResult<LoanSummaryDto>.Fail("The approved amount can't be higher than the requested amount.");
             }
-            if (model.ApprovedAmount < bank.MinLoanAmount || model.ApprovedAmount > bank.MaxLoanAmount)
+            if (approvedAmount < bank.MinLoanAmount || approvedAmount > bank.MaxLoanAmount)
             {
                 return ServiceResult<LoanSummaryDto>.Fail("The approved amount must be between " + bank.MinLoanAmount.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)
                     + " and " + bank.MaxLoanAmount.ToString("N0", System.Globalization.CultureInfo.InvariantCulture) + " AZN.");
-            }
-
-            // Qara siyahıdakı vətəndaşa kredit verilmir
-            if (loan.Borrower.CustomerId.HasValue)
-            {
-                var customer = await _customers.GetByIdAsync(loan.Borrower.CustomerId.Value);
-                if (customer is not null && customer.IsBlacklisted)
-                {
-                    return ServiceResult<LoanSummaryDto>.Fail("The customer is on the blacklist, so a loan can't be approved.");
-                }
             }
 
             // Eyni anda ən çox MaxActiveLoans aktiv kredit
@@ -375,14 +426,36 @@ namespace Service.Services
                 return ServiceResult<LoanSummaryDto>.Fail("The customer already has " + activeCount + " active loans. The limit is " + bank.MaxActiveLoans + ".");
             }
 
-            var result = await _loans.ApproveAsync(loanId, staffUserId, model.ApprovedAmount, DateTime.UtcNow);
+            // Qara siyahı, birinci təsdiq (kredit şöbəsi): pul getmir, sorğu Super Admin-ə düşür.
+            // Super Admin özü baxırsa ikinci təsdiqi gözləməyə ehtiyac yoxdur: onun təsdiqi son təsdiqdir
+            if (blacklisted && loan.Status == LoanStatus.Pending && !isSuperAdmin)
+            {
+                var firstResult = await _loans.FirstApproveAsync(loanId, staffUserId, approvedAmount, DateTime.UtcNow);
+                var firstSummary = await ToSummaryResultAsync(firstResult);
+                _logger.LogInformation("Loan {LoanId}: first approval of {Amount} AZN by {StaffId}, waiting for the Super Admin ({Success})", loanId, approvedAmount, staffUserId, firstSummary.IsSuccess);
+                if (firstSummary.IsSuccess)
+                {
+                    var staffName = staff is null ? "The loan staff" : staff.Name + " " + staff.Surname;
+                    var applicant = loan.Borrower.Name + " " + loan.Borrower.Surname;
+                    await _notifications.NotifyRolesAsync(
+                        new[] { Domain.Constants.Roles.SuperAdmin },
+                        NotificationCategory.Staff,
+                        "Loan for a blacklisted customer needs your approval",
+                        $"{staffName} approved {approvedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)} AZN for {applicant} (loan {loan.ContractNumber}), who is on the blacklist. Do you approve it too?",
+                        "/Admin/Loans/Detail/" + loan.Id);
+                }
+                return firstSummary;
+            }
+
+            var result = await _loans.ApproveAsync(loanId, staffUserId, approvedAmount, DateTime.UtcNow);
             var summary = await ToSummaryResultAsync(result);
+            _logger.LogInformation("Loan {LoanId}: approved {Amount} AZN by {StaffId}, status {Status}", loanId, approvedAmount, staffUserId, summary.Data?.Status ?? result.Outcome.ToString());
 
             // Müştəri qərarı dərhal görür: tam məbləğdə pul karta düşüb, azdırsa cavab verməlidir
             if (summary.IsSuccess && summary.Data is not null)
             {
                 var link = "/App/Loans/" + loan.Id;
-                var amount = model.ApprovedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture);
+                var amount = approvedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture);
                 if (summary.Data.Status == LoanStatus.Offered.ToString())
                 {
                     var asked = loan.RequestedAmount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture);
@@ -407,7 +480,20 @@ namespace Service.Services
                 return ServiceResult<LoanSummaryDto>.Fail(validation.Errors.Select(e => e.ErrorMessage).Distinct().ToArray());
             }
 
+            // Kredit şöbəsi təsdiq edib Super Admin-ə göndərəndən sonra rədd qərarı yalnız Super Admin-indir
+            var current = await _loans.GetDetailAsync(loanId);
+            if (current is not null && current.Status == LoanStatus.AwaitingSuperAdmin)
+            {
+                var staff = await _accounts.GetByIdAsync(staffUserId);
+                var roles = staff is null ? new List<string>() : (await _accounts.GetRolesAsync(staff)).ToList();
+                if (!roles.Contains(Domain.Constants.Roles.SuperAdmin))
+                {
+                    return ServiceResult<LoanSummaryDto>.Fail("Only the Super Admin can decide on this application now.");
+                }
+            }
+
             var result = await _loans.RejectAsync(loanId, staffUserId, model.Reason.Trim(), DateTime.UtcNow);
+            _logger.LogInformation("Loan {LoanId}: rejected by {StaffId} ({Outcome})", loanId, staffUserId, result.Outcome);
             var summary = await ToSummaryResultAsync(result);
 
             // Müştəri yalnız ümumi mətn görür; rədd səbəbi daxilidir
@@ -436,7 +522,7 @@ namespace Service.Services
             {
                 return ServiceResult<LoanSummaryDto>.NotFound();
             }
-            return ServiceResult<LoanSummaryDto>.Ok(LoanMapper.ToSummary(loan, Today()));
+            return ServiceResult<LoanSummaryDto>.Ok(LoanMapper.ToSummary(loan, Today(), true));
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Service.Services
         private readonly ITokenService _tokenService;
         private readonly IOtpService _otpService;
         private readonly ICardService _cardService;
+        private readonly ISecurityMonitor _security;
 
         private const string InvalidCredentials = "Invalid email or password.";
 
@@ -30,7 +31,8 @@ namespace Service.Services
                               ICustomerRepository customerRepository,
                               ITokenService tokenService,
                               IOtpService otpService,
-                              ICardService cardService)
+                              ICardService cardService,
+                              ISecurityMonitor security)
         {
             _accountRepository = accountRepository;
             _registerValidator = registerValidator;
@@ -41,6 +43,7 @@ namespace Service.Services
             _tokenService = tokenService;
             _otpService = otpService;
             _cardService = cardService;
+            _security = security;
         }
 
         public async Task<RegisterResponse> RegisterAsync(RegisterDto model)
@@ -185,7 +188,7 @@ namespace Service.Services
 
             if (customer.DeathDate is not null)
             {
-                return (null, "An account can't be opened with this ID record.");
+                return (null, "This ID record can't be used to open an account. If you think this is a mistake, please contact the bank.");
             }
 
             if (await _accountRepository.CustomerHasAccountAsync(customer.Id))
@@ -239,6 +242,12 @@ namespace Service.Services
             if (!await _accountRepository.CheckPasswordAsync(user, model.Password))
             {
                 await _accountRepository.RegisterFailedAttemptAsync(user);
+
+                // Təkrarlanan yanlış şifrədən sonra hesab müvəqqəti bloklanıbsa Security siqnal görür
+                if (await _accountRepository.IsLockedOutAsync(user))
+                {
+                    await _security.OnAccountLockedAsync(user.Id);
+                }
                 return FailLogin(InvalidCredentials);
             }
 

@@ -13,6 +13,10 @@ namespace Service.Helpers.Validators.Loans
             RuleFor(x => x.CardId)
                 .GreaterThan(0).WithMessage("Choose the card to pay from.");
 
+            RuleFor(x => x.Amount)
+                .GreaterThanOrEqualTo(0).WithMessage("Enter a valid amount.")
+                .Must(a => decimal.Round(a, 2) == a).WithMessage("Use at most two decimal places.");
+
             RuleFor(x => x.RequestId)
                 .Must(id => Guid.TryParse(id, out _)).WithMessage("Invalid request id.");
         }

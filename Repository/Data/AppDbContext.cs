@@ -1,5 +1,6 @@
 ﻿using Domain.Configurations;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +27,12 @@ namespace Repository.Data
         public DbSet<Workplace> Workplaces { get; set; }
         public DbSet<Employment> Employments { get; set; }
         public DbSet<ExternalBank> ExternalBanks { get; set; }
+        public DbSet<ExternalCard> ExternalCards { get; set; }
+        public DbSet<ExternalTransfer> ExternalTransfers { get; set; }
         public DbSet<ExternalLoan> ExternalLoans { get; set; }
+        public DbSet<DepositPlan> DepositPlans { get; set; }
+        public DbSet<Deposit> Deposits { get; set; }
+        public DbSet<DepositInterestPosting> DepositInterestPostings { get; set; }
         public DbSet<OwnBank> OwnBanks { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<LoanInstallment> LoanInstallments { get; set; }
@@ -40,8 +46,171 @@ namespace Repository.Data
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SupportMessage> SupportMessages { get; set; }
+        public DbSet<TreasuryEntry> TreasuryEntries { get; set; }
+        public DbSet<SecurityAlert> SecurityAlerts { get; set; }
+        public DbSet<TransactionReport> TransactionReports { get; set; }
+        public DbSet<RecurringTransfer> RecurringTransfers { get; set; }
+        public DbSet<Translation> Translations { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+        }
+
+        // Bankın xəzinəsinin jurnalı hər pul əməliyyatı ilə EYNI saxlamada yazılır: ya əməliyyat və xəzinə sətri birlikdə olur, ya heç biri.
+        // Bunun üçün əməliyyatları yazan hər yerə toxunmaq lazım gəlmir
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            RekeyTranslations();
+            AddTreasuryEntries();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            await RekeyTranslationsAsync(cancellationToken);
+            AddTreasuryEntries();
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        // Saytın mətnlərinin tərcüməsi ingilis mətnə bağlıdır (açar = ingilis mətn). Admin ingilis mətni dəyişəndə az/ru tərcümə itməsin deyə
+        // həmin açarın tərcümə sətirləri yeni mətnə köçürülür (eyni saxlamada). Yeni mətnin tərcüməsi artıq varsa toxunulmur
+        private static readonly Dictionary<Type, string[]> TranslatedTexts = new Dictionary<Type, string[]>
+        {
+            [typeof(About)] = new[] { "Label", "Title", "Description" },
+            [typeof(AboutPillar)] = new[] { "Title", "Description" },
+            [typeof(BenefitSection)] = new[] { "Label", "Title", "Description" },
+            [typeof(BenefitItem)] = new[] { "Label", "Title", "Description", "ButtonText", "Text1", "Text2", "Text3" },
+            [typeof(ServiceSection)] = new[] { "Label", "Title", "Description" },
+            [typeof(ServiceItem)] = new[] { "Title", "Description" },
+            [typeof(CardHero)] = new[] { "Label", "Title", "Description" },
+            [typeof(HomeTicker)] = new[] { "Text" },
+            [typeof(CardDesign)] = new[] { "Title" },
+            [typeof(Setting)] = new[] { "Value" }
+        };
+
+        private List<(string Old, string New)> CollectTextChanges()
+        {
+            var changes = new List<(string Old, string New)>();
+            foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified))
+            {
+                if (!TranslatedTexts.TryGetValue(entry.Entity.GetType(), out var names))
+                {
+                    continue;
+                }
+
+                foreach (var name in names)
+                {
+                    var property = entry.Property(name);
+                    if (!property.IsModified)
+                    {
+                        continue;
+                    }
+
+                    var oldText = (property.OriginalValue as string)?.Trim();
+                    var newText = (property.CurrentValue as string)?.Trim();
+                    if (!string.IsNullOrEmpty(oldText) && !string.IsNullOrEmpty(newText) && !string.Equals(oldText, newText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        changes.Add((oldText, newText));
+                    }
+                }
+            }
+            return changes;
+        }
+
+        private async Task RekeyTranslationsAsync(CancellationToken cancellationToken)
+        {
+            foreach (var (oldText, newText) in CollectTextChanges())
+            {
+                var rows = await Translations.Where(t => t.Key == oldText).ToListAsync(cancellationToken);
+                foreach (var row in rows)
+                {
+                    var language = row.Language;
+                    if (!await Translations.AnyAsync(t => t.Language == language && t.Key == newText, cancellationToken))
+                    {
+                        row.Key = newText;
+                    }
+                }
+            }
+        }
+
+        private void RekeyTranslations()
+        {
+            foreach (var (oldText, newText) in CollectTextChanges())
+            {
+                var rows = Translations.Where(t => t.Key == oldText).ToList();
+                foreach (var row in rows)
+                {
+                    var language = row.Language;
+                    if (!Translations.Any(t => t.Language == language && t.Key == newText))
+                    {
+                        row.Key = newText;
+                    }
+                }
+            }
+        }
+
+        private void AddTreasuryEntries()
+        {
+            var entries = new List<TreasuryEntry>();
+
+            foreach (var entry in ChangeTracker.Entries<Transaction>().Where(e => e.State == EntityState.Added))
+            {
+                var row = entry.Entity;
+                switch (row.Type)
+                {
+                    case TransactionType.Commission:
+                        entries.Add(NewTreasury(TreasuryEntryKind.Commission, row.Amount, "Transfer commission", row.Reference));
+                        break;
+                    case TransactionType.CardFee:
+                        entries.Add(NewTreasury(TreasuryEntryKind.CardFee, row.Amount, "Card opening fee", row.Reference));
+                        break;
+                    case TransactionType.Cashback:
+                        entries.Add(NewTreasury(TreasuryEntryKind.Cashback, -row.Amount, "Cashback paid to a customer", row.Reference));
+                        break;
+                    case TransactionType.LoanDisbursement:
+                        entries.Add(NewTreasury(TreasuryEntryKind.LoanPaidOut, -row.Amount, "Loan paid out", row.Reference));
+                        break;
+                    case TransactionType.DepositOpen:
+                        entries.Add(NewTreasury(TreasuryEntryKind.DepositReceived, row.Amount, "Deposit received", row.Reference));
+                        break;
+                    case TransactionType.DepositPayout:
+                        entries.Add(NewTreasury(TreasuryEntryKind.DepositReturned, -row.Amount, "Deposit returned to a customer", row.Reference));
+                        break;
+                    case TransactionType.DepositInterest:
+                        entries.Add(NewTreasury(TreasuryEntryKind.DepositInterest, -row.Amount, "Deposit interest paid", row.Reference));
+                        break;
+                }
+            }
+
+            // Kredit ödənişi bir neçə aylıq ödənişi örtə bilər: eyni kodlu qeydlər birləşdirilir (əsas borc, faiz və cərimə ayrıca)
+            var payments = ChangeTracker.Entries<LoanPaymentRecord>().Where(e => e.State == EntityState.Added).Select(e => e.Entity).ToList();
+            foreach (var group in payments.GroupBy(p => p.TransactionReference))
+            {
+                var principal = group.Sum(p => p.PrincipalPart);
+                var interest = group.Sum(p => p.InterestPart);
+                var penalty = group.Sum(p => p.PenaltyPart);
+                if (principal > 0m)
+                {
+                    entries.Add(NewTreasury(TreasuryEntryKind.LoanPrincipal, principal, "Loan principal repaid", group.Key));
+                }
+                if (interest > 0m)
+                {
+                    entries.Add(NewTreasury(TreasuryEntryKind.LoanInterest, interest, "Loan interest received", group.Key));
+                }
+                if (penalty > 0m)
+                {
+                    entries.Add(NewTreasury(TreasuryEntryKind.LoanPenalty, penalty, "Loan late penalty received", group.Key));
+                }
+            }
+
+            if (entries.Count > 0)
+            {
+                TreasuryEntries.AddRange(entries);
+            }
+        }
+
+        private static TreasuryEntry NewTreasury(TreasuryEntryKind kind, decimal amount, string description, string reference)
+        {
+            return new TreasuryEntry { Kind = kind, Amount = amount, Description = description, Reference = reference };
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -14,6 +14,8 @@ namespace Domain.Configurations
 
             builder.Property(m => m.RequestedAmount).HasPrecision(18, 2);
             builder.Property(m => m.ApprovedAmount).HasPrecision(18, 2);
+            builder.Property(m => m.FirstApprovedAmount).HasPrecision(18, 2);
+            builder.Property(m => m.FirstApprovedByUserId).HasMaxLength(450);
             builder.Property(m => m.MonthlyPayment).HasPrecision(18, 2);
             builder.Property(m => m.TotalRepayment).HasPrecision(18, 2);
             builder.Property(m => m.OutstandingPrincipal).HasPrecision(18, 2);

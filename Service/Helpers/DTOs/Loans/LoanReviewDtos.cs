@@ -21,6 +21,7 @@ namespace Service.Helpers.DTOs.Loans
         public int TermMonths { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Status { get; set; } = string.Empty;
+        public bool RequiresSuperAdmin { get; set; }
     }
 
     public class LoanReviewPageDto
@@ -30,6 +31,7 @@ namespace Service.Helpers.DTOs.Loans
         public int Page { get; set; }
         public int PageSize { get; set; }
         public int PendingCount { get; set; }
+        public int AwaitingSuperAdminCount { get; set; }
     }
 
     // Müraciətçinin işçiyə göstərilən məlumatı (reyestr + hesab)
@@ -139,7 +141,14 @@ namespace Service.Helpers.DTOs.Loans
         public string? ReviewedBy { get; set; }
         public DateTime? ReviewedAt { get; set; }
         public string? RejectReason { get; set; }
-        public bool CanDecide { get; set; }             // Pending olanda true
+        public bool CanDecide { get; set; }             // Pending və ya AwaitingSuperAdmin olanda true
+
+        // Qara siyahı: iki təsdiq. Stage: "Normal" (bir qərar), "FirstApproval" (kredit şöbəsi), "FinalApproval" (Super Admin)
+        public bool RequiresSuperAdminApproval { get; set; }
+        public string Stage { get; set; } = "Normal";
+        public string? FirstApprovedBy { get; set; }
+        public DateTime? FirstApprovedAt { get; set; }
+        public decimal? FirstApprovedAmount { get; set; }
     }
 
     public class ApproveLoanDto

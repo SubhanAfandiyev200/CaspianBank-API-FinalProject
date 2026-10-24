@@ -98,9 +98,15 @@ namespace Repository.Repositories
             await _userManager.AccessFailedAsync(user);
         }
 
+        // Sayğacı sıfırlayır və müvəqqəti bloku da götürür (ResetAccessFailedCountAsync yalnız sayğacı sıfırlayır, blok qalırdı:
+        // şifrəsini bərpa edən istifadəçi yeni şifrə ilə də bloklu qalırdı)
         public async Task ResetFailedAttemptsAsync(AppUser user)
         {
             await _userManager.ResetAccessFailedCountAsync(user);
+            if (await _userManager.IsLockedOutAsync(user))
+            {
+                await _userManager.SetLockoutEndDateAsync(user, null);
+            }
         }
     }
 }

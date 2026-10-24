@@ -11,7 +11,7 @@ BEGIN TRANSACTION;
 -- Caspian Bank (tek setir)
 IF NOT EXISTS (SELECT 1 FROM OwnBanks)
 INSERT INTO OwnBanks (Name, LogoUrl, Bin, MinLoanAmount, MaxLoanAmount, MinTermMonths, MaxTermMonths, AnnualInterestRate, MinAge, FixedPenalty, DailyPenaltyPercent, CourtAfterDays, MaxActiveLoans, MaxPaymentToIncomePercent, InterbankFeePercent, InterbankMinFee, MaxInterbankAmount)
-VALUES (N'Caspian Bank', NULL, N'11223456', 500, 50000, 6, 48, 10, 18, 10, 0.5, 90, 3, 45, 1, NULL, 10000);
+VALUES (N'Caspian Bank', NULL, N'96301020', 500, 50000, 6, 48, 10, 18, 10, 0.5, 90, 3, 45, 1, NULL, 10000);
 
 -- Is yerleri (VOEN ile yoxlanilir)
 IF NOT EXISTS (SELECT 1 FROM Workplaces WHERE TaxId = N'1400123451') INSERT INTO Workplaces (Name, TaxId, Sector, Address) VALUES (N'Xəzər Logistika MMC', N'1400123451', N'Nəqliyyat', N'Bakı, Suraxanı r.');

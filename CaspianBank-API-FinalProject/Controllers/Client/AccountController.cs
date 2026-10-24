@@ -22,6 +22,7 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             _passwordService = passwordService;
         }
 
+        [EnableRateLimiting("auth")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {

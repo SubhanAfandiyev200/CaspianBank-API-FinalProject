@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Service.Helpers.DTOs.Transfers;
@@ -35,6 +35,13 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
         public async Task<IActionResult> Preview([FromBody] TransferDto model)
         {
             return ToResponse(await _transferService.PreviewAsync(UserId, model));
+        }
+
+        // Hər kartın aylıq limiti və bu ay artıq göndərilən məbləğ (formada komissiya canlı göstərilir)
+        [HttpGet("limits")]
+        public async Task<IActionResult> Limits()
+        {
+            return Ok(await _transferService.GetLimitsAsync(UserId));
         }
 
         [HttpPost]

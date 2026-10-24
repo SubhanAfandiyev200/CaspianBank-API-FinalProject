@@ -70,7 +70,8 @@ namespace CaspianBank_API_FinalProject.Controllers.Client
             return ToResponse(await _cardService.AddCardAsync(UserId, model));
         }
 
-        // Balansı artırır (xarici kart simulyasiya olunur)
+        // Balansı artırır: pul Caspian kartından (ondan çıxır) və ya bazadakı başqa bank kartından (çıxmır) gəlir
+        [EnableRateLimiting("transfer")]
         [HttpPost("{id:int}/top-up")]
         public async Task<IActionResult> TopUp(int id, [FromBody] TopUpDto model)
         {

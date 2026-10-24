@@ -59,6 +59,14 @@ namespace CaspianBank_API_FinalProject.Helpers
                 {
                     _logger.LogInformation("BillingMaintenance: {Count} təkrarlanan ödəniş edildi.", paid);
                 }
+
+                // Müştərilərin aylıq təkrarlanan köçürmələri (seçilmiş gün)
+                var transfers = scope.ServiceProvider.GetRequiredService<IRecurringTransferService>();
+                var sent = await transfers.RunDueAsync();
+                if (sent > 0)
+                {
+                    _logger.LogInformation("BillingMaintenance: {Count} təkrarlanan köçürmə edildi.", sent);
+                }
             }
             catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {

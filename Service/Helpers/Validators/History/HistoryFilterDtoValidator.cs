@@ -15,7 +15,7 @@ namespace Service.Helpers.Validators.History
                 .InclusiveBetween(1, 50).WithMessage("The page size must be between 1 and 50.");
 
             RuleFor(x => x.Type)
-                .Must(value => string.IsNullOrWhiteSpace(value) || Enum.TryParse<TransactionType>(value, true, out _))
+                .Must(value => string.IsNullOrWhiteSpace(value) || EnumRules.IsName<TransactionType>(value))
                 .WithMessage("Choose a valid transaction type.");
 
             RuleFor(x => x.Direction)

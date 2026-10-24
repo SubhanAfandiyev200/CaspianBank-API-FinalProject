@@ -9,7 +9,7 @@ namespace Service.Helpers.Validators.Loans
         public LoanReviewFilterDtoValidator()
         {
             RuleFor(x => x.Status)
-                .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<LoanStatus>(s, true, out _))
+                .Must(s => string.IsNullOrWhiteSpace(s) || EnumRules.IsName<LoanStatus>(s))
                 .WithMessage("Unknown status.");
 
             RuleFor(x => x.Page)

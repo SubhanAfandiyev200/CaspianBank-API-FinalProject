@@ -312,12 +312,41 @@ namespace Domain.Loans
         }
 
         // Aylıq ödənişləri ödə (hamısı birdən). Hər aylıq ödəniş üçün ayrıca qeyd qaytarır
-        public static List<LoanPaymentRecord> ApplyInstallmentPayment(Loan loan, LoanDue due, DateTime asOf, string cardNumber, string reference)
+        // amount verilsə və borcdan azdırsa yalnız o qədər ödənir (hissə-hissə ödəmək üçün): ən köhnə ay əvvəl, hər ayda cərimə → faiz → əsas borc sırası ilə
+        public static List<LoanPaymentRecord> ApplyInstallmentPayment(Loan loan, LoanDue due, DateTime asOf, string cardNumber, string reference, decimal amount = 0m)
         {
             var records = new List<LoanPaymentRecord>();
+            var partial = amount > 0m && amount < due.Total;
+            var left = amount;
+
             foreach (var item in due.Items)
             {
-                records.Add(PayInstallment(item, asOf, cardNumber, reference));
+                if (!partial)
+                {
+                    records.Add(PayInstallment(item, asOf, cardNumber, reference));
+                    continue;
+                }
+                if (left <= 0m)
+                {
+                    break;
+                }
+
+                var penalty = Math.Min(left, item.Penalty);
+                left -= penalty;
+                var interest = Math.Min(left, item.Interest);
+                left -= interest;
+                var principal = Math.Min(left, item.Principal);
+                left -= principal;
+
+                records.Add(PayInstallment(new InstallmentDue
+                {
+                    Installment = item.Installment,
+                    Penalty = penalty,
+                    Interest = interest,
+                    Principal = principal,
+                    IsOverdue = item.IsOverdue,
+                    DaysOverdue = item.DaysOverdue
+                }, asOf, cardNumber, reference));
             }
 
             Refresh(loan, asOf);

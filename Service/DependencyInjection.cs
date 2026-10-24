@@ -39,11 +39,25 @@ namespace Service
             // Canlı kanal API layihəsində SignalR ilə əvəzlənir; qurulmayıbsa bildiriş yalnız bazaya yazılır
             services.TryAddScoped<INotificationPublisher, NullNotificationPublisher>();
             services.AddScoped<IBillService, BillService>();
+            services.AddScoped<IDepositService, DepositService>();
+            services.AddScoped<IStaffService, StaffService>();
+            services.AddScoped<ISecurityMonitor, SecurityMonitor>();
+            services.AddScoped<ISecurityAlertService, SecurityAlertService>();
+            services.AddScoped<IRecurringTransferService, RecurringTransferService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
+            services.AddScoped<IBankRulesService, BankRulesService>();
+            services.AddScoped<ITranslationService, TranslationService>();
+            services.AddScoped<ReportService>();
+            services.AddScoped<IReportService>(sp => sp.GetRequiredService<ReportService>());
+            services.AddScoped<IReportAdminService>(sp => sp.GetRequiredService<ReportService>());
+            services.AddScoped<ITreasuryService, TreasuryService>();
             services.AddScoped<IBillProviderService, BillProviderService>();
             services.AddScoped<IRecurringPaymentService, RecurringPaymentService>();
             services.AddScoped<IUserAdminService, UserAdminService>();
             services.AddScoped<IAuditService, AuditService>();
             services.AddScoped<ISupportTicketService, SupportTicketService>();
+            services.AddScoped<IBankDashboardService, BankDashboardService>();
+            services.AddScoped<IBankDirectoryService, BankDirectoryService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<ILoanReviewService, LoanReviewService>();
             services.AddScoped<IAboutService, AboutService>();

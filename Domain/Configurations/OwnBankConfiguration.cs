@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,6 +16,10 @@ namespace Domain.Configurations
             builder.Property(m => m.MaxLoanAmount).HasPrecision(18, 2);
             builder.Property(m => m.AnnualInterestRate).HasPrecision(5, 2);
             builder.Property(m => m.FixedPenalty).HasPrecision(18, 2);
+            builder.Property(m => m.OwnFunds).HasPrecision(18, 2);
+            builder.Property(m => m.OperatingCostMonthly).HasPrecision(18, 2);
+            builder.Property(m => m.ProfitTaxPercent).HasPrecision(5, 2);
+            builder.Property(m => m.ReservePercent).HasPrecision(5, 2);
             builder.Property(m => m.DailyPenaltyPercent).HasPrecision(5, 2);
             builder.Property(m => m.MaxPaymentToIncomePercent).HasPrecision(5, 2);
             builder.Property(m => m.OfferValidDays).HasDefaultValue(7);

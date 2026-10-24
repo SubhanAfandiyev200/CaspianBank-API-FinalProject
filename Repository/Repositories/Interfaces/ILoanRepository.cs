@@ -39,6 +39,9 @@ namespace Repository.Repositories.Interfaces
 
         // İşçinin qərarı: approvedAmount istənilən məbləğə bərabərdirsə kredit dərhal aktivləşir və pul karta düşür,
         // az olarsa müştərinin razılığı üçün təklif (Offered) yaranır
+        // Qara siyahıdakı müştəri: kredit şöbəsinin ilk təsdiqi. Pending -> AwaitingSuperAdmin, pul hələ getmir
+        Task<LoanResult> FirstApproveAsync(int loanId, string staffUserId, decimal approvedAmount, DateTime utcNow);
+
         Task<LoanResult> ApproveAsync(int loanId, string staffUserId, decimal approvedAmount, DateTime utcNow);
 
         Task<LoanResult> RejectAsync(int loanId, string staffUserId, string reason, DateTime utcNow);

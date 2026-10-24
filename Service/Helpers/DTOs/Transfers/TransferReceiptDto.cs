@@ -1,4 +1,4 @@
-namespace Service.Helpers.DTOs.Transfers
+﻿namespace Service.Helpers.DTOs.Transfers
 {
     public class TransferReceiptDto
     {
@@ -6,6 +6,8 @@ namespace Service.Helpers.DTOs.Transfers
         public string FromLabel { get; set; } = string.Empty;
         public string ToLabel { get; set; } = string.Empty;
         public string? ToHolder { get; set; }
+        public string? ToBankName { get; set; }                 // başqa bankın kartıdırsa bankın adı
+        public bool IsExternal { get; set; }
         public decimal Amount { get; set; }
         public decimal Commission { get; set; }
         public decimal Total { get; set; }

@@ -73,6 +73,7 @@ namespace Repository.Repositories
                 .AsNoTracking()
                 .CountAsync(l => l.BorrowerUserId == userId
                                  && (l.Status == LoanStatus.Pending
+                                     || l.Status == LoanStatus.AwaitingSuperAdmin
                                      || l.Status == LoanStatus.Offered
                                      || l.Status == LoanStatus.Active
                                      || l.Status == LoanStatus.Court));
@@ -123,7 +124,7 @@ namespace Repository.Repositories
 
             // Gözləyən müraciətlər əvvəldə (işçinin baxacağı), qalanlar yeni əvvəldə
             var items = await query
-                .OrderBy(l => l.Status == LoanStatus.Pending ? 0 : 1)
+                .OrderBy(l => l.Status == LoanStatus.Pending || l.Status == LoanStatus.AwaitingSuperAdmin ? 0 : 1)
                 .ThenByDescending(l => l.CreatedAt)
                 .ThenByDescending(l => l.Id)
                 .Skip(skip)
@@ -186,6 +187,40 @@ namespace Repository.Repositories
             return prefix + Math.Max(max + 1, 100).ToString("D6");
         }
 
+        public async Task<LoanResult> FirstApproveAsync(int loanId, string staffUserId, decimal approvedAmount, DateTime utcNow)
+        {
+            for (var attempt = 0; attempt < MaxAttempts; attempt++)
+            {
+                _dbContext.ChangeTracker.Clear();
+
+                var loan = await _dbContext.Loans.FirstOrDefaultAsync(l => l.Id == loanId);
+                if (loan is null)
+                {
+                    return LoanResult.Of(LoanOutcome.NotFound);
+                }
+                if (loan.Status != LoanStatus.Pending)
+                {
+                    return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
+                }
+
+                // Pul düşmür: təsdiq məbləği saxlanır, son qərarı Super Admin verir
+                loan.RequiresSuperAdminApproval = true;
+                loan.FirstApprovedByUserId = staffUserId;
+                loan.FirstApprovedAt = utcNow;
+                loan.FirstApprovedAmount = approvedAmount;
+                loan.Status = LoanStatus.AwaitingSuperAdmin;
+
+                var outcome = await TrySaveAsync(loan);
+                if (outcome == SaveOutcome.Saved)
+                {
+                    return Done(loan);
+                }
+            }
+
+            _dbContext.ChangeTracker.Clear();
+            return LoanResult.Of(LoanOutcome.Conflict);
+        }
+
         public async Task<LoanResult> ApproveAsync(int loanId, string staffUserId, decimal approvedAmount, DateTime utcNow)
         {
             for (var attempt = 0; attempt < MaxAttempts; attempt++)
@@ -197,7 +232,9 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.NotFound);
                 }
-                if (loan.Status != LoanStatus.Pending)
+                // Qara siyahıdakı kredit: kredit şöbəsi FirstApproveAsync ilə göndərir, Super Admin ya göndərilmişi, ya da birbaşa Pending krediti təsdiq edə bilər.
+                // Kimin nə edə biləcəyini servis yoxlayır (LoanReviewService)
+                if (loan.Status != LoanStatus.Pending && loan.Status != LoanStatus.AwaitingSuperAdmin)
                 {
                     return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
                 }
@@ -252,7 +289,7 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.NotFound);
                 }
-                if (loan.Status != LoanStatus.Pending)
+                if (loan.Status != LoanStatus.Pending && loan.Status != LoanStatus.AwaitingSuperAdmin)
                 {
                     return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
                 }
@@ -376,9 +413,22 @@ namespace Repository.Repositories
                     "The card chosen for the loan can't receive the money (it is missing, blocked or a Cashback card).");
             }
 
+            var amount = loan.ApprovedAmount ?? loan.RequestedAmount;
+
+            // Bankın xəzinəsi: kredit verildikdən sonra qalan vəsait məcburi ehtiyatdan az olmamalıdır (ehtiyat = müştəri kartları və depozitlərinin ReservePercent-i)
+            var bank = await _dbContext.OwnBanks.AsNoTracking().FirstAsync(b => b.Id == loan.OwnBankId);
+            var treasury = await _dbContext.TreasuryEntries.AsNoTracking().SumAsync(t => (decimal?)t.Amount) ?? 0m;
+            var onCards = await _dbContext.Cards.AsNoTracking().SumAsync(c => (decimal?)c.Balance) ?? 0m;
+            var inDeposits = await _dbContext.Deposits.AsNoTracking().Where(d => d.Status == DepositStatus.Active).SumAsync(d => (decimal?)d.Principal) ?? 0m;
+            var reserve = Math.Round((onCards + inDeposits) * bank.ReservePercent / 100m, 2, MidpointRounding.AwayFromZero);
+            if (treasury - amount < reserve)
+            {
+                return LoanResult.Of(LoanOutcome.TreasuryLow,
+                    "The bank can't pay out this loan right now. Please try again later.");
+            }
+
             LoanEngine.Activate(loan, utcNow);
 
-            var amount = loan.ApprovedAmount ?? loan.RequestedAmount;
             card.Balance += amount;
             _dbContext.Transactions.Add(new Transaction
             {
@@ -435,10 +485,6 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.CardBlocked);
                 }
-                if (card.Tier == CardTier.Cashback)
-                {
-                    return LoanResult.Of(LoanOutcome.CardNotAllowed, "A loan can't be paid from a Cashback card.");
-                }
 
                 var today = LoanEngine.BakuToday(plan.UtcNow);
                 var records = new List<LoanPaymentRecord>();
@@ -453,12 +499,17 @@ namespace Repository.Repositories
                         {
                             return LoanResult.Of(LoanOutcome.NothingDue, "There is nothing to pay right now.");
                         }
-                        total = due.Total;
+                        // Məbləğ yazılıbsa və borcdan azdırsa hissə-hissə ödəniş: qalanı başqa kartdan ödənilə bilər
+                        if (plan.Amount > due.Total)
+                        {
+                            return LoanResult.Of(LoanOutcome.NotPayable, "That is more than what is due now (" + due.Total.ToString("N2", System.Globalization.CultureInfo.InvariantCulture) + " AZN).");
+                        }
+                        total = plan.Amount > 0m ? plan.Amount : due.Total;
                         if (card.Balance < total)
                         {
                             return LoanResult.Of(LoanOutcome.InsufficientFunds);
                         }
-                        records = LoanEngine.ApplyInstallmentPayment(loan, due, plan.UtcNow, card.CardNumber, plan.Reference);
+                        records = LoanEngine.ApplyInstallmentPayment(loan, due, plan.UtcNow, card.CardNumber, plan.Reference, plan.Amount);
                         break;
 
                     case LoanPaymentType.PartialEarly:
