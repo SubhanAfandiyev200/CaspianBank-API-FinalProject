@@ -33,18 +33,19 @@ namespace Service.Helpers
             return loan.Status == LoanStatus.Active || loan.Status == LoanStatus.Court;
         }
 
-        public static LoanSummaryDto ToSummary(Loan loan, DateTime today)
+        // forStaff: işçi AwaitingSuperAdmin statusunu görür, müştəri isə sadəcə "baxılır" (qara siyahı barədə heç nə bilmir)
+        public static LoanSummaryDto ToSummary(Loan loan, DateTime today, bool forStaff = false)
         {
             var summary = new LoanSummaryDto();
-            FillSummary(summary, loan, today);
+            FillSummary(summary, loan, today, forStaff);
             return summary;
         }
 
-        private static void FillSummary(LoanSummaryDto summary, Loan loan, DateTime today)
+        private static void FillSummary(LoanSummaryDto summary, Loan loan, DateTime today, bool forStaff)
         {
             summary.Id = loan.Id;
             summary.ContractNumber = loan.ContractNumber;
-            summary.Status = loan.Status.ToString();
+            summary.Status = (loan.Status == LoanStatus.AwaitingSuperAdmin && !forStaff ? LoanStatus.Pending : loan.Status).ToString();
             summary.Purpose = loan.Purpose.ToString();
             summary.RequestedAmount = loan.RequestedAmount;
             summary.ApprovedAmount = loan.ApprovedAmount;
@@ -75,10 +76,10 @@ namespace Service.Helpers
             }
         }
 
-        public static LoanDetailDto ToDetail(Loan loan, DateTime today)
+        public static LoanDetailDto ToDetail(Loan loan, DateTime today, bool forStaff = false)
         {
             var detail = new LoanDetailDto();
-            FillSummary(detail, loan, today);
+            FillSummary(detail, loan, today, forStaff);
 
             detail.PurposeNote = loan.PurposeNote;
             detail.TotalRepayment = loan.TotalRepayment;
