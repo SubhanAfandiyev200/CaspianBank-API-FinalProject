@@ -51,6 +51,26 @@ INSERT INTO @t VALUES (N'az', N'We can''t approve this application right now. Yo
 INSERT INTO @t VALUES (N'ru', N'We can''t approve this application right now. You can apply again later.', N'Мы не можем одобрить эту заявку сейчас. Вы сможете подать её позже.');
 INSERT INTO @t VALUES (N'az', N'This application is closed.', N'Bu müraciət bağlanıb.');
 INSERT INTO @t VALUES (N'ru', N'This application is closed.', N'Эта заявка закрыта.');
+INSERT INTO @t VALUES (N'az', N'Being reviewed', N'Baxılır');
+INSERT INTO @t VALUES (N'ru', N'Being reviewed', N'На рассмотрении');
+INSERT INTO @t VALUES (N'az', N'Reviewed', N'Baxılıb');
+INSERT INTO @t VALUES (N'ru', N'Reviewed', N'Рассмотрено');
+INSERT INTO @t VALUES (N'az', N'Action taken', N'Tədbir görülüb');
+INSERT INTO @t VALUES (N'ru', N'Action taken', N'Приняты меры');
+INSERT INTO @t VALUES (N'az', N'No problem found', N'Problem tapılmadı');
+INSERT INTO @t VALUES (N'ru', N'No problem found', N'Проблем не обнаружено');
+INSERT INTO @t VALUES (N'az', N'Early payment', N'Vaxtından əvvəl ödəniş');
+INSERT INTO @t VALUES (N'ru', N'Early payment', N'Досрочный платёж');
+INSERT INTO @t VALUES (N'az', N'Full payoff', N'Tam ödəniş');
+INSERT INTO @t VALUES (N'ru', N'Full payoff', N'Полное погашение');
+INSERT INTO @t VALUES (N'az', N'Transfers to others', N'Başqalarına köçürmələr');
+INSERT INTO @t VALUES (N'ru', N'Transfers to others', N'Переводы другим');
+INSERT INTO @t VALUES (N'az', N'Loan payments', N'Kredit ödənişləri');
+INSERT INTO @t VALUES (N'ru', N'Loan payments', N'Платежи по кредитам');
+INSERT INTO @t VALUES (N'az', N'Fees and commissions', N'Haqqlar və komissiyalar');
+INSERT INTO @t VALUES (N'ru', N'Fees and commissions', N'Сборы и комиссии');
+INSERT INTO @t VALUES (N'az', N'Put into deposits', N'Depozitlərə qoyulan');
+INSERT INTO @t VALUES (N'ru', N'Put into deposits', N'Размещено на вкладах');
 INSERT INTO Translations ([Language], [Key], [Value], CreatedAt)
 SELECT s.[Language], s.[Key], s.[Value], GETUTCDATE() FROM @t s
 WHERE NOT EXISTS (SELECT 1 FROM Translations x WHERE x.[Language] = s.[Language] AND x.[Key] = s.[Key]);
