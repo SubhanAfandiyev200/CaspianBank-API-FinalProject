@@ -13,6 +13,7 @@ namespace Domain.Enums
         Cashback,           // ödənişdən yığılan cashback (Cashback kartına giriş)
         DepositOpen,        // müddətli depozit açıldı (kartdan çıxış)
         DepositPayout,      // depozitin əsas məbləği müddət bitəndə karta qayıtdı
-        DepositInterest     // depozitin faizi müddət bitəndə karta düşdü (bankın xərci)
+        DepositInterest,    // depozitin faizi müddət bitəndə karta düşdü (bankın xərci)
+        TopUpOut            // başqa Caspian kartının balansını artırmaq üçün kartdan çıxan pul
     }
 }
