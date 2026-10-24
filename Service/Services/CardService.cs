@@ -27,6 +27,7 @@ namespace Service.Services
         private readonly IOtpService _otp;
         private readonly IValidator<TopUpDto> _topUpValidator;
         private readonly INotificationService _notifications;
+        private readonly IBankDirectoryRepository _directory;
 
         public CardService(ICardRepository cards,
                            ICardTierConfigRepository tiers,
@@ -37,9 +38,11 @@ namespace Service.Services
                            IValidator<UnblockCardDto> unblockValidator,
                            IOtpService otp,
                            IValidator<TopUpDto> topUpValidator,
-                           INotificationService notifications)
+                           INotificationService notifications,
+                           IBankDirectoryRepository directory)
         {
             _notifications = notifications;
+            _directory = directory;
             _cards = cards;
             _tiers = tiers;
             _transactions = transactions;
@@ -195,12 +198,55 @@ namespace Service.Services
                 return ServiceResult<CardDto>.Fail("The Cashback card can't be topped up. Choose another card.");
             }
 
-            // Xarici kartın nömrəsi/CVV-si yoxlanılır, amma saxlanmır və log-a yazılmır (simulyasiya).
-            // Jurnala yalnız kartın son 4 rəqəmi yazılır.
+            // Pul yalnız həqiqi kartdan gəlir: ya Caspian kartından (həmin kartdan çıxır), ya da bazada olan başqa bank kartından (onun balansı bizdə yoxdur, ona görə çıxmır)
             var digits = TopUpDtoValidator.Digits(model.SourceCardNumber);
-            var description = $"Top up from card •••• {digits[^4..]}";
+            var amount = decimal.Round(model.Amount, 2);
+            var source = await _cards.GetByNumberAsync(digits);
 
-            if (!await _cards.TopUpAsync(card, decimal.Round(model.Amount, 2), description))
+            if (source is not null)
+            {
+                if (source.Id == card.Id)
+                {
+                    return ServiceResult<CardDto>.Fail("Choose a different card from the one you're topping up.");
+                }
+
+                // Bitmə tarixi kartdakı ilə eyni olmalıdır (CVV saxlanmır, ona görə yalnız formatı yoxlanır)
+                if (!string.Equals(model.Expiry.Trim(), source.ExpiryDate.ToString("MM/yy", CultureInfo.InvariantCulture), StringComparison.Ordinal))
+                {
+                    return ServiceResult<CardDto>.Fail("The card details are not correct.");
+                }
+
+                if (source.IsBlocked)
+                {
+                    return ServiceResult<CardDto>.Fail("That card is blocked. Choose another card.");
+                }
+
+                if (source.Balance < amount)
+                {
+                    return ServiceResult<CardDto>.Fail("That card doesn't have enough balance for this payment.");
+                }
+
+                if (!await _cards.TopUpFromCardAsync(source, card, amount))
+                {
+                    return ServiceResult<CardDto>.Fail("The balance changed while the top-up was processed. Please try again.");
+                }
+
+                if (source.UserId != userId)
+                {
+                    await _notifications.NotifyAsync(source.UserId, NotificationCategory.Card, "Money left your card",
+                        $"{amount.ToString("N2", CultureInfo.InvariantCulture)} AZN was taken from your card •••• {source.CardNumber[^4..]} to top up another card.", $"/App/Card/{source.Id}");
+                }
+
+                return ServiceResult<CardDto>.Ok(ToDto(card, HolderName(user), card.CardDesign.Image));
+            }
+
+            if (await _directory.FindExternalCardAsync(digits) is null)
+            {
+                return ServiceResult<CardDto>.Fail("We couldn't find a card with that number.");
+            }
+
+            var description = $"Top up from card •••• {digits[^4..]}";
+            if (!await _cards.TopUpAsync(card, amount, description))
             {
                 return ServiceResult<CardDto>.Fail("The balance changed while the top-up was processed. Please try again.");
             }
