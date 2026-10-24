@@ -12,7 +12,7 @@ namespace Service.Helpers.Validators.Loans
                 .GreaterThan(0).WithMessage("Choose the card to pay from.");
 
             RuleFor(x => x.Type)
-                .Must(t => Enum.TryParse<LoanPaymentType>(t, true, out _)).WithMessage("Choose how you want to pay.");
+                .Must(t => EnumRules.IsName<LoanPaymentType>(t)).WithMessage("Choose how you want to pay.");
 
             // Yalnız hissəvi erkən ödənişdə məbləğ yazılır (aylıq ödəniş və tam bağlama məbləği sistem hesablayır)
             When(x => string.Equals(x.Type, nameof(LoanPaymentType.PartialEarly), StringComparison.OrdinalIgnoreCase), () =>

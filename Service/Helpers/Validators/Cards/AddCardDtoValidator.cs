@@ -10,7 +10,7 @@ namespace Service.Helpers.Validators.Cards
         {
             // Cashback kartı yalnız ilk kartlarla birlikdə açılır, ayrıca istənə bilməz
             RuleFor(x => x.Tier)
-                .Must(t => Enum.TryParse<CardTier>(t, true, out var tier) && Enum.IsDefined(tier) && tier != CardTier.Cashback)
+                .Must(t => EnumRules.IsName<CardTier>(t) && !string.Equals(t.Trim(), nameof(CardTier.Cashback), StringComparison.OrdinalIgnoreCase))
                 .WithMessage("Choose Standard, Silver or Gold.");
 
             RuleFor(x => x.FundingCardId)
