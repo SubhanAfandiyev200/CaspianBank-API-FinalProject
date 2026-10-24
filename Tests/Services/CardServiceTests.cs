@@ -13,8 +13,31 @@ namespace CaspianBank.Tests.Services
 {
     public class CardServiceTests
     {
+        // Top-up yalnız bazada olan kartdan keçir: test üçün başqa bankın 4111 1111 1111 1111 kartı bir dəfə yazılır
+        private static readonly Lazy<Task> ExternalReady = new Lazy<Task>(async () =>
+        {
+            var app = await TestApp.SharedAsync();
+            await app.QueryAsync(async db =>
+            {
+                var bank = await db.ExternalBanks.FirstOrDefaultAsync(b => b.Bin == "41111111");
+                if (bank is null)
+                {
+                    bank = new ExternalBank { Name = "Top-up test bank", Bin = "41111111" };
+                    db.ExternalBanks.Add(bank);
+                    await db.SaveChangesAsync();
+                }
+                if (!await db.ExternalCards.AnyAsync(c => c.CardNumber == "4111111111111111"))
+                {
+                    db.ExternalCards.Add(new ExternalCard { ExternalBankId = bank.Id, CardNumber = "4111111111111111", HolderName = "Top Up", IsActive = true });
+                    await db.SaveChangesAsync();
+                }
+                return 0;
+            });
+        });
+
         private static TopUpDto ValidTopUp(decimal amount)
         {
+            ExternalReady.Value.GetAwaiter().GetResult();
             return new TopUpDto { Amount = amount, SourceCardNumber = "4111 1111 1111 1111", Expiry = DateTime.UtcNow.AddYears(2).ToString("MM/yy"), Cvv = "123" };
         }
 
