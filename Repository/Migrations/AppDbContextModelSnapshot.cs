@@ -1517,6 +1517,17 @@ namespace Repository.Migrations
                     b.Property<DateTime?>("DisbursedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("FirstApprovedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("FirstApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstApprovedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("FixedPenalty")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -1557,6 +1568,9 @@ namespace Repository.Migrations
                     b.Property<decimal>("RequestedAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("RequiresSuperAdminApproval")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ReviewedAt")
                         .HasColumnType("datetime2");
