@@ -73,6 +73,7 @@ namespace Repository.Repositories
                 .AsNoTracking()
                 .CountAsync(l => l.BorrowerUserId == userId
                                  && (l.Status == LoanStatus.Pending
+                                     || l.Status == LoanStatus.AwaitingSuperAdmin
                                      || l.Status == LoanStatus.Offered
                                      || l.Status == LoanStatus.Active
                                      || l.Status == LoanStatus.Court));
@@ -123,7 +124,7 @@ namespace Repository.Repositories
 
             // Gözləyən müraciətlər əvvəldə (işçinin baxacağı), qalanlar yeni əvvəldə
             var items = await query
-                .OrderBy(l => l.Status == LoanStatus.Pending ? 0 : 1)
+                .OrderBy(l => l.Status == LoanStatus.Pending || l.Status == LoanStatus.AwaitingSuperAdmin ? 0 : 1)
                 .ThenByDescending(l => l.CreatedAt)
                 .ThenByDescending(l => l.Id)
                 .Skip(skip)
@@ -186,6 +187,40 @@ namespace Repository.Repositories
             return prefix + Math.Max(max + 1, 100).ToString("D6");
         }
 
+        public async Task<LoanResult> FirstApproveAsync(int loanId, string staffUserId, decimal approvedAmount, DateTime utcNow)
+        {
+            for (var attempt = 0; attempt < MaxAttempts; attempt++)
+            {
+                _dbContext.ChangeTracker.Clear();
+
+                var loan = await _dbContext.Loans.FirstOrDefaultAsync(l => l.Id == loanId);
+                if (loan is null)
+                {
+                    return LoanResult.Of(LoanOutcome.NotFound);
+                }
+                if (loan.Status != LoanStatus.Pending)
+                {
+                    return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
+                }
+
+                // Pul düşmür: təsdiq məbləği saxlanır, son qərarı Super Admin verir
+                loan.RequiresSuperAdminApproval = true;
+                loan.FirstApprovedByUserId = staffUserId;
+                loan.FirstApprovedAt = utcNow;
+                loan.FirstApprovedAmount = approvedAmount;
+                loan.Status = LoanStatus.AwaitingSuperAdmin;
+
+                var outcome = await TrySaveAsync(loan);
+                if (outcome == SaveOutcome.Saved)
+                {
+                    return Done(loan);
+                }
+            }
+
+            _dbContext.ChangeTracker.Clear();
+            return LoanResult.Of(LoanOutcome.Conflict);
+        }
+
         public async Task<LoanResult> ApproveAsync(int loanId, string staffUserId, decimal approvedAmount, DateTime utcNow)
         {
             for (var attempt = 0; attempt < MaxAttempts; attempt++)
@@ -197,9 +232,13 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.NotFound);
                 }
-                if (loan.Status != LoanStatus.Pending)
+                // Qara siyahıdakı kredit əvvəl kredit şöbəsindən keçməlidir (FirstApproveAsync), sonra Super Admin təsdiq edir
+                var allowed = loan.RequiresSuperAdminApproval ? LoanStatus.AwaitingSuperAdmin : LoanStatus.Pending;
+                if (loan.Status != allowed)
                 {
-                    return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
+                    return LoanResult.Of(LoanOutcome.WrongStatus, loan.Status == LoanStatus.Pending
+                        ? "This loan needs the loan staff's approval first, then the Super Admin's."
+                        : "This application has already been reviewed.");
                 }
 
                 loan.ApprovedAmount = approvedAmount;
@@ -252,7 +291,7 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.NotFound);
                 }
-                if (loan.Status != LoanStatus.Pending)
+                if (loan.Status != LoanStatus.Pending && loan.Status != LoanStatus.AwaitingSuperAdmin)
                 {
                     return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
                 }
