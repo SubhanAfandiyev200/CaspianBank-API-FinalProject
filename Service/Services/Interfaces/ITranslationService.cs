@@ -13,5 +13,11 @@ namespace Service.Services.Interfaces
 
         Task<ServiceResult<TranslationPageDto>> GetPageAsync(TranslationFilterDto filter);
         Task<ServiceResult<TranslationRowDto>> SaveAsync(SaveTranslationDto model);
+
+        // CMS səhifəsində dil seçiləndə: həmin dilin tərcümələri açarlar üzrə (tapılmayanlar boş qaytarılmır, yoxdur)
+        Task<ServiceResult<Dictionary<string, string>>> LookupAsync(LookupTranslationsDto model);
+
+        // Eyni dil üçün bir neçə mətnin tərcüməsini yazır; boş dəyər tərcüməni silir
+        Task<ServiceResult<int>> SaveContentAsync(SaveContentTranslationsDto model);
     }
 }

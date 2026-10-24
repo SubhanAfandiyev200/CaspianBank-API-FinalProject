@@ -83,5 +83,57 @@ namespace Service.Services
             await _translations.UpsertAsync("ru", key, ru);
             return ServiceResult<TranslationRowDto>.Ok(new TranslationRowDto { Key = key, Az = az, Ru = ru });
         }
+
+        public async Task<ServiceResult<Dictionary<string, string>>> LookupAsync(LookupTranslationsDto model)
+        {
+            var language = (model.Language ?? string.Empty).Trim().ToLowerInvariant();
+            if (!Translated.Contains(language))
+            {
+                return ServiceResult<Dictionary<string, string>>.Fail("Choose az or ru.");
+            }
+
+            var keys = (model.Keys ?? new List<string>()).Select(k => (k ?? string.Empty).Trim()).Where(k => k.Length > 0 && k.Length <= 400).Distinct().Take(100).ToList();
+            var rows = await _translations.GetForKeysAsync(keys);
+            var result = new Dictionary<string, string>();
+            foreach (var row in rows.Where(r => r.Language == language))
+            {
+                result[row.Key] = row.Value;
+            }
+            return ServiceResult<Dictionary<string, string>>.Ok(result);
+        }
+
+        public async Task<ServiceResult<int>> SaveContentAsync(SaveContentTranslationsDto model)
+        {
+            var language = (model.Language ?? string.Empty).Trim().ToLowerInvariant();
+            if (!Translated.Contains(language))
+            {
+                return ServiceResult<int>.Fail("Choose az or ru.");
+            }
+
+            var items = model.Items ?? new List<ContentTranslationItemDto>();
+            if (items.Count > 50)
+            {
+                return ServiceResult<int>.Fail("Too many texts at once.");
+            }
+
+            foreach (var item in items)
+            {
+                var key = (item.Key ?? string.Empty).Trim();
+                if (key.Length == 0 || key.Length > 400)
+                {
+                    return ServiceResult<int>.Fail("The text to translate must be 1 to 400 characters.");
+                }
+                if ((item.Value ?? string.Empty).Trim().Length > 2000)
+                {
+                    return ServiceResult<int>.Fail("A translation can be at most 2000 characters.");
+                }
+            }
+
+            foreach (var item in items)
+            {
+                await _translations.UpsertAsync(language, item.Key.Trim(), (item.Value ?? string.Empty).Trim());
+            }
+            return ServiceResult<int>.Ok(items.Count);
+        }
     }
 }

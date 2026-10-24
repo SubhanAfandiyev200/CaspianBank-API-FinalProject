@@ -37,4 +37,24 @@ namespace Service.Helpers.DTOs.Translations
         public string? Az { get; set; }
         public string? Ru { get; set; }
     }
+
+    // Admin CMS səhifəsində bir dil seçilib: həmin dildəki tərcümələr açarlar (ingilis mətnlər) üzrə soruşulur
+    public class LookupTranslationsDto
+    {
+        public string Language { get; set; } = string.Empty;    // az və ya ru
+        public List<string> Keys { get; set; } = new List<string>();
+    }
+
+    // Eyni dil üçün bir neçə mətnin tərcüməsini birlikdə yazır (boş dəyər tərcüməni silir)
+    public class SaveContentTranslationsDto
+    {
+        public string Language { get; set; } = string.Empty;    // az və ya ru
+        public List<ContentTranslationItemDto> Items { get; set; } = new List<ContentTranslationItemDto>();
+    }
+
+    public class ContentTranslationItemDto
+    {
+        public string Key { get; set; } = string.Empty;         // ingilis mətn (səhifədəki cari mətn)
+        public string? Value { get; set; }
+    }
 }
