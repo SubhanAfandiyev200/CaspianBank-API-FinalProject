@@ -3,6 +3,7 @@ using Domain.Enums;
 using Domain.Loans;
 using Domain.Transfers;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Repository.Repositories.Interfaces;
 using Repository.Results;
 using Service.Helpers.DTOs.Transfers;
@@ -26,6 +27,7 @@ namespace Service.Services
         private readonly IValidator<TransferDto> _validator;
         private readonly INotificationService _notifications;
         private readonly ISecurityMonitor _security;
+        private readonly ILogger<TransferService> _logger;
 
         public TransferService(ICardRepository cards,
                                ICardTierConfigRepository tiers,
@@ -35,7 +37,8 @@ namespace Service.Services
                                IBaseRepository<OwnBank> ownBanks,
                                IValidator<TransferDto> validator,
                                INotificationService notifications,
-                               ISecurityMonitor security)
+                               ISecurityMonitor security,
+                               ILogger<TransferService> logger)
         {
             _cards = cards;
             _tiers = tiers;
@@ -46,6 +49,7 @@ namespace Service.Services
             _validator = validator;
             _notifications = notifications;
             _security = security;
+            _logger = logger;
         }
 
         // Yoxlamalardan keçmiş köçürmənin bütün hissələri. Başqa banka gedəndə Destination və Recipient boşdur, External dolu olur
@@ -124,6 +128,7 @@ namespace Service.Services
             switch (result.Outcome)
             {
                 case TransferOutcome.Success:
+                    _logger.LogInformation("Transfer {Reference} done: {Amount} AZN, commission {Commission}, user {UserId}, external {External}", reference, plan.Amount, plan.Commission, userId, plan.External is not null);
                     // Başqa Caspian müştərisinin kartına gedibsə, alıcı pulun gəldiyini dərhal görür (öz kartları arasında və başqa banka bildiriş yoxdur)
                     if (!plan.IsOwn && plan.Destination is not null && plan.Recipient is not null)
                     {
