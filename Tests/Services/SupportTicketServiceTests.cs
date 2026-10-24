@@ -59,7 +59,7 @@ namespace CaspianBank.Tests.Services
             var notice = Assert.Single(await _app.NotificationsAsync(support.Id), n => n.LinkUrl == $"/Admin/Tickets/Detail/{ticket.Id}");
             Assert.Equal("New message from Elçin Hüseynov", notice.Title);
             Assert.Equal("Card problem", notice.Message);
-            Assert.DoesNotContain(await _app.NotificationsAsync(accountant.Id), n => n.LinkUrl == $"/Admin/Tickets/Detail/{ticket.Id}");
+            Assert.Single(await _app.NotificationsAsync(accountant.Id), n => n.LinkUrl == $"/Admin/Tickets/Detail/{ticket.Id}");   // Help üçün hələlik bütün işçi rolları
         }
 
         [Fact]

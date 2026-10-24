@@ -11,7 +11,7 @@ namespace CaspianBank.Tests.Api
     {
         private static readonly string[] PublicClientControllers =
         {
-            "AccountController", "CardTiersController", "HomeController", "SettingsController", "I18nController"
+            "AccountController", "CardTiersController", "HomeController", "SettingsController", "I18nController", "HelpController"
         };
 
         private static IEnumerable<Type> Controllers(string ns)
