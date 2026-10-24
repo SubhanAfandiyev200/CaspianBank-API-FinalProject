@@ -148,3 +148,8 @@ Sənədləşdirilən funksiyalar:
 - **Bildirişlər və dəyişənli mətnlər tərcümə olunur:** `Translator` bazadakı `{0}` şablonlarını gələn mətnə uyğunlaşdırır, bildiriş mətnlərinin az/ru şablonları `translations-notifications.sql`-dədir, canlı bildiriş `POST /App/Notifications/Translate` ilə çevrilir. Bax `105-theme-and-languages.md`.
 - **Serilog:** API və MVC öz `logs/` qovluğuna yazır (gündə bir fayl, 14 gün). Yeni sənəd `107-logging-serilog.md`. `TransferService`, `CardService` (top-up), `LoanReviewService` jurnala yazır.
 - **Yenilənən sənədlər:** `09-cards.md` (top-up yalnız həqiqi kartdan), `10-transfers.md` (aylıq pulsuz limit, başqa banka köçürmə), `97-loans.md` (qara siyahıda iki təsdiq), `98-notifications-signalr.md`, `100-bills.md`, `105-theme-and-languages.md`, `106-tests.md`.
+
+### 2026-10-24 (4): Super Admin birbaşa təsdiq, depozit bildirişi, admin düzəlişləri
+- Qara siyahılı kreditdə Super Admin birbaşa təsdiq edə bilər (son təsdiq sayılır); kredit şöbəsi təsdiq edəndə hələ də Super Admin-ə gedir. `LoanRepository.ApproveAsync` Pending və AwaitingSuperAdmin qəbul edir, kimin nə edə biləcəyini `LoanReviewService` yoxlayır.
+- Yeni depozit açılanda Accountant/Admin/SuperAdmin-ə "New term deposit" bildirişi gedir (`DepositService.OpenAsync`).
+- Admin: `i18n.js` admin layout-a əlavə olundu (`wheel-select.js` `cbt` olmadığı üçün sınırdı, seçim pəncərələri açılmırdı), sol panelin sürüşdürmə zolağı gizlədildi, Spending ay/kateqoriya adları və bir neçə status/etiket tərcümə olunur.
