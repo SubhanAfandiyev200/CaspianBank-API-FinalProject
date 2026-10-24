@@ -13,6 +13,7 @@ using Repository.Data;
 using Repository.Repositories.Interfaces;
 using Service;
 using Service.Services.Interfaces;
+using Serilog;
 using Service.Helpers.Settings;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -21,6 +22,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Yalnız bu kompüterdəki gizli məlumatlar (məs. işçi hesablarının parolları). Fayl .gitignore-dadır, yoxdursa heç nə olmur
 builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
+// Jurnal (Serilog): həm konsola, həm də layihə qovluğundakı logs/ qovluğuna (gündə bir fayl, 14 gün saxlanır) yazılır.
+// Səviyyələr appsettings.json-dakı "Serilog" bölməsindədir. Parol, token və kart məlumatı heç vaxt jurnala yazılmır
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File(
+        Path.Combine(context.HostingEnvironment.ContentRootPath, "logs", "api-.log"),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 14,
+        shared: true,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"));
 
 // Add services to the container.
 
@@ -280,6 +294,15 @@ app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+// Hər sorğu bir sətirdə: metod, yol, status, müddət, giriş edənin id-si (sorğunun sorğu sətri yazılmır)
+app.UseSerilogRequestLogging(options =>
+{
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+    {
+        diagnosticContext.Set("UserId", httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous");
+    };
+});
 
 app.UseRateLimiter();
 
