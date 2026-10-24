@@ -188,6 +188,7 @@ namespace Service.Services
 
             if (customer.DeathDate is not null)
             {
+                await _security.OnDeceasedRegistrationAttemptAsync(customer.Fin, (customer.Name + " " + customer.Surname).Trim());
                 return (null, "This ID record can't be used to open an account. If you think this is a mistake, please contact the bank.");
             }
 
