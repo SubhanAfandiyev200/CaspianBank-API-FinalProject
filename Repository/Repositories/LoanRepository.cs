@@ -232,13 +232,11 @@ namespace Repository.Repositories
                 {
                     return LoanResult.Of(LoanOutcome.NotFound);
                 }
-                // Qara siyahıdakı kredit əvvəl kredit şöbəsindən keçməlidir (FirstApproveAsync), sonra Super Admin təsdiq edir
-                var allowed = loan.RequiresSuperAdminApproval ? LoanStatus.AwaitingSuperAdmin : LoanStatus.Pending;
-                if (loan.Status != allowed)
+                // Qara siyahıdakı kredit: kredit şöbəsi FirstApproveAsync ilə göndərir, Super Admin ya göndərilmişi, ya da birbaşa Pending krediti təsdiq edə bilər.
+                // Kimin nə edə biləcəyini servis yoxlayır (LoanReviewService)
+                if (loan.Status != LoanStatus.Pending && loan.Status != LoanStatus.AwaitingSuperAdmin)
                 {
-                    return LoanResult.Of(LoanOutcome.WrongStatus, loan.Status == LoanStatus.Pending
-                        ? "This loan needs the loan staff's approval first, then the Super Admin's."
-                        : "This application has already been reviewed.");
+                    return LoanResult.Of(LoanOutcome.WrongStatus, "This application has already been reviewed.");
                 }
 
                 loan.ApprovedAmount = approvedAmount;
