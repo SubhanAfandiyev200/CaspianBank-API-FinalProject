@@ -107,6 +107,14 @@ namespace Service.Services
                 + Money(dto.TotalAtMaturity) + " on " + dto.MaturesAt.ToString("dd MMM yyyy", CultureInfo.InvariantCulture) + ".",
                 "/App/Deposits", "deposit-open:" + dto.Reference);
 
+            // Pul rolundakı işçilər də yeni depoziti zəngdə görür (bank öhdəliyi artdı)
+            await _notifications.NotifyRolesAsync(
+                new[] { Domain.Constants.Roles.Accountant, Domain.Constants.Roles.Admin, Domain.Constants.Roles.SuperAdmin },
+                NotificationCategory.Staff,
+                "New term deposit",
+                user.Name + " " + user.Surname + " opened a term deposit of " + Money(dto.Principal) + " for " + dto.TermMonths + " months at " + Rate(dto.AnnualRate) + "% a year.",
+                "/Admin/Deposits");
+
             return ServiceResult<DepositDto>.Ok(dto);
         }
 
