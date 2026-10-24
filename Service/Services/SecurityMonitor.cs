@@ -113,6 +113,36 @@ namespace Service.Services
             }
         }
 
+        public async Task OnDeceasedRegistrationAttemptAsync(string fin, string name)
+        {
+            try
+            {
+                // Eyni FİN üçün bir saatda bir siqnal (təkrar cəhd siqnalı doldurmasın)
+                var hourKey = DateTime.UtcNow.ToString("yyyyMMddHH", CultureInfo.InvariantCulture);
+                var description = "Someone tried to open an account with the ID record of a deceased citizen: " + name + ", FIN " + fin + ".";
+                var created = await _security.TryAddAsync(new SecurityAlert
+                {
+                    UserId = null,
+                    Kind = SecurityAlertKind.DeceasedIdentity,
+                    Severity = SecurityAlertSeverity.High,
+                    Reference = "deceased:" + fin + ":" + hourKey,
+                    Description = description
+                });
+                if (!created)
+                {
+                    return;
+                }
+
+                await _notifications.NotifyRolesAsync(AlertReaders, NotificationCategory.Staff,
+                    "Registration attempt with a deceased citizen's ID", description, "/Admin/Security",
+                    "security-alert:" + SecurityAlertKind.DeceasedIdentity + ":" + fin + ":" + hourKey);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Vəfat etmiş vətəndaş siqnalı yazılmadı");
+            }
+        }
+
         private async Task RaiseAsync(string userId, SecurityAlertKind kind, SecurityAlertSeverity severity, string reference, decimal? amount, string description)
         {
             var created = await _security.TryAddAsync(new SecurityAlert

@@ -100,9 +100,14 @@ namespace Service.Services
                 return ServiceResult<SecurityAlertDto>.Fail("This alert was already handled.");
             }
 
-            if (freeze && !alert.User.IsRestricted)
+            if (freeze && alert.User is null)
             {
-                var restricted = await _users.RestrictAsync(staffName, alert.UserId, new RestrictUserDto { Reason = "Security: " + note });
+                return ServiceResult<SecurityAlertDto>.Fail("This alert has no account to freeze.");
+            }
+
+            if (freeze && alert.User is not null && !alert.User.IsRestricted)
+            {
+                var restricted = await _users.RestrictAsync(staffName, alert.UserId!, new RestrictUserDto { Reason = "Security: " + note });
                 if (!restricted.IsSuccess)
                 {
                     return restricted.IsNotFound
@@ -139,10 +144,10 @@ namespace Service.Services
                 Description = alert.Description,
                 Amount = alert.Amount,
                 Reference = alert.Reference,
-                CustomerId = alert.UserId,
-                CustomerName = (alert.User.Name + " " + alert.User.Surname).Trim(),
-                Email = alert.User.Email ?? string.Empty,
-                AccountRestricted = alert.User.IsRestricted,
+                CustomerId = alert.UserId ?? string.Empty,
+                CustomerName = alert.User is null ? string.Empty : (alert.User.Name + " " + alert.User.Surname).Trim(),
+                Email = alert.User?.Email ?? string.Empty,
+                AccountRestricted = alert.User?.IsRestricted ?? false,
                 ResolvedByName = alert.ResolvedByName,
                 ResolvedAt = alert.ResolvedAt,
                 ResolutionNote = alert.ResolutionNote

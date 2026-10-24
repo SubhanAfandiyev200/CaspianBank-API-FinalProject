@@ -11,6 +11,9 @@ namespace Service.Services.Interfaces
 
         // Təkrarlanan uğursuz girişdən sonra hesab müvəqqəti bloklananda çağırılır
         Task OnAccountLockedAsync(string userId);
+
+        // Qeydiyyatda vəfat etmiş vətəndaşın məlumatı ilə hesab açmağa cəhd olanda çağırılır (şəxsiyyət oğurluğu əlaməti)
+        Task OnDeceasedRegistrationAttemptAsync(string fin, string name);
     }
 
     public interface ISecurityAlertService
