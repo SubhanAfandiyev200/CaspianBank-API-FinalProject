@@ -197,7 +197,7 @@ namespace CaspianBank.Tests.Services
         }
 
         [Fact]
-        public async Task Apply_by_a_blacklisted_citizen_is_recorded_and_rejected_at_once()
+        public async Task Apply_by_a_blacklisted_citizen_waits_for_the_two_approvals()
         {
             var app = await TestApp.SharedAsync();
             var accountant = await app.NewStaffAsync();
@@ -206,15 +206,15 @@ namespace CaspianBank.Tests.Services
             var result = await WithLoanServiceAsync(app, s => s.ApplyAsync(kit.User.Id, LoanTestData.ApplyModel(kit.Standard.Id)));
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("Rejected", result.Data!.Status);
+            Assert.Equal("Pending", result.Data!.Status);
             var stored = await app.GetLoanAsync(result.Data.Id);
-            Assert.Equal("Blacklist: Unpaid loans", stored.RejectReason);
-            Assert.NotNull(stored.ReviewedAt);
-            Assert.DoesNotContain(await app.NotificationsAsync(accountant.Id), n => n.LinkUrl == $"/Admin/Loans/Detail/{result.Data.Id}");
+            Assert.True(stored.RequiresSuperAdminApproval);
+            Assert.Null(stored.ReviewedAt);
+            Assert.Contains(await app.NotificationsAsync(accountant.Id), n => n.LinkUrl == $"/Admin/Loans/Detail/{result.Data.Id}" && n.Title.Contains("blacklisted"));
         }
 
         [Fact]
-        public async Task A_blacklisted_citizen_is_rejected_even_without_a_job()
+        public async Task A_blacklisted_citizen_can_apply_even_without_a_job()
         {
             var app = await TestApp.SharedAsync();
             var kit = await app.NewBorrowerAsync(salary: 0m, blacklisted: true);
@@ -222,7 +222,7 @@ namespace CaspianBank.Tests.Services
             var result = await WithLoanServiceAsync(app, s => s.ApplyAsync(kit.User.Id, LoanTestData.ApplyModel(kit.Standard.Id)));
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("Rejected", result.Data!.Status);
+            Assert.Equal("Pending", result.Data!.Status);
         }
 
         [Fact]
@@ -423,7 +423,7 @@ namespace CaspianBank.Tests.Services
         }
 
         [Fact]
-        public async Task Approval_is_refused_for_a_citizen_who_was_blacklisted_after_applying()
+        public async Task A_citizen_blacklisted_after_applying_needs_the_super_admin_too()
         {
             var app = await TestApp.SharedAsync();
             var kit = await app.NewBorrowerAsync();
@@ -437,7 +437,8 @@ namespace CaspianBank.Tests.Services
 
             var result = await WithReviewServiceAsync(app, s => s.ApproveAsync(staff.Id, applied.Id, new ApproveLoanDto { ApprovedAmount = 6000m }));
 
-            Assert.Equal("The customer is on the blacklist, so a loan can't be approved.", result.Errors[0]);
+            Assert.True(result.IsSuccess);
+            Assert.Equal("AwaitingSuperAdmin", result.Data!.Status);
             Assert.Equal(0m, await app.BalanceAsync(kit.Standard.Id));
         }
 
