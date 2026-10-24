@@ -14,6 +14,9 @@ namespace Repository.Repositories.Interfaces
         // Balansı artırır və "TopUp" qeydini yazır (bir SaveChanges). false: eyni anda başqa əməliyyat balansı dəyişib (RowVersion)
         Task<bool> TopUpAsync(Card card, decimal amount, string description);
 
+        // Bir Caspian kartından digərinə: mənbədən çıxır, hədəfə düşür, iki qeyd yazılır (bir SaveChanges). false: balans eyni anda dəyişib (RowVersion)
+        Task<bool> TopUpFromCardAsync(Card source, Card target, decimal amount);
+
         Task<Card?> GetByNumberAsync(string cardNumber);
         Task<bool> CardNumberExistsAsync(string cardNumber);
         Task<bool> UserHasCardsAsync(string userId);
