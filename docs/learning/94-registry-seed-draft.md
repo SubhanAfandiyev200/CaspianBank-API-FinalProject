@@ -161,12 +161,12 @@ Qaydaya görə çarpan: gecikmə sayı 0 → ×24, 1–2 → ×12, 3 və çox �
 
 | # | Vətəndaş | Email (nümunə) | Telefon | Kartlar (toxum) |
 |---|---|---|---|---|
-| R1 | Aysel Məmmədova | `SENINGMAIL+aysel@gmail.com` | 0501110001 | Standard 1250.00, Cashback 35.20 |
-| R2 | Elçin Hüseynov | `SENINGMAIL+elcin@gmail.com` | 0501110002 | Standard 410.00, Cashback 78.90, Gold 5200.00 |
-| R3 | Nigar Əliyeva | `SENINGMAIL+nigar@gmail.com` | 0501110003 | Standard 90.00, Cashback 12.00 |
-| R4 | Rauf Quliyev | `SENINGMAIL+rauf@gmail.com` | 0501110004 | Standard 300.00, Cashback 0.00 |
-| R5 | Leyla Cəfərova | `SENINGMAIL+leyla@gmail.com` | 0501110005 | Standard 2000.00, Cashback 0.00 |
-| R6 | Tural Rzayev | `SENINGMAIL+tural@gmail.com` | 0501110006 | Standard 640.00, Cashback 41.50, Silver 900.00 |
+| R1 | Aysel Məmmədova | `SENINGMAIL+aysel@gmail.com` | 0557843838 | Standard 1250.00, Cashback 35.20 |
+| R2 | Elçin Hüseynov | `SENINGMAIL+elcin@gmail.com` | 0777656565 | Standard 410.00, Cashback 78.90, Gold 5200.00 |
+| R3 | Nigar Əliyeva | `SENINGMAIL+nigar@gmail.com` | 0503112131 | Standard 90.00, Cashback 12.00 |
+| R4 | Rauf Quliyev | `SENINGMAIL+rauf@gmail.com` | 0773245566 | Standard 300.00, Cashback 0.00 |
+| R5 | Leyla Cəfərova | `SENINGMAIL+leyla@gmail.com` | 0999895474 | Standard 2000.00, Cashback 0.00 |
+| R6 | Tural Rzayev | `SENINGMAIL+tural@gmail.com` | 0102132345 | Standard 640.00, Cashback 41.50, Silver 900.00 |
 
 ### Caspian kreditləri (ödəniş kodu = `ContractNumber`)
 
