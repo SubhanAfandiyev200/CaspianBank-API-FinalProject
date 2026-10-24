@@ -402,7 +402,7 @@ namespace Service.Services
                 // Super Admin kredit şöbəsinin təsdiq etdiyi məbləği təsdiq edir
                 approvedAmount = loan.FirstApprovedAmount ?? model.ApprovedAmount;
             }
-            else if (blacklisted && !isLoanStaff)
+            else if (blacklisted && !isLoanStaff && !isSuperAdmin)
             {
                 return ServiceResult<LoanSummaryDto>.Fail("A loan for a customer on the blacklist must first be approved by the loan staff. The Super Admin gives the final approval after that.");
             }
@@ -426,8 +426,9 @@ namespace Service.Services
                 return ServiceResult<LoanSummaryDto>.Fail("The customer already has " + activeCount + " active loans. The limit is " + bank.MaxActiveLoans + ".");
             }
 
-            // Qara siyahı, birinci təsdiq: pul getmir, sorğu Super Admin-ə düşür
-            if (blacklisted && loan.Status == LoanStatus.Pending)
+            // Qara siyahı, birinci təsdiq (kredit şöbəsi): pul getmir, sorğu Super Admin-ə düşür.
+            // Super Admin özü baxırsa ikinci təsdiqi gözləməyə ehtiyac yoxdur: onun təsdiqi son təsdiqdir
+            if (blacklisted && loan.Status == LoanStatus.Pending && !isSuperAdmin)
             {
                 var firstResult = await _loans.FirstApproveAsync(loanId, staffUserId, approvedAmount, DateTime.UtcNow);
                 var firstSummary = await ToSummaryResultAsync(firstResult);
