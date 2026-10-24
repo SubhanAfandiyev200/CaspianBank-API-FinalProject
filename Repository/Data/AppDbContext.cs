@@ -59,14 +59,93 @@ namespace Repository.Data
         // Bunun üçün əməliyyatları yazan hər yerə toxunmaq lazım gəlmir
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
+            RekeyTranslations();
             AddTreasuryEntries();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+            await RekeyTranslationsAsync(cancellationToken);
             AddTreasuryEntries();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        // Saytın mətnlərinin tərcüməsi ingilis mətnə bağlıdır (açar = ingilis mətn). Admin ingilis mətni dəyişəndə az/ru tərcümə itməsin deyə
+        // həmin açarın tərcümə sətirləri yeni mətnə köçürülür (eyni saxlamada). Yeni mətnin tərcüməsi artıq varsa toxunulmur
+        private static readonly Dictionary<Type, string[]> TranslatedTexts = new Dictionary<Type, string[]>
+        {
+            [typeof(About)] = new[] { "Label", "Title", "Description" },
+            [typeof(AboutPillar)] = new[] { "Title", "Description" },
+            [typeof(BenefitSection)] = new[] { "Label", "Title", "Description" },
+            [typeof(BenefitItem)] = new[] { "Label", "Title", "Description", "ButtonText", "Text1", "Text2", "Text3" },
+            [typeof(ServiceSection)] = new[] { "Label", "Title", "Description" },
+            [typeof(ServiceItem)] = new[] { "Title", "Description" },
+            [typeof(CardHero)] = new[] { "Label", "Title", "Description" },
+            [typeof(HomeTicker)] = new[] { "Text" },
+            [typeof(CardDesign)] = new[] { "Title" },
+            [typeof(Setting)] = new[] { "Value" }
+        };
+
+        private List<(string Old, string New)> CollectTextChanges()
+        {
+            var changes = new List<(string Old, string New)>();
+            foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified))
+            {
+                if (!TranslatedTexts.TryGetValue(entry.Entity.GetType(), out var names))
+                {
+                    continue;
+                }
+
+                foreach (var name in names)
+                {
+                    var property = entry.Property(name);
+                    if (!property.IsModified)
+                    {
+                        continue;
+                    }
+
+                    var oldText = (property.OriginalValue as string)?.Trim();
+                    var newText = (property.CurrentValue as string)?.Trim();
+                    if (!string.IsNullOrEmpty(oldText) && !string.IsNullOrEmpty(newText) && !string.Equals(oldText, newText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        changes.Add((oldText, newText));
+                    }
+                }
+            }
+            return changes;
+        }
+
+        private async Task RekeyTranslationsAsync(CancellationToken cancellationToken)
+        {
+            foreach (var (oldText, newText) in CollectTextChanges())
+            {
+                var rows = await Translations.Where(t => t.Key == oldText).ToListAsync(cancellationToken);
+                foreach (var row in rows)
+                {
+                    var language = row.Language;
+                    if (!await Translations.AnyAsync(t => t.Language == language && t.Key == newText, cancellationToken))
+                    {
+                        row.Key = newText;
+                    }
+                }
+            }
+        }
+
+        private void RekeyTranslations()
+        {
+            foreach (var (oldText, newText) in CollectTextChanges())
+            {
+                var rows = Translations.Where(t => t.Key == oldText).ToList();
+                foreach (var row in rows)
+                {
+                    var language = row.Language;
+                    if (!Translations.Any(t => t.Language == language && t.Key == newText))
+                    {
+                        row.Key = newText;
+                    }
+                }
+            }
         }
 
         private void AddTreasuryEntries()
