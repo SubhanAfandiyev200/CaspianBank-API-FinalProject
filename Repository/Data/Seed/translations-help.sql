@@ -1,0 +1,47 @@
+-- Help pəncərəsi və vəfat etmiş şəxsin məlumatı ilə qeydiyyat siqnalı üçün mətnlər (az, ru). js: ilə başlayanlar JavaScript mətnləridir. Təkrar işlədilə bilər.
+SET NOCOUNT ON;
+DECLARE @t TABLE ([Language] nvarchar(5), [Key] nvarchar(400), [Value] nvarchar(2000));
+INSERT INTO @t VALUES (N'az', N'Caspian help', N'Caspian yardım');
+INSERT INTO @t VALUES (N'ru', N'Caspian help', N'Помощь Caspian');
+INSERT INTO @t VALUES (N'az', N'Our team replies to you', N'Komandamız sizə cavab verir');
+INSERT INTO @t VALUES (N'ru', N'Our team replies to you', N'Наша команда ответит вам');
+INSERT INTO @t VALUES (N'az', N'Close help', N'Yardımı bağla');
+INSERT INTO @t VALUES (N'ru', N'Close help', N'Закрыть помощь');
+INSERT INTO @t VALUES (N'az', N'Your email, so we can reply', N'Email ünvanınız, cavab verə bilək');
+INSERT INTO @t VALUES (N'ru', N'Your email, so we can reply', N'Ваш email, чтобы мы могли ответить');
+INSERT INTO @t VALUES (N'az', N'Your email', N'Email ünvanınız');
+INSERT INTO @t VALUES (N'ru', N'Your email', N'Ваш email');
+INSERT INTO @t VALUES (N'az', N'Attach an image', N'Şəkil əlavə et');
+INSERT INTO @t VALUES (N'ru', N'Attach an image', N'Прикрепить изображение');
+INSERT INTO @t VALUES (N'az', N'You can attach one image (PNG, JPG or WebP).', N'Bir şəkil əlavə edə bilərsiniz (PNG, JPG və ya WebP).');
+INSERT INTO @t VALUES (N'ru', N'You can attach one image (PNG, JPG or WebP).', N'Можно прикрепить одно изображение (PNG, JPG или WebP).');
+INSERT INTO @t VALUES (N'az', N'Hi {0}! Write your question and our team will answer you in your notifications.', N'Salam {0}! Sualınızı yazın, komandamız cavabı bildirişlərinizdə verəcək.');
+INSERT INTO @t VALUES (N'ru', N'Hi {0}! Write your question and our team will answer you in your notifications.', N'Здравствуйте, {0}! Напишите свой вопрос, и наша команда ответит в ваших уведомлениях.');
+INSERT INTO @t VALUES (N'az', N'Hi! Write your question and our team will answer by email.', N'Salam! Sualınızı yazın, komandamız email ilə cavab verəcək.');
+INSERT INTO @t VALUES (N'ru', N'Hi! Write your question and our team will answer by email.', N'Здравствуйте! Напишите свой вопрос, и наша команда ответит по email.');
+INSERT INTO @t VALUES (N'az', N'js:Please write your email so we can reply.', N'Cavab verə bilməyimiz üçün emailinizi yazın.');
+INSERT INTO @t VALUES (N'ru', N'js:Please write your email so we can reply.', N'Укажите свой email, чтобы мы могли ответить.');
+INSERT INTO @t VALUES (N'az', N'js:Thanks! Your message was sent. Our team will reply to your email.', N'Təşəkkürlər! Mesajınız göndərildi. Komandamız emailinizə cavab verəcək.');
+INSERT INTO @t VALUES (N'ru', N'js:Thanks! Your message was sent. Our team will reply to your email.', N'Спасибо! Сообщение отправлено. Наша команда ответит на ваш email.');
+INSERT INTO @t VALUES (N'az', N'js:Thanks! Your message was sent. You will get the answer in your notifications.', N'Təşəkkürlər! Mesajınız göndərildi. Cavabı bildirişlərinizdə alacaqsınız.');
+INSERT INTO @t VALUES (N'ru', N'js:Thanks! Your message was sent. You will get the answer in your notifications.', N'Спасибо! Сообщение отправлено. Ответ придёт в ваши уведомления.');
+INSERT INTO @t VALUES (N'az', N'js:The image must be 5 MB or smaller.', N'Şəkil 5 MB və ya daha kiçik olmalıdır.');
+INSERT INTO @t VALUES (N'ru', N'js:The image must be 5 MB or smaller.', N'Размер изображения не должен превышать 5 МБ.');
+INSERT INTO @t VALUES (N'az', N'Attached image', N'Əlavə olunmuş şəkil');
+INSERT INTO @t VALUES (N'ru', N'Attached image', N'Прикреплённое изображение');
+INSERT INTO @t VALUES (N'az', N'Visitor, not registered', N'Ziyarətçi, qeydiyyatdan keçməyib');
+INSERT INTO @t VALUES (N'ru', N'Visitor, not registered', N'Посетитель, не зарегистрирован');
+INSERT INTO @t VALUES (N'az', N'New help message', N'Yeni yardım mesajı');
+INSERT INTO @t VALUES (N'ru', N'New help message', N'Новое сообщение в помощь');
+INSERT INTO @t VALUES (N'az', N'New help message from a visitor', N'Ziyarətçidən yeni yardım mesajı');
+INSERT INTO @t VALUES (N'ru', N'New help message from a visitor', N'Новое сообщение в помощь от посетителя');
+INSERT INTO @t VALUES (N'az', N'Enter your email so we can answer you.', N'Cavab verə bilməyimiz üçün emailinizi yazın.');
+INSERT INTO @t VALUES (N'ru', N'Enter your email so we can answer you.', N'Укажите email, чтобы мы могли вам ответить.');
+INSERT INTO @t VALUES (N'az', N'Registration attempt with a deceased citizen''s ID', N'Vəfat etmiş vətəndaşın ID-si ilə qeydiyyat cəhdi');
+INSERT INTO @t VALUES (N'ru', N'Registration attempt with a deceased citizen''s ID', N'Попытка регистрации по ID умершего гражданина');
+INSERT INTO @t VALUES (N'az', N'This alert has no account to freeze.', N'Bu siqnalın dondurulacaq hesabı yoxdur.');
+INSERT INTO @t VALUES (N'ru', N'This alert has no account to freeze.', N'У этого оповещения нет аккаунта для заморозки.');
+INSERT INTO Translations ([Language], [Key], [Value], CreatedAt)
+SELECT s.[Language], s.[Key], s.[Value], GETUTCDATE() FROM @t s
+WHERE NOT EXISTS (SELECT 1 FROM Translations x WHERE x.[Language] = s.[Language] AND x.[Key] = s.[Key]);
+PRINT CONCAT('Translations added: ', @@ROWCOUNT);
