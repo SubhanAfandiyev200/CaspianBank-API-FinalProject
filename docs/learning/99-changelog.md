@@ -153,3 +153,9 @@ Sənədləşdirilən funksiyalar:
 - Qara siyahılı kreditdə Super Admin birbaşa təsdiq edə bilər (son təsdiq sayılır); kredit şöbəsi təsdiq edəndə hələ də Super Admin-ə gedir. `LoanRepository.ApproveAsync` Pending və AwaitingSuperAdmin qəbul edir, kimin nə edə biləcəyini `LoanReviewService` yoxlayır.
 - Yeni depozit açılanda Accountant/Admin/SuperAdmin-ə "New term deposit" bildirişi gedir (`DepositService.OpenAsync`).
 - Admin: `i18n.js` admin layout-a əlavə olundu (`wheel-select.js` `cbt` olmadığı üçün sınırdı, seçim pəncərələri açılmırdı), sol panelin sürüşdürmə zolağı gizlədildi, Spending ay/kateqoriya adları və bir neçə status/etiket tərcümə olunur.
+
+### 2026-10-24 (5): Admin paneli üç dildə, CMS mətnləri dilə görə redaktə olunur
+- Admin view-ları (61 fayl) `@T[...]`-a keçdi, 7 seed faylı ilə ≈700 mətnin az/ru tərcüməsi əlavə olundu; admin-də də dil menyusu var.
+- Edit səhifələrində `EN | AZ | RU`: admin hər dil üçün mətni əlavə edir və ya yeniləyir (`106`-dakı `ContentTranslationTests`). İngilis mətn dəyişəndə tərcümələr yeni mətnə köçür. Bax `105-theme-and-languages.md`.
+- Dashboard-da "Customer deposits" tilesi "Term deposits" oldu (depozit açanda artır); cədvəllərin üfüqi sürüşdürmə zolağı və admin yan panelinin zolağı gizlənir.
+- Demo top-up kartının balansı 5 000 000-dan 100 000 AZN-ə endirildi (real bankda belə depozit yoxdur, xəzinə rəqəmləri də qəribə görünürdü).

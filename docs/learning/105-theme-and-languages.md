@@ -27,7 +27,7 @@
 - `LanguageController.Set(lang, returnUrl)` cookie qoyur (yalnız yerli `returnUrl`).
 - `<html lang="@T.Lang">` — brauzer və ekran oxuyucu üçün; **diqqət:** `lang="az"` olanda CSS `text-transform: uppercase` "i"-ni "İ" edir, ona görə tərcüməsiz ingilis mətn "OFFİCE" kimi görünə bilər. Tərcümə varsa problem yoxdur.
 - **JavaScript mətnləri:** `cbt("Pay {0}", amount)` (`wwwroot/js/i18n.js`). Lüğət layout-da `window.I18N` kimi gəlir; açarlar DB-də **`js:` prefiksi** ilə saxlanılır (`js:Pay {0}`). Skriptlər `_I18nScript` partial-ından sonra yüklənməlidir.
-- **Admin paneli ingilis qalır.** `_SiteControls` admin area-da dil menyusunu göstərmir (tema düyməsi qalır).
+- **Admin paneli də üç dildədir** (2026-10-24-dən): `_SiteControls` admin-də də dil menyusunu göstərir. Admin view-ları `@T["..."]` ilə yazılıb, tərcümələr `translations-admin-1..7.sql`-dədir. Yeni admin mətni yazanda eyni qaydadır: `@T["My text"]` + az/ru sətri.
 - **Bildirişlər:** başlıqlar da, dəyişənli mətnlər də (şablon tərcüməsi) tərcümə olunur, bax aşağıdakı bölmə.
 
 ### Yeni mətn əlavə etmə qaydası (həmişə eyni)
@@ -55,3 +55,11 @@ API-nin göndərdiyi hazır cümlələrdə dəyişən hissə olur ("Your card �
 ### Nə tərcümə olunmur (bilərəkdən)
 - Admin paneli ingilis dilindədir. API-nin doğrulama xətaları cümlə tam uyğun gələndə və ya şablonla tərcümə olunur; bazada olmayan cümlə ingiliscə qalır. Staff bildirişləri (məs. "New loan application") admin üçündür və ingiliscədir.
 - Home CMS mətnləri (hero, xidmətlər...) admin tərəfindən dəyişdirilsə, yeni mətnin tərcüməsi olmur və ingilis qalır; yeni mətni `Translations`-a əlavə etmək lazımdır.
+
+## Admin CMS mətnlərinin dilə görə redaktəsi (2026-10-24)
+Ana səhifənin mətnləri (Hero, About və sütunları, Services, Benefits, Ticker, kart dizaynının adı, footer başlığı və təsviri) bazada **ingiliscə** saxlanır. Az və ru tərcümələr `Translations` cədvəlindədir, açar həmin ingilis mətnin özüdür.
+- **İstifadə:** admin bu mətnlərin **Edit** səhifəsini açır, yuxarıda `EN | AZ | RU` düymələri var. EN: adi redaktə. AZ və ya RU: eyni mətn sahələrində həmin dilin tərcüməsi görünür (yoxdursa boş, ingilis mətn işarə kimi göstərilir), yazıb "Save changes" basanda tərcümə yadda saxlanır (boş saxlasan tərcümə silinir və ingilis mətn göstərilir). Şəkil və digər sahələr tərcümə rejimində gizlənir.
+- **İş:** `wwwroot/js/lang-edit.js` (səhifədə `data-translatable` sahələri və `_LangTabs` partial-ı varsa işləyir), MVC `Areas/Admin/Controllers/ContentTranslationsController` (`Lookup`, `Save`), API `POST api/admin/translations/lookup` və `PUT api/admin/translations/content` (`TranslationService.LookupAsync`, `SaveContentAsync`; biri digər dilə toxunmur). Saxladıqdan sonra MVC-nin lüğət yaddaşı təzələnir.
+- **İngilis mətn dəyişəndə tərcümə itmir:** `AppDbContext.SaveChanges` CMS varlıqlarının (About, AboutPillar, BenefitSection/Item, ServiceSection/Item, CardHero, HomeTicker, CardDesign, Setting) mətn sahələri dəyişəndə həmin köhnə açarın tərcümə sətirlərini yeni mətnə köçürür (eyni saxlamada). Yeni mətnin tərcüməsi artıq varsa toxunmur; yalnız böyük-kiçik hərf fərqi varsa heç nə etmir (açar böyük-kiçik hərfə həssas deyil).
+- Yeni redaktə səhifəsinə əlavə etmək: mətn inputlarına `data-translatable`, forma üstünə `<partial name="_LangTabs" />`. Create səhifələrində yoxdur: əvvəl ingilis mətnlə yarat, sonra Edit-də tərcümə et.
+- Testlər: `ContentTranslationTests`.
