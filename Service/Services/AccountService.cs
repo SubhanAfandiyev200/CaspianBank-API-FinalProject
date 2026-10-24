@@ -188,7 +188,7 @@ namespace Service.Services
 
             if (customer.DeathDate is not null)
             {
-                return (null, "An account can't be opened with this ID record.");
+                return (null, "This ID record can't be used to open an account. If you think this is a mistake, please contact the bank.");
             }
 
             if (await _accountRepository.CustomerHasAccountAsync(customer.Id))
