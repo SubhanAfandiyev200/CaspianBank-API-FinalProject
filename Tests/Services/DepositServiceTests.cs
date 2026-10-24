@@ -104,6 +104,23 @@ namespace CaspianBank.Tests.Services
         }
 
         [Fact]
+        public async Task Opening_a_deposit_tells_the_money_staff()
+        {
+            var app = await TestApp.SharedAsync();
+            var accountant = await app.NewStaffAsync(Domain.Constants.Roles.Accountant);
+            var support = await app.NewStaffAsync(Domain.Constants.Roles.CustomerSupport);
+            var kit = await app.NewKitAsync(2000m);
+            var plan = await Plan6Async(app);
+
+            var result = await WithAsync(app, s => s.OpenAsync(kit.User.Id, Open(plan, kit, 700m)));
+
+            Assert.True(result.IsSuccess, string.Join(";", result.Errors));
+            var note = Assert.Single(await app.NotificationsAsync(accountant.Id), n => n.Title == "New term deposit" && n.Message.Contains(kit.User.Name));
+            Assert.Equal("/Admin/Deposits", note.LinkUrl);
+            Assert.DoesNotContain(await app.NotificationsAsync(support.Id), n => n.Title == "New term deposit" && n.Message.Contains(kit.User.Name));
+        }
+
+        [Fact]
         public async Task Opening_writes_the_journal_row_the_notification_and_the_treasury_entry()
         {
             var app = await TestApp.SharedAsync();

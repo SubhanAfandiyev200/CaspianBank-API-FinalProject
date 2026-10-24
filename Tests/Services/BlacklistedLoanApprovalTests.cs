@@ -108,13 +108,31 @@ namespace CaspianBank.Tests.Services
         }
 
         [Fact]
-        public async Task The_super_admin_alone_cannot_give_the_first_approval()
+        public async Task The_super_admin_can_approve_a_blacklisted_application_directly()
         {
             var app = await TestApp.SharedAsync();
             var (kit, loan) = await BlacklistedApplicationAsync(app);
             var superAdmin = await app.NewStaffAsync(Roles.SuperAdmin);
 
             var result = await ReviewAsync(app, s => s.ApproveAsync(superAdmin.Id, loan.Id, new ApproveLoanDto { ApprovedAmount = 6000m }));
+
+            // Super Admin-in təsdiqi son təsdiqdir: ikinci addımı gözləməyə ehtiyac yoxdur
+            Assert.True(result.IsSuccess);
+            Assert.Equal("Active", result.Data!.Status);
+            Assert.Equal(6000m, await app.BalanceAsync(kit.Standard.Id));
+            var stored = await app.GetLoanAsync(loan.Id);
+            Assert.Equal(superAdmin.Id, stored.ReviewedByUserId);
+            Assert.Null(stored.FirstApprovedByUserId);
+        }
+
+        [Fact]
+        public async Task Staff_without_a_money_role_cannot_approve_a_blacklisted_application()
+        {
+            var app = await TestApp.SharedAsync();
+            var (kit, loan) = await BlacklistedApplicationAsync(app);
+            var support = await app.NewStaffAsync(Roles.CustomerSupport);
+
+            var result = await ReviewAsync(app, s => s.ApproveAsync(support.Id, loan.Id, new ApproveLoanDto { ApprovedAmount = 6000m }));
 
             Assert.False(result.IsSuccess);
             Assert.StartsWith("A loan for a customer on the blacklist must first be approved by the loan staff", result.Errors[0]);
